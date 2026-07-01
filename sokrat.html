@@ -277,9 +277,14 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   if(!sess){sess='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);try{localStorage.setItem('sok_sess',sess);}catch(e){}}
   try{hist=JSON.parse(localStorage.getItem('sok_hist')||'[]');}catch(e){hist=[];}
   function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function linkify(s){
+    s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$1</a>');
+    s=s.replace(/(^|\s)(https?:\/\/[^\s<)]+)(?![^<]*>)/g,'$1<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$2</a>');
+    return s;
+  }
   function bubble(role,text){
     const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');
-    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+esc(text)+'</div>';
+    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+linkify(esc(text))+'</div>';
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
   }
   function save(){try{localStorage.setItem('sok_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}

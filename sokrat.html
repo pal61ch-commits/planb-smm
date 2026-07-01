@@ -157,6 +157,19 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .dzmode.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700}
 .dz-out{padding:18px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
 .dz-out img{max-width:100%;border-radius:14px;border:1px solid var(--gb)}
+.howbtn{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;font-family:'Inter';font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:14px;border:1px solid var(--gb2);background:linear-gradient(120deg,rgba(245,196,0,.18),var(--glass2));color:var(--text);cursor:pointer;transition:.2s var(--ease)}
+.howbtn:hover{border-color:var(--yellow);transform:translateY(-1px)}
+.hmcard{width:100%;max-width:560px;max-height:86vh;overflow-y:auto;background:rgba(16,17,24,.98);border:1px solid var(--gb2);border-radius:22px;padding:26px 24px;box-shadow:var(--shadow);position:relative}
+.hmcard h3{font-size:22px;margin-bottom:4px}
+.hmsub{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.hitem{border:1px solid var(--gb);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.hhead{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;font-family:'Manrope';font-weight:700;font-size:15px}
+.hhead .ha{margin-left:auto;color:var(--muted);transition:.2s}
+.hitem.op .hhead .ha{transform:rotate(180deg)}
+.hbody{display:none;padding:2px 18px 16px 18px;font-size:13.5px;color:#c9c9cf;line-height:1.6}
+.hitem.op .hbody{display:block}
+.hbody ol{margin:0;padding-left:20px}.hbody li{margin:6px 0}
+.hfree{font-size:11px;font-weight:700;color:#3ad07a;background:rgba(58,208,122,.14);padding:2px 8px;border-radius:100px}
 .sitefoot{margin:28px auto 0;max-width:880px;padding:22px 4px 16px;border-top:1px solid var(--gb);display:flex;flex-direction:column;align-items:center;gap:13px;position:relative;z-index:2}
 .sitefoot .ftitle{font-family:'Manrope';font-weight:700;font-size:14.5px;color:var(--text)}
 .fbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
@@ -191,6 +204,8 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <button class="tab" data-tab="copywriter">✍️ Копирайтер <span class="lk">🔒</span></button>
     <button class="tab" data-tab="autoload">📦 Автозагрузка <span class="lk">🔒</span></button>
   </nav>
+
+  <button class="howbtn" id="howBtn">❓ Как пользоваться Сократом</button>
 
   <!-- СОКРАТ — бесплатный консультант -->
   <section class="panel on" data-panel="sokrat">
@@ -283,6 +298,16 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <div class="fc">Сервис «Сократ» — ИИ-авитолог. Оператор: ИП Кислов К. П.</div>
   </footer>
 </main>
+
+<!-- модалка «как пользоваться» -->
+<div class="modal" id="howModal">
+  <div class="hmcard">
+    <button class="mclose" id="hmClose" aria-label="Закрыть">×</button>
+    <h3>Как пользоваться Сократом</h3>
+    <div class="hmsub" id="hmSub"></div>
+    <div id="hmList"></div>
+  </div>
+</div>
 
 <!-- модалка вход/регистрация -->
 <div class="modal" id="authModal">
@@ -512,6 +537,34 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
       form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;var btn=form.querySelector('button');btn.disabled=true;btn.textContent='Генерирую…';out.innerHTML='<div class="typing" style="padding:24px"><i></i><i></i><i></i></div>';var r=await api('/c/sokrat/tool/designer',{message:v,mode:mode});btn.disabled=false;btn.textContent='Сгенерировать';var imgs=(r.d&&r.d.images)||[];if(imgs.length){out.innerHTML=imgs.map(function(im){return '<figure style="margin:0"><figcaption style="font-size:12px;color:var(--muted);margin-bottom:6px">'+te(im.label)+'</figcaption><img src="'+im.url+'" alt="'+te(im.label)+'"></figure>';}).join('');}else{out.innerHTML='<div style="color:#ff7a7a;padding:14px;font-size:13.5px">'+te((r.d&&r.d.error)||'Не удалось сгенерировать')+'</div>';}});
     }
   }
+  var HOW=[
+    {ic:'🦉',name:'Сократ-консультант',free:true,steps:{any:'Просто напишите свой вопрос по Авито в чате слева — отвечу бесплатно, 24/7. Регистрация и оплата не нужны.'}},
+    {ic:'🎨',name:'Дизайнер — картинки и баннеры',steps:{
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху (почта + пароль).','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Дизайнер».','Выберите режим: «Картинка для объявления» (1080×1080) или «Баннер профиля» (ПК + моб).','Опишите картинку — получите готовое изображение точно под размеры Авито.'],
+      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Дизайнер» → выберите режим → опишите картинку → готовое изображение.'],
+      sub:['Откройте вкладку «Дизайнер» → выберите режим (объявление / баннер профиля) → опишите картинку → получите готовое изображение под размеры Авито.']}},
+    {ic:'✍️',name:'Копирайтер — тексты объявлений',steps:{
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху.','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Копирайтер».','Напишите, что продаёте — получите готовый продающий текст: заголовок + структура + ключи под поиск Авито.'],
+      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Копирайтер» → напишите что продаёте → готовый текст объявления.'],
+      sub:['Откройте вкладку «Копирайтер» → напишите что продаёте → получите готовый текст объявления под Авито.']}},
+    {ic:'📦',name:'Автозагрузка — работа с фидом',steps:{
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху.','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Автозагрузка».','Загрузите свой xlsx-фид (или создайте объявление с нуля командой).','Командами: «размножь по городам», «поставь цену», «перепиши заголовки по правилам» → скачайте готовый файл.','Добавите свои ключи Avito API — проверю отчёты автозагрузки с ошибками и поставлю цену за просмотр (CPV) на объявления.'],
+      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Автозагрузка» → загрузите фид → командами правьте/масштабируйте → скачайте готовый файл.'],
+      sub:['Откройте вкладку «Автозагрузка» → загрузите xlsx или создайте с нуля → командами масштабируйте по городам / меняйте цены / правьте тексты → скачайте. С ключами Avito API — отчёты + цена за просмотр.']}}
+  ];
+  function renderHow(){
+    var st=state.subscribed?'sub':(state.auth?'nosub':'noauth');
+    document.getElementById('hmSub').textContent = state.subscribed?'Подписка активна — все инструменты открыты. Жмите на функцию для инструкции.':(state.auth?'Вы вошли. Осталось оплатить подписку, чтобы открыть инструменты.':'Консультация бесплатна и без входа. Инструменты — по подписке после регистрации.');
+    var list=document.getElementById('hmList');
+    list.innerHTML=HOW.map(function(fe){
+      var body = fe.steps.any ? '<p>'+te(fe.steps.any)+'</p>' : '<ol>'+(fe.steps[st]||[]).map(function(x){return '<li>'+te(x)+'</li>';}).join('')+'</ol>';
+      return '<div class="hitem"><div class="hhead">'+fe.ic+' '+te(fe.name)+(fe.free?' <span class="hfree">бесплатно</span>':'')+'<span class="ha">▾</span></div><div class="hbody">'+body+'</div></div>';
+    }).join('');
+    list.querySelectorAll('.hitem').forEach(function(it){it.querySelector('.hhead').addEventListener('click',function(){it.classList.toggle('op');});});
+  }
+  $('#howBtn').addEventListener('click',function(){renderHow();$('#howModal').classList.add('on');});
+  $('#hmClose').addEventListener('click',function(){$('#howModal').classList.remove('on');});
+  $('#howModal').addEventListener('click',function(e){if(e.target.id==='howModal')$('#howModal').classList.remove('on');});
   renderModal();renderAuthbox();renderGates();refresh();handleReturn();
 })();
 </script>

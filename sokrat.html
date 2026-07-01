@@ -145,7 +145,10 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .toolui .card{margin-top:0}
 .toolhead{font-family:'Manrope';font-weight:700;font-size:15.5px;padding:15px 20px;border-bottom:1px solid var(--gb);color:var(--text)}
 .toolchat{height:clamp(300px,44vh,460px)}
-.dz-out{padding:18px;min-height:120px;display:flex;align-items:center;justify-content:center}
+.dz-modes{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px 0}
+.dzmode{font-family:'Inter';font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:100px;border:1px solid var(--gb);background:var(--glass2);color:var(--muted);cursor:pointer;transition:.15s}
+.dzmode.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700}
+.dz-out{padding:18px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
 .dz-out img{max-width:100%;border-radius:14px;border:1px solid var(--gb)}
 .sitefoot{margin:28px auto 0;max-width:880px;padding:22px 4px 16px;border-top:1px solid var(--gb);display:flex;flex-direction:column;align-items:center;gap:13px;position:relative;z-index:2}
 .sitefoot .ftitle{font-family:'Manrope';font-weight:700;font-size:14.5px;color:var(--text)}
@@ -206,6 +209,10 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <div class="toolui" data-tool="designer" hidden>
       <div class="card">
         <div class="toolhead">🎨 Дизайнер — картинки для объявлений</div>
+        <div class="dz-modes">
+          <button type="button" class="dzmode on" data-mode="listing">📸 Картинка для объявления</button>
+          <button type="button" class="dzmode" data-mode="banner">🖼 Баннер профиля (ПК+моб)</button>
+        </div>
         <div class="dz-out" id="dz-out"><span style="color:var(--muted);font-size:13px">Опишите картинку и нажмите «Сгенерировать»</span></div>
         <form class="composer" data-toolform="designer" autocomplete="off">
           <textarea rows="2" placeholder="Напр.: баннер для объявления — кожаный диван, тёплый свет, минимализм"></textarea>
@@ -470,8 +477,9 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
       b('assistant','Опишите товар или услугу — сразу выдам готовый текст объявления под поиск Авито.');
       form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('button');btn.disabled=true;b('user',v);hist.push({role:'user',content:v});var t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">✍️</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var rep=(r.d&&(r.d.reply||r.d.error))||'Не получилось, попробуйте ещё раз.';b('assistant',rep);hist.push({role:'assistant',content:rep});btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
-      var out=document.getElementById('dz-out');
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;var btn=form.querySelector('button');btn.disabled=true;btn.textContent='Генерирую…';out.innerHTML='<div class="typing" style="padding:24px"><i></i><i></i><i></i></div>';var r=await api('/c/sokrat/tool/designer',{message:v});btn.disabled=false;btn.textContent='Сгенерировать';if(r.d&&r.d.image){out.innerHTML='<img src="'+r.d.image+'" alt="сгенерировано">';}else{out.innerHTML='<div style="color:#ff7a7a;padding:14px;font-size:13.5px">'+te((r.d&&r.d.error)||'Не удалось сгенерировать')+'</div>';}});
+      var out=document.getElementById('dz-out'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]');
+      ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;var btn=form.querySelector('button');btn.disabled=true;btn.textContent='Генерирую…';out.innerHTML='<div class="typing" style="padding:24px"><i></i><i></i><i></i></div>';var r=await api('/c/sokrat/tool/designer',{message:v,mode:mode});btn.disabled=false;btn.textContent='Сгенерировать';var imgs=(r.d&&r.d.images)||[];if(imgs.length){out.innerHTML=imgs.map(function(im){return '<figure style="margin:0"><figcaption style="font-size:12px;color:var(--muted);margin-bottom:6px">'+te(im.label)+'</figcaption><img src="'+im.url+'" alt="'+te(im.label)+'"></figure>';}).join('');}else{out.innerHTML='<div style="color:#ff7a7a;padding:14px;font-size:13.5px">'+te((r.d&&r.d.error)||'Не удалось сгенерировать')+'</div>';}});
     }
   }
   renderModal();renderAuthbox();renderGates();refresh();handleReturn();

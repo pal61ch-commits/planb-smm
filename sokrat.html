@@ -250,6 +250,16 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
       <div class="gate" data-gate="autoload"></div>
     </div>
+    <div class="toolui" data-tool="autoload" hidden>
+      <div class="card">
+        <div class="toolhead">📦 Автозагрузка — помощник по фиду Авито</div>
+        <div class="chat toolchat" id="al-chat"></div>
+        <form class="composer" data-toolform="autoload" autocomplete="off">
+          <textarea rows="2" placeholder="Напр.: размножь по городам Владимирской области — кровельные работы от 500 ₽/м²"></textarea>
+          <button class="send" type="submit" aria-label="Отправить">▶</button>
+        </form>
+      </div>
+    </div>
   </section>
     <footer class="sitefoot">
     <div class="ftitle">Полезная информация</div>
@@ -476,6 +486,11 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
       var b=function(role,text){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'✍️')+'</div><div class="bub">'+te(text)+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;};
       b('assistant','Опишите товар или услугу — сразу выдам готовый текст объявления под поиск Авито.');
       form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('button');btn.disabled=true;b('user',v);hist.push({role:'user',content:v});var t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">✍️</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var rep=(r.d&&(r.d.reply||r.d.error))||'Не получилось, попробуйте ещё раз.';b('assistant',rep);hist.push({role:'assistant',content:rep});btn.disabled=false;ta.focus();});
+    } else if(name==='autoload'){
+      var chat=document.getElementById('al-chat'), hist=[];
+      var b=function(role,text){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+te(text)+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;};
+      b('assistant','Помогу с автозагрузкой: размножить по городам, тексты под фид, разбор ошибок. Что нужно?');
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('button');btn.disabled=true;b('user',v);hist.push({role:'user',content:v});var t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">📦</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;var r=await api('/c/sokrat/tool/autoload',{message:v,history:hist});t.remove();var rep=(r.d&&(r.d.reply||r.d.error))||'Не получилось, попробуйте ещё раз.';b('assistant',rep);hist.push({role:'assistant',content:rep});btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
       var out=document.getElementById('dz-out'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]');
       ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});

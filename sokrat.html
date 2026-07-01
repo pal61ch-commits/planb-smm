@@ -3,18 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ИИ-авитолог Сократ — Plan B · Бесплатная консультация по Авито 24/7</title>
-<meta name="description" content="Сократ — ИИ-авитолог Plan B. Бесплатная консультация по Авито 24/7, в 10 раз дешевле живого авитолога. Продвижение, объявления, кабинет.">
-<!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108505608', 'ym');
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/108505608" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<title>Сократ — ИИ-авитолог Plan B · Бесплатная консультация по Авито</title>
+<meta name="description" content="Сократ — бесплатный ИИ-авитолог Plan B. Консультация по Авито 24/7: выдача, тексты, фото, продвижение. Платные инструменты: дизайнер, копирайтер, автозагрузка.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,321 +14,399 @@
   --text:#f3f3f1;--muted:#9b9ba3;
   --glass:rgba(255,255,255,.045);--glass2:rgba(255,255,255,.07);
   --gb:rgba(255,255,255,.10);--gb2:rgba(245,196,0,.28);
-  --ease:cubic-bezier(.16,.84,.34,1);
-  --shadow:0 24px 60px -24px rgba(0,0,0,.7);
+  --ease:cubic-bezier(.16,.84,.34,1);--shadow:0 24px 60px -24px rgba(0,0,0,.7);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-h1,h2,h3,h4,.dis{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.06;font-weight:800}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:1180px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;font-weight:800}
 .yel{color:var(--yellow)}
-.glass{background:var(--glass);backdrop-filter:blur(22px) saturate(1.25);-webkit-backdrop-filter:blur(22px) saturate(1.25);border:1px solid var(--gb);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.07)}
+.bgimg{position:fixed;inset:-2%;z-index:0;background:#04040a url('/c/sokrat-bg.jpg') center/cover no-repeat;animation:kb 75s ease-in-out infinite alternate}
+@keyframes kb{from{transform:scale(1.04)}to{transform:scale(1.14) translate(-1.5%,-1%)}}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none;display:block}
 
-/* bg */
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:radial-gradient(100% 70% at 50% -10%,#17150c 0%,var(--bg) 55%)}
-.glow{position:absolute;border-radius:50%;filter:blur(80px);will-change:transform}
-.g1{width:560px;height:560px;background:radial-gradient(circle,rgba(245,196,0,.16),transparent 70%);top:-120px;right:-80px;animation:fl 18s ease-in-out infinite}
-.g2{width:480px;height:480px;background:radial-gradient(circle,rgba(245,196,0,.10),transparent 70%);bottom:-140px;left:-100px;animation:fl 24s ease-in-out infinite reverse}
-@keyframes fl{50%{transform:translate(40px,40px) scale(1.12)}}
-.bg-logo{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(78vw,920px);opacity:.05;z-index:0;pointer-events:none}
-.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:26px 20px 30px}
 
-/* nav */
-.nav{position:sticky;top:14px;z-index:50;margin-top:14px}
-.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;border-radius:18px;padding:0 14px 0 22px}
-.nav img{height:28px}
-.nav-links{display:flex;gap:24px;align-items:center}
-.nav-links a{color:var(--muted);font-size:14px;font-weight:600;transition:.2s}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{padding:10px 20px;border-radius:11px;background:var(--yellow);color:#15140c!important;font-weight:700;font-size:14px;transition:.25s;box-shadow:0 6px 20px rgba(245,196,0,.32)}
-.nav-cta:hover{background:var(--yellow2);transform:translateY(-1px)}
-@media(max-width:780px){.nav-links a:not(.nav-cta){display:none}}
+/* header */
+.head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}
+.head .hl{display:flex;align-items:center;gap:15px;min-width:0}
+.orb{width:56px;height:56px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,rgba(245,196,0,.4),rgba(245,196,0,.05) 70%);
+  border:1.5px solid var(--gb2);box-shadow:0 0 40px rgba(245,196,0,.22),inset 0 0 22px rgba(245,196,0,.12);
+  animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-6px)}}
+.orb span{font-family:'Manrope';font-weight:800;font-size:30px;color:var(--yellow);text-shadow:0 3px 16px rgba(245,196,0,.5)}
+.head h1{font-size:26px}
+.head h1 i{font-style:normal;font-size:13px;font-weight:600;color:var(--muted);margin-left:8px}
+.head .sub{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:7px;margin-top:3px}
+.head .sub b{width:7px;height:7px;border-radius:50%;background:#3ad07a;box-shadow:0 0 9px #3ad07a;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.4}}
 
-/* hero */
-.hero{padding:60px 0 70px;position:relative}
-.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center}
-.partner{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--yellow);padding:8px 15px;border-radius:100px;margin-bottom:22px}
-.partner b{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow)}
-.hero h1{font-size:clamp(38px,6.4vw,68px);margin-bottom:18px}
-.hero h1 span{position:relative;white-space:nowrap}
-.hero .lead{max-width:520px;color:var(--muted);font-size:clamp(16px,1.9vw,18px);margin-bottom:30px}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:9px;padding:15px 28px;border-radius:13px;font-weight:700;font-size:15px;font-family:'Manrope';cursor:pointer;transition:.22s var(--ease);border:1px solid transparent;will-change:transform}
-.btn-y{background:var(--yellow);color:#15140c;box-shadow:0 10px 30px -8px rgba(245,196,0,.5)}
-.btn-y:hover{background:var(--yellow2);transform:translateY(-2px)}
-.btn-g{background:var(--glass);border-color:var(--gb);color:var(--text);backdrop-filter:blur(14px)}
-.btn-g:hover{border-color:var(--gb2);transform:translateY(-2px)}
-.trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;color:var(--muted);font-size:13px}
-.trust b{color:var(--text);font-weight:600}
-/* hero visual — orbit system */
-.hv{position:relative;height:500px;display:flex;align-items:center;justify-content:center}
-.orbit-sys{position:relative;width:540px;height:500px;display:grid;place-items:center}
-.sphere{position:absolute;width:262px;z-index:5;animation:float 8s ease-in-out infinite;filter:drop-shadow(0 30px 70px rgba(245,196,0,.16))}
-@keyframes float{50%{transform:translateY(-14px)}}
-.aring{position:absolute;top:50%;left:50%;border-radius:50%;border:1.5px solid rgba(245,196,0,.55);box-shadow:0 0 18px rgba(245,196,0,.4),inset 0 0 14px rgba(245,196,0,.18);pointer-events:none}
-.ochip{position:absolute;top:50%;left:50%;border-radius:13px;padding:9px 14px;display:flex;flex-direction:column;gap:1px;white-space:nowrap;will-change:transform,opacity}
-.ochip .v{font-family:'Manrope';font-weight:800;font-size:16px;color:var(--yellow);line-height:1.05}
-.ochip .k{font-size:10.5px;color:var(--muted)}
-@media(max-width:880px){.hero .wrap{grid-template-columns:1fr;gap:6px}.hero-text{text-align:center}.partner,.hero-btns,.trust{justify-content:center}.hero .lead{margin-inline:auto}.hv{order:-1;height:320px}.orbit-sys{transform:scale(.58)}}
+/* auth box (header right) */
+#authbox{display:flex;align-items:center;gap:10px;flex:none}
+.authbtn{font-family:'Inter';font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:11px;border:1px solid transparent;background:var(--yellow);color:#15140c;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.authbtn:hover{background:var(--yellow2);transform:translateY(-1px)}
+.authbtn.ghost{background:var(--glass2);color:var(--text);border-color:var(--gb)}
+.authchip{font-size:13px;color:var(--text);display:flex;align-items:center;gap:7px;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.subok{font-size:11px;font-weight:700;color:#3ad07a;background:rgba(58,208,122,.14);padding:2px 7px;border-radius:100px;flex:none}
 
-/* sections */
-.section{padding:80px 0;position:relative}
-.sec-head{text-align:center;max-width:680px;margin:0 auto 50px}
-.kick{display:inline-block;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);font-weight:700;margin-bottom:14px}
-.sec-head h2{font-size:clamp(28px,4.4vw,46px)}
-.sec-head p{color:var(--muted);margin-top:14px;font-size:16px}
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{display:inline-flex;align-items:center;gap:8px;font-family:'Inter';font-size:14px;font-weight:600;
+  padding:11px 17px;border-radius:14px;border:1px solid var(--gb);background:var(--glass);color:var(--muted);
+  cursor:pointer;transition:.2s var(--ease)}
+.tab:hover{color:var(--text);border-color:var(--gb2)}
+.tab.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700;box-shadow:0 8px 24px -6px rgba(245,196,0,.45)}
+.tab .free{font-size:11px;font-weight:700;background:rgba(58,208,122,.16);color:#3ad07a;padding:2px 7px;border-radius:100px}
+.tab.on .free{background:rgba(21,20,12,.18);color:#15140c}
+.tab .lk{font-size:12px;opacity:.8}
 
-/* services */
-.services{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-@media(max-width:960px){.services{grid-template-columns:1fr;max-width:480px;margin:0 auto}}
-.scard{border-radius:22px;padding:32px 28px;position:relative;overflow:hidden;transition:transform .28s var(--ease),border-color .28s;transform-style:preserve-3d;will-change:transform}
-.scard::before{content:"";position:absolute;inset:0;background:radial-gradient(320px 220px at var(--mx,50%) var(--my,0%),rgba(245,196,0,.14),transparent 70%);opacity:0;transition:.3s}
-.scard:hover{border-color:var(--gb2)}
-.scard:hover::before{opacity:1}
-.scard>*{position:relative;transform:translateZ(26px)}
-.scard .num{font-family:'Manrope';font-weight:800;font-size:15px;color:var(--yellow);background:rgba(245,196,0,.12);width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center}
-.scard h3{font-size:23px;margin:16px 0 6px}
-.price{font-family:'Manrope';font-weight:800;font-size:30px;color:var(--yellow);margin:2px 0 14px;line-height:1}
-.price small{font-size:14px;color:var(--muted);font-weight:500}
-.scard .d{color:var(--muted);font-size:14.5px;margin-bottom:16px}
-.scard ul{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
-.scard li{position:relative;padding-left:26px;color:#d7d7d2;font-size:14px}
-.scard li::before{content:"";position:absolute;left:0;top:6px;width:14px;height:14px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px rgba(245,196,0,.5)}
-.scard li::after{content:"✓";position:absolute;left:3px;top:4px;font-size:9px;color:#15140c;font-weight:900}
-.scard .btn{width:100%;justify-content:center}
+/* panels */
+.panel{display:none;animation:fade .35s var(--ease)}
+.panel.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
 
-/* bonus */
-.bonus{border-radius:24px;padding:36px 40px;display:flex;align-items:center;gap:26px;flex-wrap:wrap;background:linear-gradient(120deg,rgba(245,196,0,.14),var(--glass));border:1px solid var(--gb2)!important}
-.bonus .gift{font-size:54px;filter:drop-shadow(0 6px 20px rgba(245,196,0,.45))}
-.bonus-txt{flex:1;min-width:260px}
-.bonus-txt .big{font-family:'Manrope';font-weight:800;font-size:clamp(26px,3.6vw,40px);color:var(--yellow);line-height:1}
-.bonus-txt h3{font-size:19px;margin:6px 0 8px;font-weight:700}
-.bonus-txt p{color:var(--muted);font-size:14.5px}
+/* chat (Сократ) */
+.card{border-radius:24px;border:1px solid var(--gb2);background:rgba(10,11,17,.74);backdrop-filter:blur(26px) saturate(1.1);
+  box-shadow:var(--shadow),0 0 60px -20px rgba(150,90,255,.4);overflow:hidden;display:flex;flex-direction:column}
+.chat{height:clamp(380px,56vh,580px);overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.msg{display:flex;gap:10px;max-width:88%;animation:in .3s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.msg.u{align-self:flex-end;flex-direction:row-reverse}
+.av{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:'Manrope';font-weight:800;font-size:13px}
+.msg.s .av{background:radial-gradient(circle at 35% 30%,rgba(245,196,0,.4),rgba(245,196,0,.08));color:var(--yellow);border:1px solid var(--gb2)}
+.msg.u .av{background:var(--glass2);color:var(--muted);border:1px solid var(--gb)}
+.bub{padding:12px 16px;border-radius:16px;font-size:14.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.s .bub{background:var(--glass2);border:1px solid var(--gb);border-top-left-radius:5px}
+.msg.u .bub{background:var(--yellow);color:#15140c;border-top-right-radius:5px;font-weight:500}
+.typing{display:flex;gap:4px;padding:5px 2px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+.composer{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--gb);align-items:flex-end;background:rgba(255,255,255,.02)}
+.composer textarea{flex:1;background:var(--glass2);border:1px solid var(--gb);border-radius:13px;color:var(--text);
+  font-family:'Inter';font-size:14.5px;padding:13px 15px;resize:none;max-height:130px;line-height:1.4;transition:border-color .2s}
+.composer textarea::placeholder{color:#6c6c74}
+.composer textarea:focus{outline:none;border-color:var(--gb2)}
+.send{background:var(--yellow);color:#15140c;border:none;border-radius:13px;padding:13px 22px;font-size:17px;font-weight:800;
+  cursor:pointer;transition:.2s var(--ease);align-self:stretch}
+.send:hover{background:var(--yellow2);transform:translateY(-1px)}
+.send:disabled{opacity:.5;cursor:wait;transform:none}
+.foot{font-size:12px;color:#67676e;text-align:center;padding:13px 20px;border-top:1px solid var(--gb)}
+.foot a{color:var(--muted)}
 
-/* why */
-.why{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-@media(max-width:820px){.why{grid-template-columns:repeat(2,1fr)}}
-.wcard{border-radius:18px;padding:28px 22px;text-align:center;transition:.3s}
-.wcard:hover{transform:translateY(-6px);border-color:var(--gb2)}
-.wcard .ic{font-size:28px;margin-bottom:12px}
-.wcard .big{font-family:'Manrope';font-weight:800;font-size:34px;color:var(--yellow)}
-.wcard h4{font-size:16px;margin:8px 0 6px;font-weight:700}
-.wcard p{color:var(--muted);font-size:13px}
+/* paywall (платные вкладки) */
+.lockwrap{border-radius:24px;border:1px solid var(--gb2);background:linear-gradient(150% 140% at 50% 0%,rgba(245,196,0,.10),rgba(10,11,17,.76));backdrop-filter:blur(26px);
+  box-shadow:var(--shadow),0 0 60px -20px rgba(245,196,0,.35);padding:46px 36px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.lockwrap .ic{font-size:54px;filter:drop-shadow(0 8px 22px rgba(245,196,0,.3))}
+.lockwrap h2{font-size:clamp(24px,4vw,32px)}
+.lockwrap .what{color:var(--muted);font-size:15.5px;max-width:520px}
+.price{display:inline-flex;align-items:baseline;gap:8px;margin:6px 0 2px}
+.price b{font-family:'Manrope';font-weight:800;font-size:40px;color:var(--yellow);line-height:1}
+.price span{color:var(--muted);font-size:15px}
 
-/* steps */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
-@media(max-width:820px){.steps{grid-template-columns:repeat(2,1fr)}}
-.step{border-radius:18px;padding:26px 22px;transition:.3s}
-.step:hover{transform:translateY(-5px);border-color:var(--gb2)}
-.step::before{counter-increment:s;content:"0" counter(s);font-family:'Manrope';font-weight:800;font-size:36px;color:var(--yellow);display:block;margin-bottom:10px}
-.step h4{font-size:17px;margin-bottom:6px;font-weight:700}
-.step p{color:var(--muted);font-size:13.5px}
+/* gate (динамический CTA в платной вкладке) */
+.gate{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;min-height:58px;justify-content:center}
+.gbtn{display:inline-flex;align-items:center;gap:9px;padding:14px 30px;border-radius:14px;background:var(--glass2);
+  border:1px solid var(--gb2);color:var(--text);font-family:'Manrope';font-weight:700;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
+.gbtn:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.gbtn.pay{background:var(--yellow);color:#15140c;border-color:transparent;box-shadow:0 10px 28px -8px rgba(245,196,0,.5)}
+.gbtn.pay:hover{background:var(--yellow2)}
+.gbtn:disabled{opacity:.6;cursor:wait;transform:none}
+.ghint{font-size:12.5px;color:#67676e;max-width:460px}
+.subactive{font-family:'Manrope';font-weight:700;font-size:18px;color:#3ad07a}
 
-/* cases */
-.cases{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-@media(max-width:900px){.cases{grid-template-columns:1fr;max-width:480px;margin:0 auto}}
-.ccard{border-radius:20px;overflow:hidden;transition:.3s}
-.ccard:hover{transform:translateY(-5px);border-color:var(--gb2)}
-.ccard .h{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--yellow);font-family:'Manrope';font-weight:700;font-size:14px;border-bottom:1px solid var(--gb);background:rgba(245,196,0,.06)}
-.ccard .h .t{color:var(--muted);font-size:11px;font-weight:500}
-.ccard .b{padding:22px}
-.ccard .res{display:flex;gap:22px;margin-bottom:12px}
-.ccard .res b{display:block;font-family:'Manrope';font-weight:800;font-size:26px;color:var(--yellow);line-height:1}
-.ccard .res span{font-size:11px;color:var(--muted)}
-.ccard p{color:var(--muted);font-size:13.5px}
+/* modal вход/регистрация */
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(4,4,10,.72);backdrop-filter:blur(7px)}
+.modal.on{display:flex;animation:fade .25s var(--ease)}
+.mcard{width:100%;max-width:386px;background:rgba(16,17,24,.97);border:1px solid var(--gb2);border-radius:22px;padding:30px 26px;box-shadow:var(--shadow);position:relative}
+.mcard h3{font-size:23px;margin-bottom:6px}
+.mcard .msub{font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5}
+.mcard label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
+.mcard input{width:100%;background:var(--glass2);border:1px solid var(--gb);border-radius:12px;color:var(--text);
+  font-family:'Inter';font-size:15px;padding:13px 14px;transition:border-color .2s}
+.mcard input:focus{outline:none;border-color:var(--gb2)}
+.msubmit{width:100%;margin-top:20px;padding:14px;border-radius:13px;background:var(--yellow);color:#15140c;border:none;
+  font-family:'Manrope';font-weight:800;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
+.msubmit:hover{background:var(--yellow2)}
+.msubmit:disabled{opacity:.6;cursor:wait}
+.mtoggle{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
+.mtoggle a{color:var(--yellow);cursor:pointer}
+.merr{color:#ff7a7a;font-size:13px;text-align:center;margin-top:12px;min-height:16px}
+.mclose{position:absolute;top:13px;right:15px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1}
+.mclose:hover{color:var(--text)}
 
-/* reviews */
-.revs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-@media(max-width:900px){.revs{grid-template-columns:1fr;max-width:480px;margin:0 auto}}
-.rcard{border-radius:20px;padding:26px;transition:.3s}
-.rcard:hover{transform:translateY(-4px);border-color:var(--gb2)}
-.rcard .st{color:var(--yellow);font-size:15px;letter-spacing:2px;margin-bottom:12px}
-.rcard p{font-size:14.5px;color:#dcdcd6;margin-bottom:18px}
-.rcard .w{display:flex;align-items:center;gap:12px}
-.rcard .av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--yellow),#b8920a);display:flex;align-items:center;justify-content:center;font-family:'Manrope';font-weight:800;color:#15140c;font-size:17px}
-.rcard .w b{font-size:14px;display:block}
-.rcard .w span{font-size:12px;color:var(--muted)}
+/* toast */
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);z-index:60;background:rgba(16,17,24,.98);
+  border:1px solid var(--gb2);color:var(--text);font-size:13.5px;padding:13px 20px;border-radius:13px;box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:.3s var(--ease);max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* videos */
-.vids{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-@media(max-width:900px){.vids{grid-template-columns:repeat(2,1fr);max-width:520px;margin:0 auto}}
-.vcard{position:relative;aspect-ratio:9/16;border-radius:18px;overflow:hidden;transition:.3s}
-.vcard:hover{transform:translateY(-5px);border-color:var(--gb2)}
-.vcard video{width:100%;height:100%;object-fit:cover;display:block}
-
-/* contact */
-.cbox{border-radius:26px;padding:54px 40px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--gb2)!important;background:linear-gradient(150% 140% at 0% 0%,rgba(245,196,0,.1),var(--glass))}
-.cbox h2{font-size:clamp(28px,4.4vw,44px);margin-bottom:10px}
-.cbox p{color:var(--muted);margin-bottom:30px;max-width:560px;margin-inline:auto}
-.chs{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;max-width:760px;margin:0 auto}
-.ch{display:flex;align-items:center;gap:10px;padding:15px 24px;border-radius:13px;background:var(--glass2);border:1px solid var(--gb);font-weight:600;font-size:15px;transition:.25s var(--ease);min-width:150px;justify-content:center;will-change:transform}
-.ch:hover{border-color:var(--yellow);transform:translateY(-3px)}
-.ch .e{font-size:19px}
-
-/* ai cta (главная) + слот ассистента (стр. Сократа) */
-.ai-sec{padding:34px 0 6px}
-.ai-cta{display:flex;align-items:center;gap:34px;border-radius:26px;padding:40px 46px;border:1px solid var(--gb2)!important;background:linear-gradient(120deg,rgba(245,196,0,.13),var(--glass));transition:transform .3s var(--ease),border-color .3s;cursor:pointer;position:relative;overflow:hidden}
-.ai-cta:hover{transform:translateY(-4px);border-color:var(--yellow)!important}
-.ai-cta-txt{flex:1;min-width:0}
-.ai-badge{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--yellow);margin-bottom:14px}
-.ai-badge b{width:7px;height:7px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow);animation:pulse 1.8s ease-in-out infinite}
-@keyframes pulse{50%{opacity:.35}}
-.ai-cta h2{font-size:clamp(26px,3.8vw,40px);margin-bottom:12px}
-.ai-cta p{color:var(--muted);font-size:15.5px;max-width:640px;margin-bottom:22px}
-.ai-orb{flex:none;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,rgba(245,196,0,.36),rgba(245,196,0,.05) 70%);border:1.5px solid var(--gb2);box-shadow:0 0 50px rgba(245,196,0,.22),inset 0 0 26px rgba(245,196,0,.14);animation:float 7s ease-in-out infinite}
-.ai-orb span{font-family:'Manrope';font-weight:800;font-size:60px;color:var(--yellow);text-shadow:0 4px 22px rgba(245,196,0,.5)}
-@media(max-width:780px){.ai-cta{flex-direction:column-reverse;text-align:center;padding:34px 26px;gap:22px}.ai-cta p{margin-inline:auto}.ai-orb{width:104px;height:104px}.ai-orb span{font-size:46px}}
-.sokrat-slot{border-radius:26px;padding:60px 40px;text-align:center;border:1.5px dashed var(--gb2)!important;display:flex;flex-direction:column;align-items:center;gap:16px;min-height:340px;justify-content:center;background:linear-gradient(150% 140% at 50% 0%,rgba(245,196,0,.06),var(--glass))}
-.sokrat-slot h2{font-size:clamp(24px,3.4vw,34px)}
-.sokrat-slot p{color:var(--muted);max-width:540px;font-size:15px}
-
-/* footer */
-footer{border-top:1px solid var(--gb);padding:38px 0;text-align:center;position:relative;z-index:2;margin-top:20px}
-footer img{height:26px;opacity:.85;margin-bottom:14px}
-.socs{display:flex;gap:14px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
-.soc{display:inline-flex;align-items:center;gap:9px;padding:11px 18px;border-radius:12px;font-family:'Manrope';font-weight:700;font-size:14px;background:var(--glass2);border:1px solid var(--gb);transition:.25s var(--ease)}
-.soc svg{width:21px;height:21px}
-.soc:hover{transform:translateY(-3px)}
-.soc.vk:hover{border-color:#4a76a8}.soc.ig:hover{border-color:#e1306c}.soc.tg:hover{border-color:#2aabee}
-.fc{color:#67676e;font-size:12.5px}
-
-/* fab */
-.fab{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:12px}
-.fab a{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 26px rgba(0,0,0,.45);transition:transform .22s var(--ease);position:relative}
-.fab a:hover{transform:scale(1.12)}
-.fab svg{width:27px;height:27px}
-.fab .wa{background:#25d366}.fab .tg{background:#28a8ea}
-.fab .ph{background:var(--yellow);color:#15140c}
-.fab .ph svg{animation:ring 2.4s ease-in-out infinite}
-@keyframes ring{0%,72%,100%{transform:rotate(0)}76%,84%,92%{transform:rotate(12deg)}80%,88%{transform:rotate(-12deg)}}
-.fab a::after{content:attr(data-tip);position:absolute;right:64px;top:50%;transform:translateY(-50%);white-space:nowrap;background:#15140c;color:#fff;padding:7px 13px;border-radius:9px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;border:1px solid var(--gb)}
-.fab a:hover::after{opacity:1}
-@media(max-width:600px){.fab{right:12px;gap:10px}.fab a{width:48px;height:48px}.fab svg{width:24px;height:24px}.fab a::after{display:none}}
-
-/* reveal */
-.reveal{opacity:0;transform:translateY(42px) scale(.97);transition:opacity .8s var(--ease),transform .8s var(--ease)}
-.reveal.in{opacity:1;transform:none}
-.reveal.d1{transition-delay:.1s}.reveal.d2{transition-delay:.2s}.reveal.d3{transition-delay:.3s}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+@media(max-width:560px){.wrap{padding:18px 14px}.head h1{font-size:21px}.head h1 i{display:none}.orb{width:48px;height:48px}.tab{padding:10px 13px;font-size:13px}.lockwrap{padding:36px 22px}.authchip{max-width:120px}}
 </style>
 </head>
 <body>
+<div class="bgimg"></div>
+<canvas id="sky"></canvas>
 
-<div class="bg"><div class="glow g1"></div><div class="glow g2"></div></div>
-<img class="bg-logo" src="logo-planb.png" alt="">
-<div class="grain"></div>
-
-<nav class="nav">
-  <div class="wrap glass">
-    <a href="index.html"><img src="logo-planb.png" alt="Plan B Продвижение"></a>
-    <div class="nav-links">
-      <a href="index.html#services">Услуги</a>
-      <a href="index.html#cases">Кейсы</a>
-      <a href="index.html">← На главную</a>
-      <a href="#sokrat" class="nav-cta">Спросить Сократа</a>
-    </div>
-  </div>
-</nav>
-
-<!-- HERO Сократ -->
-<header class="hero" style="padding-bottom:20px">
-  <div class="wrap" style="display:block;text-align:center;max-width:880px;margin:0 auto">
-    <div class="hero-text">
-      <div class="partner glass" style="margin-bottom:22px"><b></b>ИИ-авитолог Plan B · на связи 24/7</div>
-      <h1 style="font-size:clamp(36px,6vw,62px)">Знакомьтесь — <span class="yel">Сократ</span>,<br>ваш ИИ-авитолог</h1>
-      <p class="lead" style="margin:18px auto 30px">Бесплатная консультация по Авито в любой момент. Сократ отвечает мгновенно и обходится <b class="yel">в 10 раз дешевле</b> живого авитолога — без зарплаты, выходных и отпусков. Спросите что угодно про продвижение, объявления и кабинет.</p>
-      <div class="hero-btns" style="justify-content:center">
-        <a href="#sokrat" class="btn btn-y">Спросить Сократа →</a>
-        <a href="index.html" class="btn btn-g">← Назад на Plan B</a>
-      </div>
-      <div class="trust" style="justify-content:center;margin-top:30px">
-        <span><b style="color:var(--yellow)">24/7</b> на связи</span>
-        <span><b style="color:var(--yellow)">×10</b> дешевле авитолога</span>
-        <span><b style="color:var(--yellow)">0 ₽</b> консультация</span>
-        <span><b style="color:var(--yellow)">Мгновенно</b> отвечает</span>
+<main class="wrap">
+  <header class="head">
+    <div class="hl">
+      <div class="orb"><span>Σ</span></div>
+      <div>
+        <h1>Сократ <i>ИИ-авитолог</i></h1>
+        <div class="sub"><b></b> На связи 24/7 · консультация бесплатно</div>
       </div>
     </div>
-  </div>
-</header>
+    <div id="authbox"></div>
+  </header>
 
-<!-- ================================================================= -->
-<!--  МЕСТО ПОД ИИ-АВИТОЛОГА СОКРАТА                                    -->
-<!--  Соседний диалог (кабинет с ИИ) вставляет сюда свой виджет/чат/    -->
-<!--  iframe ВМЕСТО блока .sokrat-slot (метка INSERT_SOKRAT_WIDGET).    -->
-<!-- ================================================================= -->
-<section class="section" id="sokrat" style="padding-top:24px">
-  <div class="wrap">
-    <div class="sokrat-slot glass reveal">
-      <div class="ai-orb"><span>Σ</span></div>
-      <h2>Здесь живёт <span class="yel">Сократ</span></h2>
-      <p>Сюда встраивается чат-виджет или кабинет ИИ-авитолога. Этот блок — заглушка: замени его на свой код ассистента.</p>
-      <!-- INSERT_SOKRAT_WIDGET_HERE -->
+  <nav class="tabs">
+    <button class="tab on" data-tab="sokrat">🦉 Сократ <span class="free">бесплатно</span></button>
+    <button class="tab" data-tab="designer">🎨 Дизайнер <span class="lk">🔒</span></button>
+    <button class="tab" data-tab="copywriter">✍️ Копирайтер <span class="lk">🔒</span></button>
+    <button class="tab" data-tab="autoload">📦 Автозагрузка <span class="lk">🔒</span></button>
+  </nav>
+
+  <!-- СОКРАТ — бесплатный консультант -->
+  <section class="panel on" data-panel="sokrat">
+    <div class="card">
+      <div class="chat" id="chat"></div>
+      <form class="composer" id="form" autocomplete="off">
+        <textarea id="input" rows="1" placeholder="Спросите Сократа про Авито — что продаёте и что не получается…"></textarea>
+        <button class="send" id="send" type="submit" aria-label="Отправить">▶</button>
+      </form>
+      <div class="foot">Сократ — бесплатный ИИ-авитолог Plan B. Не раздаёт гарантий и не выдумывает цифры · <a href="#" data-tab-go="designer">платные инструменты ↑</a></div>
     </div>
-  </div>
-</section>
-<!-- ===================== /КОНЕЦ МЕСТА ПОД СОКРАТА ===================== -->
+  </section>
 
-<!-- FAB -->
-<div class="fab">
-  <a class="wa" href="https://wa.me/79281446617" target="_blank" rel="noopener" data-tip="Написать в WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.97L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.18c-.24.68-1.42 1.31-1.96 1.36-.5.05-1.13.07-1.83-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-2.99s.75-2.12 1.01-2.41c.26-.29.57-.36.76-.36l.55.01c.18.01.42-.07.65.5.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.69-.81.87-1.09.18-.28.36-.23.61-.14.25.09 1.6.76 1.87.9.28.14.46.21.53.33.07.12.07.68-.17 1.36z"/></svg></a>
-  <a class="tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-tip="Написать в Telegram" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.5L2.9 11.84c-1.3.52-1.29 1.25-.24 1.57l4.88 1.52 1.88 5.78c.23.63.11.88.77.88.51 0 .73-.23 1.02-.5l2.46-2.39 5.12 3.78c.94.52 1.62.25 1.85-.87l3.36-15.8c.34-1.38-.52-2-1.5-1.59z"/></svg></a>
-  <a class="ph" href="tel:+79281446617" data-tip="Позвонить +7 928 144-66-17" aria-label="Позвонить"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.18z"/></svg></a>
+  <!-- ПЛАТНЫЕ ВКЛАДКИ -->
+  <section class="panel" data-panel="designer">
+    <div class="lockwrap">
+      <div class="ic">🎨</div>
+      <h2>Дизайнер <span class="yel">объявлений</span></h2>
+      <p class="what">Продающие баннеры и картинки для Авито — по тексту или вашему образцу. Один запрос — готовое цельное изображение под объявление (без коллажей).</p>
+      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="gate" data-gate="designer"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="copywriter">
+    <div class="lockwrap">
+      <div class="ic">✍️</div>
+      <h2>Копирайтер <span class="yel">для Авито</span></h2>
+      <p class="what">Продающие тексты объявлений с SEO-ключами под поиск Авито: цепляющий заголовок + структура Боль → Решение → Выгоды → Призыв. Тон на выбор.</p>
+      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="gate" data-gate="copywriter"></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="autoload">
+    <div class="lockwrap">
+      <div class="ic">📦</div>
+      <h2>Автозагрузка <span class="yel">Авито</span></h2>
+      <p class="what">Массовое размещение и размножение объявлений по городам, уникализация фото и текстов, проверка фида автозагрузки. Сотни объявлений за минуты.</p>
+      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="gate" data-gate="autoload"></div>
+    </div>
+  </section>
+</main>
+
+<!-- модалка вход/регистрация -->
+<div class="modal" id="authModal">
+  <div class="mcard">
+    <button class="mclose" id="mClose" aria-label="Закрыть">×</button>
+    <h3 id="mTitle">Вход</h3>
+    <div class="msub">Доступ к платным инструментам Plan B. Консультация у Сократа — всегда бесплатна и без входа.</div>
+    <form id="mForm" autocomplete="on">
+      <label>Email</label>
+      <input id="mEmail" type="email" autocomplete="email" placeholder="you@mail.ru" required>
+      <label>Пароль</label>
+      <input id="mPass" type="password" autocomplete="current-password" placeholder="минимум 6 символов" required>
+      <button class="msubmit" id="mSubmit" type="submit">Войти</button>
+      <div class="merr" id="mErr"></div>
+    </form>
+    <div class="mtoggle" id="mToggle"></div>
+  </div>
 </div>
 
-<footer>
-  <div class="wrap">
-    <img src="logo-planb.png" alt="Plan B">
-    <div class="socs">
-      <a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener" class="soc vk"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.79 16.95h.98s.3-.03.45-.2c.14-.15.13-.43.13-.43s-.02-1.32.59-1.51c.6-.19 1.38 1.27 2.2 1.83.62.43 1.09.33 1.09.33l2.19-.03s1.15-.07.6-.97c-.04-.07-.32-.67-1.65-1.9-1.39-1.29-1.2-1.08.47-3.31 1.02-1.36 1.43-2.19 1.3-2.54-.12-.34-.86-.25-.86-.25l-2.46.02s-.18-.03-.32.05c-.13.08-.22.27-.22.27s-.39 1.06-.92 1.96c-1.11 1.9-1.55 2-1.74 1.89-.42-.27-.31-1.1-.31-1.69 0-1.83.28-2.6-.54-2.8-.27-.06-.47-.11-1.17-.12-.9-.01-1.65 0-2.08.21-.29.15-.51.47-.38.49.17.02.55.1.75.37.26.35.25 1.14.25 1.14s.15 2.19-.35 2.46c-.34.19-.81-.19-1.8-1.92-.51-.88-.89-1.86-.89-1.86s-.07-.18-.21-.27c-.16-.12-.39-.15-.39-.15l-2.34.02s-.35.01-.48.16c-.11.14-.01.42-.01.42s1.83 4.29 3.91 6.45c1.9 1.98 4.06 1.85 4.06 1.85z"/></svg> ВКонтакте</a>
-      <a href="https://www.instagram.com/avitolog_planb_prodvizenie/" target="_blank" rel="noopener" class="soc ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg> Instagram</a>
-      <a href="https://t.me/planB_prodvizhenie" target="_blank" rel="noopener" class="soc tg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.5L2.9 11.84c-1.3.52-1.29 1.25-.24 1.57l4.88 1.52 1.88 5.78c.23.63.11.88.77.88.51 0 .73-.23 1.02-.5l2.46-2.39 5.12 3.78c.94.52 1.62.25 1.85-.87l3.36-15.8c.34-1.38-.52-2-1.5-1.59z"/></svg> Telegram</a>
-    </div>
-    <div class="fc" style="margin-bottom:10px"><a href="oferta.html" style="color:var(--muted)">Договор оферты</a> &nbsp;·&nbsp; <a href="privacy.html" style="color:var(--muted)">Политика конфиденциальности</a></div>
-    <div class="fc">© 2026 <b style="color:var(--yellow)">Plan B</b> · Продвижение. ИП Кислов К.П., ИНН 610702818209. Когда план А не сработал — есть Plan B.</div>
-  </div>
-</footer>
+<script>
+/* Базовый адрес API. На кабинете/локалхосте — относительный; на сайте (GitHub Pages) — абсолютный до бэкенда-кабинета. Один файл работает в обоих местах. */
+var SOK_API_BASE=(location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname.indexOf('sslip.io')>=0)?'':'https://93-77-191-3.sslip.io';
 
-<!-- cookie consent -->
-<div id="cookie" style="position:fixed;left:18px;bottom:18px;z-index:999;max-width:380px;display:none;flex-direction:column;gap:10px;padding:15px 18px;border-radius:14px;background:rgba(18,18,20,.94);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);font-size:12.5px;color:#bdbdc2;box-shadow:0 14px 44px rgba(0,0,0,.55)">
-  <span>🍪 Мы используем cookie и Яндекс.Метрику для аналитики. Продолжая пользоваться сайтом, вы соглашаетесь с <a href="privacy.html" style="color:#F5C400">Политикой конфиденциальности</a>.</span>
-  <button onclick="cookieOk()" style="align-self:flex-start;padding:9px 20px;border-radius:9px;border:none;background:#F5C400;color:#15140c;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px">Принять</button>
-</div>
-<script>
-try{if(!localStorage.getItem('cookieOk')){var _c=document.getElementById('cookie');_c.style.display='flex';}}catch(e){}
-function cookieOk(){try{localStorage.setItem('cookieOk','1');}catch(e){}document.getElementById('cookie').style.display='none';}
-</script>
-<script>
-if(window.ym)ym(108505608,'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});
-const RM=matchMedia('(prefers-reduced-motion:reduce)').matches, fine=matchMedia('(pointer:fine)').matches;
-const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.14});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-if(!RM){
-  const gl=[...document.querySelectorAll('.glow')];let mx=0,my=0,cx=0,cy=0;
-  addEventListener('mousemove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;},{passive:true});
-  (function loop(){cx+=(mx-cx)*.05;cy+=(my-cy)*.05;gl.forEach((g,i)=>g.style.transform=`translate(${cx*(30+i*20)}px,${cy*(30+i*20)}px)`);requestAnimationFrame(loop);})();
-  if(fine)document.querySelectorAll('[data-tilt]').forEach(c=>{
-    c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*7}deg) rotateX(${-y*7}deg) translateY(-4px)`;c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');});
-    c.addEventListener('mouseleave',()=>c.style.transform='');});
-  if(fine)document.querySelectorAll('[data-magnet]').forEach(b=>{
-    b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.2}px,${(e.clientY-r.top-r.height/2)*.3}px)`;});
-    b.addEventListener('mouseleave',()=>b.style.transform='');});
-}
-/* hero — 4 chips orbit the planet on one simple tilted ring, passing in front / behind */
+/* ── Лёгкое мерцание звёзд поверх фото-галактики ── */
 (function(){
-  const sys=document.getElementById('orbit'); if(!sys) return;
-  const chips=[...sys.querySelectorAll('.ochip')];
-  const a=250, b=70, sp=0.22;            // одна общая орбита (наклон b/a)
-  function place(el,ang){
-    const x=a*Math.cos(ang), y=b*Math.sin(ang), front=Math.sin(ang)>0;
-    el.style.transform=`translate(-50%,-50%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
-    el.style.zIndex=front?10:1; el.style.opacity=front?1:.4;
+  var cv=document.getElementById('sky'); if(!cv) return;
+  var ctx=cv.getContext('2d'), W=0,H=0, dpr=Math.min(window.devicePixelRatio||1,2), stars=[];
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function build(){
+    W=cv.width=Math.floor(innerWidth*dpr); H=cv.height=Math.floor(innerHeight*dpr);
+    cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px';
+    stars=[]; var n=Math.min(150,Math.round(innerWidth*innerHeight/11000));
+    for(var i=0;i<n;i++) stars.push({x:Math.random()*W,y:Math.random()*H,r:rnd(.6,1.9)*dpr,a:rnd(.4,1),tw:rnd(.5,2),ph:rnd(0,6.28),
+      c:(Math.random()<.3?'rgba(170,200,255,':'rgba(255,255,255,')});
   }
-  const phase=i=>i*Math.PI/2;            // 4 плашки равномерно: 0/90/180/270
-  if(RM){chips.forEach((c,i)=>place(c,phase(i)));return;}
-  const t0=performance.now();
-  (function loop(now){const t=(now-t0)/1000;chips.forEach((c,i)=>place(c,phase(i)+t*sp));requestAnimationFrame(loop);})(t0);
+  function draw(ts){
+    var t=ts/1000; ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation='lighter';
+    for(var k=0;k<stars.length;k++){var s=stars[k];
+      var a=s.a*(0.25+0.75*Math.sin(t*s.tw+s.ph)); if(a<0)a=0;
+      ctx.fillStyle=s.c+a.toFixed(3)+')'; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,6.2832); ctx.fill();}
+    requestAnimationFrame(draw);
+  }
+  build(); requestAnimationFrame(draw);
+  var rt; addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,200);},{passive:true});
+})();
+
+/* вкладки */
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('on', t.dataset.tab===name); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('on', p.dataset.panel===name); });
+}
+document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click', function(){ showTab(t.dataset.tab); }); });
+document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); showTab(a.dataset.tabGo); }); });
+
+/* чат Сократа → /c/sokrat/api */
+(function(){
+  const API=SOK_API_BASE+'/c/sokrat/api';
+  const chat=document.getElementById('chat'), form=document.getElementById('form'),
+        input=document.getElementById('input'), send=document.getElementById('send');
+  const WELCOME='Здравствуйте! Я Сократ — ваш ИИ-авитолог 🦉.\n\nБесплатно проконсультирую по любым вопросам Авито: как правильно опубликовать объявление, какое продвижение подключить, как поднять выдачу и продажи. Подскажу по стратегии и помогу с публикацией.\n\nЗдесь же можно сделать картинку для объявления (вкладка «Дизайнер»), продающий текст («Копирайтер») и работать с автозагрузкой («Автозагрузка») — это платные инструменты.\n\nРасскажите, что продаёте и какой у вас вопрос?';
+  let sess='',hist=[];
+  try{sess=localStorage.getItem('sok_sess')||'';}catch(e){}
+  if(!sess){sess='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);try{localStorage.setItem('sok_sess',sess);}catch(e){}}
+  try{hist=JSON.parse(localStorage.getItem('sok_hist')||'[]');}catch(e){hist=[];}
+  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function bubble(role,text){
+    const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');
+    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+esc(text)+'</div>';
+    chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
+  }
+  function save(){try{localStorage.setItem('sok_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
+  if(hist.length){hist.forEach(m=>bubble(m.role,m.content));}else{bubble('assistant',WELCOME);}
+  input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
+  let busy=false;
+  async function ask(text){
+    if(busy)return;busy=true;send.disabled=true;
+    bubble('user',text);hist.push({role:'user',content:text});save();
+    const t=document.createElement('div');t.className='msg s';
+    t.innerHTML='<div class="av">Σ</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';
+    chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
+    try{
+      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sess:sess,message:text})});
+      const d=await r.json();t.remove();
+      const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
+      bubble('assistant',reply);hist.push({role:'assistant',content:reply});save();
+    }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
+    busy=false;send.disabled=false;input.focus();
+  }
+  form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v)return;input.value='';input.style.height='auto';ask(v);});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
+})();
+
+/* ── авторизация + гейт платных вкладок ── */
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+  let token='', state={auth:false,subscribed:false,until:null,email:''}, mode='login';
+  try{token=localStorage.getItem('sok_auth')||'';}catch(e){}
+  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function fmtDate(iso){try{return new Date(iso).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
+  function setToken(t){token=t||'';try{t?localStorage.setItem('sok_auth',t):localStorage.removeItem('sok_auth');}catch(e){}}
+
+  async function api(path,body){
+    const h={'Content-Type':'application/json'}; if(token)h['X-Auth-Token']=token;
+    let st=0,d={};
+    try{const r=await fetch(SOK_API_BASE+path,{method:'POST',headers:h,body:JSON.stringify(body||{})});st=r.status;try{d=await r.json();}catch(e){}}catch(e){}
+    return {st,d};
+  }
+
+  function renderAuthbox(){
+    const box=$('#authbox'); if(!box)return;
+    if(state.auth){
+      const badge=state.subscribed?'<span class="subok">✓ подписка</span>':'';
+      box.innerHTML='<span class="authchip" title="'+esc(state.email)+'">'+esc(state.email)+badge+'</span><button class="authbtn ghost" id="logoutBtn">Выйти</button>';
+      $('#logoutBtn').onclick=doLogout;
+    }else{
+      box.innerHTML='<button class="authbtn" id="loginBtn">Войти</button>';
+      $('#loginBtn').onclick=function(){openModal('login');};
+    }
+  }
+
+  function renderGates(){
+    let html,fn;
+    if(!state.auth){
+      html='<button class="gbtn">Войти / зарегистрироваться</button><p class="ghint">Регистрация по почте — минута. Консультация у Сократа бесплатна и без входа.</p>';
+      fn=function(){openModal('register');};
+    }else if(state.subscribed){
+      html='<div class="subactive">✅ Подписка активна до '+fmtDate(state.until)+'</div><p class="ghint">Инструмент подключается — совсем скоро. Спасибо, что с нами!</p>';
+      fn=function(){};
+    }else{
+      html='<button class="gbtn pay">Оплатить 3000 ₽ / месяц</button><p class="ghint">Картой или СБП. Доступ ко всем инструментам сразу после оплаты.</p>';
+      fn=doSubscribe;
+    }
+    $$('.gate').forEach(function(g){g.innerHTML=html;});
+    $$('.gate .gbtn').forEach(function(b){b.onclick=fn;});
+  }
+
+  async function refresh(){
+    if(!token){state={auth:false};renderAuthbox();renderGates();return;}
+    const {d}=await api('/c/sokrat/me',{});
+    if(d&&d.auth){state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until};}
+    else{const had=token;setToken('');state={auth:false};if(had)toast('Вы вошли с другого устройства — сессия здесь завершена.');}
+    renderAuthbox();renderGates();
+  }
+
+  async function doSubscribe(){
+    if(!state.auth){openModal('login');return;}
+    const btn=document.querySelector('.gate .gbtn.pay'); if(btn){btn.disabled=true;btn.textContent='Создаём оплату…';}
+    const {st,d}=await api('/c/sokrat/subscribe',{});
+    if(d&&d.redirect){window.location.href=d.redirect;return;}
+    toast((d&&d.error)||'Не удалось создать оплату, попробуйте позже.');
+    renderGates();
+  }
+  async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();toast('Вы вышли.');}
+
+  /* модалка */
+  function openModal(m){mode=m;renderModal();$('#authModal').classList.add('on');setTimeout(function(){$('#mEmail').focus();},50);}
+  function closeModal(){$('#authModal').classList.remove('on');$('#mErr').textContent='';}
+  function renderModal(){
+    $('#mTitle').textContent=mode==='login'?'Вход':'Регистрация';
+    $('#mSubmit').textContent=mode==='login'?'Войти':'Зарегистрироваться';
+    $('#mPass').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');
+    $('#mToggle').innerHTML=mode==='login'?'Нет аккаунта? <a id="mSwap">Зарегистрироваться</a>':'Уже есть аккаунт? <a id="mSwap">Войти</a>';
+    $('#mSwap').onclick=function(){mode=(mode==='login'?'register':'login');renderModal();};
+    $('#mErr').textContent='';
+  }
+  async function submitModal(e){
+    if(e)e.preventDefault();
+    const email=$('#mEmail').value.trim(), pw=$('#mPass').value;
+    if(!email||!pw){$('#mErr').textContent='Заполните почту и пароль';return;}
+    const btn=$('#mSubmit');btn.disabled=true;
+    const {st,d}=await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
+    btn.disabled=false;
+    if(d&&d.token){setToken(d.token);state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until};closeModal();renderAuthbox();renderGates();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉');}
+    else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
+  }
+
+  /* тост */
+  let toastTimer;
+  function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('on');},5000);}
+
+  /* возврат с оплаты */
+  function handleReturn(){
+    const q=new URLSearchParams(location.search);
+    if(q.get('paid')==='ok'){
+      toast('Оплата получена — активируем подписку…');
+      let n=0;const iv=setInterval(async function(){n++;await refresh();if(state.subscribed||n>=8){clearInterval(iv);if(state.subscribed)toast('Подписка активна! 🎉');}},2000);
+      history.replaceState({},'',location.pathname);
+    }else if(q.get('paid')==='fail'){toast('Оплата не прошла. Попробуйте ещё раз.');history.replaceState({},'',location.pathname);}
+  }
+
+  $('#mForm').addEventListener('submit',submitModal);
+  $('#mClose').addEventListener('click',closeModal);
+  $('#authModal').addEventListener('click',function(e){if(e.target.id==='authModal')closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
+  renderModal();renderAuthbox();renderGates();refresh();handleReturn();
 })();
 </script>
 </body>

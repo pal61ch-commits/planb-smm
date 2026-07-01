@@ -142,6 +142,11 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   opacity:0;pointer-events:none;transition:.3s var(--ease);max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
+.toolui .card{margin-top:0}
+.toolhead{font-family:'Manrope';font-weight:700;font-size:15.5px;padding:15px 20px;border-bottom:1px solid var(--gb);color:var(--text)}
+.toolchat{height:clamp(300px,44vh,460px)}
+.dz-out{padding:18px;min-height:120px;display:flex;align-items:center;justify-content:center}
+.dz-out img{max-width:100%;border-radius:14px;border:1px solid var(--gb)}
 .sitefoot{margin:28px auto 0;max-width:880px;padding:22px 4px 16px;border-top:1px solid var(--gb);display:flex;flex-direction:column;align-items:center;gap:13px;position:relative;z-index:2}
 .sitefoot .ftitle{font-family:'Manrope';font-weight:700;font-size:14.5px;color:var(--text)}
 .fbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
@@ -198,6 +203,16 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
       <div class="gate" data-gate="designer"></div>
     </div>
+    <div class="toolui" data-tool="designer" hidden>
+      <div class="card">
+        <div class="toolhead">🎨 Дизайнер — картинки для объявлений</div>
+        <div class="dz-out" id="dz-out"><span style="color:var(--muted);font-size:13px">Опишите картинку и нажмите «Сгенерировать»</span></div>
+        <form class="composer" data-toolform="designer" autocomplete="off">
+          <textarea rows="2" placeholder="Напр.: баннер для объявления — кожаный диван, тёплый свет, минимализм"></textarea>
+          <button class="send" type="submit">Сгенерировать</button>
+        </form>
+      </div>
+    </div>
   </section>
 
   <section class="panel" data-panel="copywriter">
@@ -207,6 +222,16 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <p class="what">Продающие тексты объявлений с SEO-ключами под поиск Авито: цепляющий заголовок + структура Боль → Решение → Выгоды → Призыв. Тон на выбор.</p>
       <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
       <div class="gate" data-gate="copywriter"></div>
+    </div>
+    <div class="toolui" data-tool="copywriter" hidden>
+      <div class="card">
+        <div class="toolhead">✍️ Копирайтер — продающие тексты для Авито</div>
+        <div class="chat toolchat" id="cw-chat"></div>
+        <form class="composer" data-toolform="copywriter" autocomplete="off">
+          <textarea rows="2" placeholder="Что продаёте? Напр.: кожаный диван б/у, Москва, самовывоз"></textarea>
+          <button class="send" type="submit" aria-label="Сгенерировать">▶</button>
+        </form>
+      </div>
     </div>
   </section>
 
@@ -369,6 +394,11 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
     }
     $$('.gate').forEach(function(g){g.innerHTML=html;});
     $$('.gate .gbtn').forEach(function(b){b.onclick=fn;});
+    document.querySelectorAll('.toolui').forEach(function(ui){
+      var panel=ui.closest('.panel'), lock=panel?panel.querySelector('.lockwrap'):null;
+      if(state.subscribed){ if(lock)lock.style.display='none'; ui.hidden=false; initTool(ui.getAttribute('data-tool')); }
+      else { if(lock)lock.style.display=''; ui.hidden=true; }
+    });
   }
 
   async function refresh(){
@@ -430,6 +460,20 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   $('#authModal').addEventListener('click',function(e){if(e.target.id==='authModal')closeModal();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
 
+  var _toolInit={};
+  function te(s){return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function initTool(name){
+    if(_toolInit[name])return; var form=document.querySelector('[data-toolform="'+name+'"]'); if(!form)return; _toolInit[name]=true;
+    if(name==='copywriter'){
+      var chat=document.getElementById('cw-chat'), hist=[];
+      var b=function(role,text){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'✍️')+'</div><div class="bub">'+te(text)+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;};
+      b('assistant','Опишите товар или услугу — сразу выдам готовый текст объявления под поиск Авито.');
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('button');btn.disabled=true;b('user',v);hist.push({role:'user',content:v});var t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">✍️</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var rep=(r.d&&(r.d.reply||r.d.error))||'Не получилось, попробуйте ещё раз.';b('assistant',rep);hist.push({role:'assistant',content:rep});btn.disabled=false;ta.focus();});
+    } else if(name==='designer'){
+      var out=document.getElementById('dz-out');
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;var btn=form.querySelector('button');btn.disabled=true;btn.textContent='Генерирую…';out.innerHTML='<div class="typing" style="padding:24px"><i></i><i></i><i></i></div>';var r=await api('/c/sokrat/tool/designer',{message:v});btn.disabled=false;btn.textContent='Сгенерировать';if(r.d&&r.d.image){out.innerHTML='<img src="'+r.d.image+'" alt="сгенерировано">';}else{out.innerHTML='<div style="color:#ff7a7a;padding:14px;font-size:13.5px">'+te((r.d&&r.d.error)||'Не удалось сгенерировать')+'</div>';}});
+    }
+  }
   renderModal();renderAuthbox();renderGates();refresh();handleReturn();
 })();
 </script>

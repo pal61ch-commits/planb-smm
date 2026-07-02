@@ -397,7 +397,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   }
   function bubble(role,text){
     const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');
-    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+mdbold(linkify(esc(text)))+'</div>';
+    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+linkify(esc(text)).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')+'</div>';
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
   }
   function save(){try{localStorage.setItem('sok_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
@@ -533,6 +533,11 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   var _toolInit={};
   function te(s){return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   function mdbold(s){return s.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');}
+  function linkify(s){
+    s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$1</a>');
+    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}return pre+'<a href="'+url+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+url+'</a>'+t;});
+    return s;
+  }
   function fmt(s){return mdbold(linkify(te(s)));}
   function copyText(t,btn){navigator.clipboard.writeText(t).then(function(){toast('Скопировано ✓');if(btn){var o=btn.innerHTML;btn.innerHTML='✓ Скопировано';setTimeout(function(){btn.innerHTML=o;},1600);}}).catch(function(){toast('Не удалось скопировать');});}
   function wireAttach(form){

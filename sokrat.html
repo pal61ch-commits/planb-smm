@@ -375,7 +375,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
   function linkify(s){
     s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$1</a>');
-    s=s.replace(/(^|\s)(https?:\/\/[^\s<)]+)(?![^<]*>)/g,'$1<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$2</a>');
+    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}return pre+'<a href="'+url+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+url+'</a>'+t;});
     return s;
   }
   function bubble(role,text){

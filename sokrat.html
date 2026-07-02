@@ -570,8 +570,25 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
       ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
       var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'🎨')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
-      say('assistant','Опишите картинку для объявления — сгенерирую точно под размеры Авито. Есть образец? Прикрепите 📎 и скажите, что изменить (цвет, фон, текст, стиль).');
-      async function gen(promptText,fl){add('user',te(promptText)+(fl?' <span style="opacity:.65">📎 '+te(fl.name)+'</span>':''));var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);if(fl)fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();var imgs=d.images||[];if(imgs.length){imgs.forEach(function(im){add('assistant','<figure style="margin:0"><figcaption>'+te(im.label)+'</figcaption><img src="'+im.url+'" alt="'+te(im.label)+'"></figure>','dz-msg');});var rb=add('assistant','<button class="regen">↻ Ещё вариант</button>');rb.querySelector('.regen').addEventListener('click',function(){gen(promptText,fl);});}else{say('assistant',d.error||'Не удалось сгенерировать');}}catch(e){t.remove();say('assistant','Ошибка генерации');}}
+      var DZWELCOME='Опишите картинку для объявления — сгенерирую точно под размеры Авито. Есть образец? Прикрепите 📎 и скажите, что изменить (цвет, фон, текст, стиль).';
+      say('assistant',DZWELCOME);
+      function fnameFor(idx){return mode==='banner'?('avito_banner_'+(idx===0?'pc_1202x436':'mobile_1242x936')+'.jpg'):'avito_1080x1080.jpg';}
+      async function gen(promptText,fl){
+        add('user',te(promptText)+(fl?' <span style="opacity:.65">📎 '+te(fl.name)+'</span>':''));
+        var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');
+        var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);if(fl)fd.append('file',fl);
+        var h={};if(token)h['X-Auth-Token']=token;
+        try{
+          var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});
+          var d=await r.json();t.remove();var imgs=d.images||[];
+          if(imgs.length){
+            imgs.forEach(function(im,idx){add('assistant','<a class="dlfile" download="'+fnameFor(idx)+'" href="'+im.url+'">📥 Скачать без сжатия · '+te(im.label)+'</a><img src="'+im.url+'" alt="'+te(im.label)+'" style="margin-top:9px">','dz-msg');});
+            var ctl=add('assistant','<div style="font-size:13.5px;margin-bottom:3px"><b>Промпт:</b> '+te(promptText)+'</div><div style="color:var(--muted);font-size:13px;margin:6px 0 11px">Напишите в чат, если нужно изменить что-то ещё.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🔄 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
+            ctl.querySelector('.r-repeat').addEventListener('click',function(){gen(promptText,fl);});
+            ctl.querySelector('.r-restart').addEventListener('click',function(){chat.innerHTML='';att.clear();say('assistant',DZWELCOME);});
+          } else { say('assistant',d.error||'Не удалось сгенерировать'); }
+        }catch(e){t.remove();say('assistant','Ошибка генерации');}
+      }
       form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;await gen(v,fl);att.clear();btn.disabled=false;ta.focus();});
     }
   }

@@ -157,6 +157,21 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .dzmode.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700}
 .dz-out{padding:18px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
 .dz-out img{max-width:100%;border-radius:14px;border:1px solid var(--gb)}
+.attach{background:var(--glass2);border:1px solid var(--gb);color:var(--muted);border-radius:13px;height:46px;min-width:46px;font-size:18px;cursor:pointer;transition:.15s;flex-shrink:0}
+.attach:hover{border-color:var(--yellow);color:var(--yellow)}
+.chip{display:flex;align-items:center;gap:9px;margin:0 20px 4px;padding:7px 11px;font-size:12.5px;background:var(--glass2);border:1px solid var(--gb2);border-radius:11px;color:var(--text)}
+.chip img{width:34px;height:34px;object-fit:cover;border-radius:7px;flex-shrink:0}
+.chip .chipx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0 2px;flex-shrink:0}
+.chip .chipx:hover{color:#ff7a7a}
+.cw-field{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--yellow);margin-bottom:7px;opacity:.85}
+.cw-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.copyrow{display:flex;justify-content:flex-end;margin-top:10px}
+.copybtn,.regen{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:7px 13px;border-radius:9px;border:1px solid var(--gb2);background:var(--glass2);color:var(--yellow);cursor:pointer;transition:.15s}
+.copybtn:hover,.regen:hover{border-color:var(--yellow);background:rgba(245,196,0,.1)}
+.regen{color:var(--text)}
+.dz-msg{padding:8px!important}
+.dz-msg figcaption{font-size:12px;color:var(--muted);margin:2px 0 7px 2px}
+.dz-msg img{max-width:100%;border-radius:12px;border:1px solid var(--gb);display:block}
 .howbtn{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;font-family:'Inter';font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:14px;border:1px solid var(--gb2);background:linear-gradient(120deg,rgba(245,196,0,.18),var(--glass2));color:var(--text);cursor:pointer;transition:.2s var(--ease)}
 .howbtn:hover{border-color:var(--yellow);transform:translateY(-1px)}
 .hmcard{width:100%;max-width:560px;max-height:86vh;overflow-y:auto;background:rgba(16,17,24,.98);border:1px solid var(--gb2);border-radius:22px;padding:26px 24px;box-shadow:var(--shadow);position:relative}
@@ -235,10 +250,13 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
           <button type="button" class="dzmode on" data-mode="listing">📸 Картинка для объявления</button>
           <button type="button" class="dzmode" data-mode="banner">🖼 Баннер профиля (ПК+моб)</button>
         </div>
-        <div class="dz-out" id="dz-out"><span style="color:var(--muted);font-size:13px">Опишите картинку и нажмите «Сгенерировать»</span></div>
+        <div class="chat toolchat" id="dz-chat"></div>
+        <div class="chip" data-chip hidden></div>
         <form class="composer" data-toolform="designer" autocomplete="off">
-          <textarea rows="2" placeholder="Напр.: баннер для объявления — кожаный диван, тёплый свет, минимализм"></textarea>
-          <button class="send" type="submit">Сгенерировать</button>
+          <textarea rows="2" placeholder="Опишите картинку… или прикрепите свой образец 📎 и скажите, что изменить"></textarea>
+          <button type="button" class="attach" data-attach title="Прикрепить образец">📎</button>
+          <input type="file" hidden data-file accept="image/*">
+          <button class="send" type="submit" aria-label="Сгенерировать">▶</button>
         </form>
       </div>
     </div>
@@ -275,13 +293,12 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <div class="toolui" data-tool="autoload" hidden>
       <div class="card">
         <div class="toolhead">📦 Автозагрузка — работа с файлом фида</div>
-        <div class="al-bar">
-          <label class="al-btn">📎 Загрузить xlsx<input type="file" id="al-file" accept=".xlsx,.xls" hidden></label>
-          <button type="button" class="al-btn dl" id="al-dl" disabled>⬇ Скачать готовый</button>
-        </div>
         <div class="chat toolchat" id="al-chat"></div>
+        <div class="chip" data-chip hidden></div>
         <form class="composer" data-toolform="autoload" autocomplete="off">
-          <textarea rows="2" placeholder="Напр.: размножь по городам Владимирской области — кровельные работы от 500 ₽/м²"></textarea>
+          <textarea rows="2" placeholder="Загрузите xlsx 📎 и скажите что сделать: «размножь по городам», «поставь цену 700»…"></textarea>
+          <button type="button" class="attach" data-attach title="Загрузить xlsx">📎</button>
+          <input type="file" hidden data-file accept=".xlsx,.xls">
           <button class="send" type="submit" aria-label="Отправить">▶</button>
         </form>
       </div>
@@ -380,7 +397,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   }
   function bubble(role,text){
     const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');
-    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+linkify(esc(text))+'</div>';
+    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+mdbold(linkify(esc(text)))+'</div>';
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
   }
   function save(){try{localStorage.setItem('sok_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
@@ -515,26 +532,42 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
 
   var _toolInit={};
   function te(s){return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function mdbold(s){return s.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');}
+  function fmt(s){return mdbold(linkify(te(s)));}
+  function copyText(t,btn){navigator.clipboard.writeText(t).then(function(){toast('Скопировано ✓');if(btn){var o=btn.innerHTML;btn.innerHTML='✓ Скопировано';setTimeout(function(){btn.innerHTML=o;},1600);}}).catch(function(){toast('Не удалось скопировать');});}
+  function wireAttach(form){
+    var fileInp=form.querySelector('[data-file]'),attachBtn=form.querySelector('[data-attach]'),chip=form.parentNode.querySelector('[data-chip]'),st={file:null};
+    if(attachBtn)attachBtn.addEventListener('click',function(){if(fileInp)fileInp.click();});
+    function render(){if(!chip)return;if(st.file){chip.hidden=false;var isImg=/^image\//.test(st.file.type||'');chip.innerHTML=(isImg?'<img src="'+URL.createObjectURL(st.file)+'">':'<span style="font-size:16px">📎</span>')+'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+te(st.file.name)+'</span><button type="button" class="chipx" aria-label="Убрать">✕</button>';chip.querySelector('.chipx').onclick=function(){st.file=null;if(fileInp)fileInp.value='';render();};}else{chip.hidden=true;chip.innerHTML='';}}
+    if(fileInp)fileInp.addEventListener('change',function(){st.file=fileInp.files[0]||null;render();});
+    return {get:function(){return st.file;},clear:function(){st.file=null;if(fileInp)fileInp.value='';render();}};
+  }
   function initTool(name){
     if(_toolInit[name])return; var form=document.querySelector('[data-toolform="'+name+'"]'); if(!form)return; _toolInit[name]=true;
     if(name==='copywriter'){
       var chat=document.getElementById('cw-chat'), hist=[];
-      var b=function(role,text){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'✍️')+'</div><div class="bub">'+te(text)+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;};
-      b('assistant','Опишите товар или услугу — сразу выдам готовый текст объявления под поиск Авито.');
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('button');btn.disabled=true;b('user',v);hist.push({role:'user',content:v});var t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">✍️</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var rep=(r.d&&(r.d.reply||r.d.error))||'Не получилось, попробуйте ещё раз.';b('assistant',rep);hist.push({role:'assistant',content:rep});btn.disabled=false;ta.focus();});
+      var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'✍️')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
+      var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
+      var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});};
+      say('assistant','Опишите товар или услугу — выдам готовый заголовок и текст объявления, каждый со своей кнопкой «Копировать». Готово к вставке в Авито.');
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var d=r.d||{};if(d.error){say('assistant',d.error);}else{if(d.title)copyBubble('Заголовок',d.title);if(d.body)copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});}btn.disabled=false;ta.focus();});
     } else if(name==='autoload'){
-      var chat=document.getElementById('al-chat'), dl=document.getElementById('al-dl'), fileInp=document.getElementById('al-file');
-      var b=function(role,text){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+te(text)+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;};
-      b('assistant','Загрузите файл автозагрузки (xlsx) или создайте объявление с нуля. Команды: «размножь по Владимирской области», «поставь цену 700», «перепиши заголовки по правилам». Готовый файл — кнопкой ⬇.\n\nА если вставите ваши ключи Avito API — проверю отчёты автозагрузки и поставлю цену за просмотр (CPV) на нужные объявления.');
-      fileInp.addEventListener('change',async function(){var fl=fileInp.files[0];if(!fl)return;b('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();if(d.ok){b('assistant','Загрузил: '+d.summary+' Что сделать?');dl.disabled=false;}else{b('assistant',d.error||'Не смог прочитать файл');}}catch(e){b('assistant','Ошибка загрузки');}fileInp.value='';});
-      async function alDownload(){var h={};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h});if(!r.ok){b('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){b('assistant','Ошибка скачивания');}}
+      var chat=document.getElementById('al-chat'), att=wireAttach(form);
+      var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
+      var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
+      say('assistant','Загрузите файл автозагрузки (xlsx) кнопкой 📎 и скажите, что сделать: «размножь по городам Владимирской области», «поставь цену 700», «перепиши заголовки». Готовый файл заберёте ссылкой в чате.\n\nВставите ваши ключи Avito API — проверю отчёты автозагрузки и поставлю цену за просмотр (CPV).');
+      async function alDownload(){var h={};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h});if(!r.ok){say('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){say('assistant','Ошибка скачивания');}}
       function dlBubble(){var m=document.createElement('div');m.className='msg s';m.innerHTML='<div class="av">📦</div><div class="bub" style="background:none;border:none;padding:0"><a class="dlfile" href="#">📄 avito_feed.xlsx — скачать</a></div>';m.querySelector('.dlfile').addEventListener('click',function(ev){ev.preventDefault();alDownload();});chat.appendChild(m);chat.scrollTop=chat.scrollHeight;}
-      dl.addEventListener('click',alDownload);
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('button');btn.disabled=true;b('user',v);var t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">📦</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;var r=await api('/c/sokrat/tool/autoload',{message:v});t.remove();var rep=(r.d&&(r.d.reply||r.d.error))||'Не получилось, попробуйте ещё раз.';b('assistant',rep);if(r.d&&r.d.ready){dl.disabled=false;dlBubble();}btn.disabled=false;ta.focus();});
+      async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','Загрузил: '+d.summary+' Что сделать?');}else{say('assistant',d.error||'Не смог прочитать файл');}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.ready)dlBubble();}btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
-      var out=document.getElementById('dz-out'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]');
+      var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form);
       ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;var btn=form.querySelector('button');btn.disabled=true;btn.textContent='Генерирую…';out.innerHTML='<div class="typing" style="padding:24px"><i></i><i></i><i></i></div>';var r=await api('/c/sokrat/tool/designer',{message:v,mode:mode});btn.disabled=false;btn.textContent='Сгенерировать';var imgs=(r.d&&r.d.images)||[];if(imgs.length){out.innerHTML=imgs.map(function(im){return '<figure style="margin:0"><figcaption style="font-size:12px;color:var(--muted);margin-bottom:6px">'+te(im.label)+'</figcaption><img src="'+im.url+'" alt="'+te(im.label)+'"></figure>';}).join('');}else{out.innerHTML='<div style="color:#ff7a7a;padding:14px;font-size:13.5px">'+te((r.d&&r.d.error)||'Не удалось сгенерировать')+'</div>';}});
+      var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'🎨')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
+      var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
+      say('assistant','Опишите картинку для объявления — сгенерирую точно под размеры Авито. Есть образец? Прикрепите 📎 и скажите, что изменить (цвет, фон, текст, стиль).');
+      async function gen(promptText,fl){add('user',te(promptText)+(fl?' <span style="opacity:.65">📎 '+te(fl.name)+'</span>':''));var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);if(fl)fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();var imgs=d.images||[];if(imgs.length){imgs.forEach(function(im){add('assistant','<figure style="margin:0"><figcaption>'+te(im.label)+'</figcaption><img src="'+im.url+'" alt="'+te(im.label)+'"></figure>','dz-msg');});var rb=add('assistant','<button class="regen">↻ Ещё вариант</button>');rb.querySelector('.regen').addEventListener('click',function(){gen(promptText,fl);});}else{say('assistant',d.error||'Не удалось сгенерировать');}}catch(e){t.remove();say('assistant','Ошибка генерации');}}
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;await gen(v,fl);att.clear();btn.disabled=false;ta.focus();});
     }
   }
   var HOW=[

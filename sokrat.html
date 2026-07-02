@@ -129,6 +129,16 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .msubmit{width:100%;margin-top:20px;padding:14px;border-radius:13px;background:var(--yellow);color:#15140c;border:none;
   font-family:'Manrope';font-weight:800;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
 .msubmit:hover{background:var(--yellow2)}
+.mcard.acct{max-width:420px;max-height:90vh;overflow-y:auto}
+.acctsub{font-size:13.5px;line-height:1.5;padding:13px 15px;border-radius:13px;background:var(--glass2);border:1px solid var(--gb);margin:12px 0 4px}
+.acctsub .days{color:var(--yellow);font-weight:700}
+.acctsub .renew{width:100%;margin-top:11px;padding:11px;border-radius:11px;background:var(--yellow);color:#15140c;border:none;font-weight:700;cursor:pointer}
+.acctsub .renew:hover{background:var(--yellow2)}
+.acctsec{margin-top:16px;padding-top:15px;border-top:1px solid var(--gb)}
+.acctsec .accth{font-family:'Manrope';font-weight:700;font-size:14.5px;margin-bottom:11px}
+.acctsec input{margin-bottom:9px}
+.msubmit.slim{margin-top:4px;padding:11px;font-size:14px}
+.merr.ok{color:#3ad07a}
 .msubmit:disabled{opacity:.6;cursor:wait}
 .mtoggle{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
 .mtoggle a{color:var(--yellow);cursor:pointer}
@@ -344,6 +354,30 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   </div>
 </div>
 
+<div class="modal" id="acctModal">
+  <div class="mcard acct">
+    <button class="mclose" id="aClose" aria-label="Закрыть">×</button>
+    <h3>Личный кабинет</h3>
+    <div class="msub" id="aEmailLine"></div>
+    <div class="acctsub" id="aSub"></div>
+    <div class="acctsec">
+      <div class="accth">🔑 Сменить пароль</div>
+      <input id="aOldPw" type="password" autocomplete="current-password" placeholder="текущий пароль">
+      <input id="aNewPw" type="password" autocomplete="new-password" placeholder="новый пароль (мин. 6)">
+      <button class="msubmit slim" id="aPwBtn" type="button">Сменить пароль</button>
+      <div class="merr" id="aPwErr"></div>
+    </div>
+    <div class="acctsec">
+      <div class="accth">✉️ Сменить почту</div>
+      <input id="aNewEmail" type="email" autocomplete="email" placeholder="новая почта">
+      <input id="aEmailPw" type="password" autocomplete="current-password" placeholder="текущий пароль">
+      <button class="msubmit slim" id="aEmailBtn" type="button">Сменить почту</button>
+      <div class="merr" id="aEmailErr"></div>
+    </div>
+    <button class="authbtn ghost" id="aLogout" style="width:100%;margin-top:18px">Выйти из аккаунта</button>
+  </div>
+</div>
+
 <script>
 /* Базовый адрес API. На кабинете/локалхосте — относительный; на сайте (GitHub Pages) — абсолютный до бэкенда-кабинета. Один файл работает в обоих местах. */
 var SOK_API_BASE=(location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname.indexOf('sslip.io')>=0)?'':'https://93-77-191-3.sslip.io';
@@ -442,7 +476,8 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
     const box=$('#authbox'); if(!box)return;
     if(state.auth){
       const badge=state.subscribed?'<span class="subok">✓ подписка</span>':'';
-      box.innerHTML='<span class="authchip" title="'+esc(state.email)+'">'+esc(state.email)+badge+'</span><button class="authbtn ghost" id="logoutBtn">Выйти</button>';
+      box.innerHTML='<button class="authchip" id="acctBtn" title="Личный кабинет" style="cursor:pointer">'+esc(state.email)+badge+' ⚙</button><button class="authbtn ghost" id="logoutBtn">Выйти</button>';
+      $('#acctBtn').onclick=openAcct;
       $('#logoutBtn').onclick=doLogout;
     }else{
       box.innerHTML='<button class="authbtn" id="loginBtn">Войти</button>';
@@ -469,6 +504,8 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
       if(state.subscribed){ if(lock)lock.style.display='none'; ui.hidden=false; initTool(ui.getAttribute('data-tool')); }
       else { if(lock)lock.style.display=''; ui.hidden=true; }
     });
+    // замочки 🔒 на вкладках — снимаем при активной подписке
+    document.querySelectorAll('.tab .lk').forEach(function(el){ el.style.display = state.subscribed ? 'none' : ''; });
   }
 
   async function refresh(){
@@ -488,6 +525,28 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
     renderGates();
   }
   async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();toast('Вы вышли.');}
+
+  /* Личный кабинет: подписка (дней осталось + продление) + смена пароля/почты */
+  function acctDays(){ if(!state.until) return null; return Math.max(0, Math.ceil((new Date(state.until)-new Date())/86400000)); }
+  function renderAcctSub(){
+    var el=$('#aSub'); if(!el) return;
+    if(state.subscribed){
+      var dl=acctDays();
+      el.innerHTML='✅ Подписка активна <b>до '+fmtDate(state.until)+'</b>'+(dl!=null?' · осталось <span class="days">'+dl+' дн.</span>':'')+'<button class="renew" id="aRenew">Продлить на месяц · 3000 ₽</button>';
+    }else{
+      el.innerHTML='Подписка не активна. Оформите доступ ко всем инструментам.<button class="renew" id="aRenew">Оформить · 3000 ₽ / мес</button>';
+    }
+    var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); doSubscribe(); };
+  }
+  function openAcct(){
+    if(!state.auth){ openModal('login'); return; }
+    $('#aEmailLine').textContent=state.email||'';
+    renderAcctSub();
+    ['aPwErr','aEmailErr'].forEach(function(id){var e=$('#'+id);if(e){e.className='merr';e.textContent='';}});
+    ['aOldPw','aNewPw','aNewEmail','aEmailPw'].forEach(function(id){var e=$('#'+id);if(e)e.value='';});
+    $('#acctModal').classList.add('on');
+  }
+  function closeAcct(){ $('#acctModal').classList.remove('on'); }
 
   /* модалка */
   function openModal(m){mode=m;renderModal();$('#authModal').classList.add('on');setTimeout(function(){$('#mEmail').focus();},50);}
@@ -528,7 +587,31 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   $('#mForm').addEventListener('submit',submitModal);
   $('#mClose').addEventListener('click',closeModal);
   $('#authModal').addEventListener('click',function(e){if(e.target.id==='authModal')closeModal();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeAcct();}});
+
+  $('#aClose').addEventListener('click',closeAcct);
+  $('#acctModal').addEventListener('click',function(e){if(e.target.id==='acctModal')closeAcct();});
+  $('#aLogout').addEventListener('click',function(){closeAcct();doLogout();});
+  $('#aPwBtn').addEventListener('click',async function(){
+    var er=$('#aPwErr');er.className='merr';er.textContent='';
+    var old=$('#aOldPw').value, nw=$('#aNewPw').value;
+    if(!old||!nw){er.textContent='Заполните оба поля';return;}
+    this.disabled=true;
+    var res=await api('/c/sokrat/account/password',{old:old,new:nw});var d=res.d;
+    this.disabled=false;
+    if(d&&d.ok){er.className='merr ok';er.textContent='Пароль изменён ✓';$('#aOldPw').value='';$('#aNewPw').value='';}
+    else{er.textContent=(d&&d.error)||'Не удалось сменить пароль';}
+  });
+  $('#aEmailBtn').addEventListener('click',async function(){
+    var er=$('#aEmailErr');er.className='merr';er.textContent='';
+    var em=$('#aNewEmail').value.trim(), pw=$('#aEmailPw').value;
+    if(!em||!pw){er.textContent='Введите новую почту и текущий пароль';return;}
+    this.disabled=true;
+    var res=await api('/c/sokrat/account/email',{email:em,password:pw});var d=res.d;
+    this.disabled=false;
+    if(d&&d.ok){er.className='merr ok';er.textContent='Почта изменена ✓';state.email=d.email||em;renderAuthbox();$('#aEmailLine').textContent=state.email;$('#aNewEmail').value='';$('#aEmailPw').value='';}
+    else{er.textContent=(d&&d.error)||'Не удалось сменить почту';}
+  });
 
   var _toolInit={};
   function te(s){return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
@@ -581,6 +664,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
         try{
           var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});
           var d=await r.json();t.remove();var imgs=d.images||[];
+          if(d.warning){say('assistant',d.warning);}
           if(imgs.length){
             imgs.forEach(function(im,idx){add('assistant','<a class="dlfile" download="'+fnameFor(idx)+'" href="'+im.url+'">📥 Скачать без сжатия · '+te(im.label)+'</a><img src="'+im.url+'" alt="'+te(im.label)+'" style="margin-top:9px">','dz-msg');});
             var ctl=add('assistant','<div style="font-size:13.5px;margin-bottom:3px"><b>Промпт:</b> '+te(promptText)+'</div><div style="color:var(--muted);font-size:13px;margin:6px 0 11px">Напишите в чат, если нужно изменить что-то ещё.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🔄 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');

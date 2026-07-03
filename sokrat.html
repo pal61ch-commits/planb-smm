@@ -385,6 +385,12 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 /* Базовый адрес API. На кабинете/локалхосте — относительный; на сайте (GitHub Pages) — абсолютный до бэкенда-кабинета. Один файл работает в обоих местах. */
 var SOK_API_BASE=(location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname.indexOf('sslip.io')>=0)?'':'https://93-77-191-3.sslip.io';
 
+/* ── Аналитика: сквозной id посетителя + первичный источник (UTM) + маяк визита ── */
+var SOK_VIS=(function(){try{var v=localStorage.getItem('sok_vis');if(!v){v='v'+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem('sok_vis',v);}return v;}catch(e){return 'v'+Math.random().toString(36).slice(2,10);}})();
+var SOK_UTM=(function(){try{var q=new URLSearchParams(location.search),o={},any=false;['utm_source','utm_medium','utm_campaign'].forEach(function(k){var val=q.get(k);if(val){o[k]=val.slice(0,120);any=true;}});if(any){localStorage.setItem('sok_utm',JSON.stringify(o));return o;}return JSON.parse(localStorage.getItem('sok_utm')||'{}');}catch(e){return {};}})();
+function sokTrack(ev){try{var b=Object.assign({event:ev,visitor:SOK_VIS,ref:document.referrer||'',path:location.pathname},SOK_UTM);fetch(SOK_API_BASE+'/c/sokrat/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b),keepalive:true}).catch(function(){});}catch(e){}}
+try{sokTrack('visit');}catch(e){}
+
 /* ── Лёгкое мерцание звёзд поверх фото-галактики ── */
 (function(){
   var cv=document.getElementById('sky'); if(!cv) return;
@@ -457,7 +463,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
     t.innerHTML='<div class="av">Σ</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';
     chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
     try{
-      const payload={sess:sess,message:text}; if(image)payload.image=image;
+      const payload=Object.assign({sess:sess,message:text,visitor:SOK_VIS},SOK_UTM); if(image)payload.image=image;
       const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();t.remove();
       const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
@@ -481,7 +487,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   async function api(path,body){
     const h={'Content-Type':'application/json'}; if(token)h['X-Auth-Token']=token;
     let st=0,d={};
-    try{const r=await fetch(SOK_API_BASE+path,{method:'POST',headers:h,body:JSON.stringify(body||{})});st=r.status;try{d=await r.json();}catch(e){}}catch(e){}
+    try{const r=await fetch(SOK_API_BASE+path,{method:'POST',headers:h,body:JSON.stringify(Object.assign({visitor:SOK_VIS},SOK_UTM,body||{}))});st=r.status;try{d=await r.json();}catch(e){}}catch(e){}
     return {st,d};
   }
 

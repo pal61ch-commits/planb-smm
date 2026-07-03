@@ -236,8 +236,11 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   <section class="panel on" data-panel="sokrat">
     <div class="card">
       <div class="chat" id="chat"></div>
+      <div class="chip" id="cChip" hidden></div>
       <form class="composer" id="form" autocomplete="off">
-        <textarea id="input" rows="1" placeholder="Спросите Сократа про Авито — что продаёте и что не получается…"></textarea>
+        <textarea id="input" rows="1" placeholder="Спросите Сократа про Авито — или пришлите скриншот экрана 📎"></textarea>
+        <button type="button" class="attach" id="cAttach" title="Прикрепить скриншот">📎</button>
+        <input type="file" id="cFile" hidden accept="image/*">
         <button class="send" id="send" type="submit" aria-label="Отправить">▶</button>
       </form>
       <div class="foot">Сократ — бесплатный ИИ-авитолог Plan B. Не раздаёт гарантий и не выдумывает цифры · <a href="#" data-tab-go="designer">платные инструменты ↑</a></div>
@@ -429,30 +432,40 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
     s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}return pre+'<a href="'+url+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+url+'</a>'+t;});
     return s;
   }
-  function bubble(role,text){
+  function bubble(role,text,image){
     const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');
-    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+linkify(esc(text)).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')+'</div>';
+    const img=image?'<img src="'+image+'" alt="скриншот" style="max-width:100%;border-radius:10px;display:block;'+(text?'margin-bottom:6px':'')+'">':'';
+    const body=text?linkify(esc(text)).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>'):'';
+    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+img+body+'</div>';
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
   }
   function save(){try{localStorage.setItem('sok_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
   if(hist.length){hist.forEach(m=>bubble(m.role,m.content));}else{bubble('assistant',WELCOME);}
   input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
   let busy=false;
-  async function ask(text){
+  var cImg=null;
+  var cAttach=document.getElementById('cAttach'), cFile=document.getElementById('cFile'), cChip=document.getElementById('cChip');
+  function cClear(){cImg=null;if(cFile)cFile.value='';if(cChip){cChip.hidden=true;cChip.innerHTML='';}}
+  if(cAttach&&cFile){
+    cAttach.addEventListener('click',function(){cFile.click();});
+    cFile.addEventListener('change',function(){var f=cFile.files[0];if(!f){cClear();return;}var rd=new FileReader();rd.onload=function(){cImg=rd.result;if(cChip){cChip.hidden=false;cChip.innerHTML='<img src="'+cImg+'"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(f.name)+'</span><button type="button" class="chipx">✕</button>';cChip.querySelector('.chipx').onclick=cClear;}};rd.readAsDataURL(f);});
+  }
+  async function ask(text,image){
     if(busy)return;busy=true;send.disabled=true;
-    bubble('user',text);hist.push({role:'user',content:text});save();
+    bubble('user',text,image);hist.push({role:'user',content:text||'📷 скриншот'});save();
     const t=document.createElement('div');t.className='msg s';
     t.innerHTML='<div class="av">Σ</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';
     chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
     try{
-      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sess:sess,message:text})});
+      const payload={sess:sess,message:text}; if(image)payload.image=image;
+      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();t.remove();
       const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
       bubble('assistant',reply);hist.push({role:'assistant',content:reply});save();
     }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
     busy=false;send.disabled=false;input.focus();
   }
-  form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v)return;input.value='';input.style.height='auto';ask(v);});
+  form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v&&!cImg)return;const img=cImg;input.value='';input.style.height='auto';cClear();ask(v,img);});
   input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
 })();
 

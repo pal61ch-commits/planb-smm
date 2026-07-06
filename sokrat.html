@@ -257,6 +257,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <button class="tab" data-tab="designer">🎨 Дизайнер <span class="lk">🔒</span></button>
     <button class="tab" data-tab="copywriter">✍️ Копирайтер <span class="lk">🔒</span></button>
     <button class="tab" data-tab="autoload">📦 Автозагрузка <span class="lk">🔒</span></button>
+    <button class="tab" data-tab="support">🛟 Поддержка <span class="free">бесплатно</span></button>
   </nav>
 
   <button class="howbtn" id="howBtn">❓ Как пользоваться Сократом</button>
@@ -273,6 +274,18 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
         <button class="send" id="send" type="submit" aria-label="Отправить">▶</button>
       </form>
       <div class="foot">Сократ — бесплатный ИИ-авитолог Plan B. Не раздаёт гарантий и не выдумывает цифры · <a href="#" data-tab-go="designer">платные инструменты ↑</a></div>
+    </div>
+  </section>
+
+  <!-- ПОДДЕРЖКА — бесплатная: ИИ помогает по сервису и принимает баги (сам не чинит) -->
+  <section class="panel" data-panel="support">
+    <div class="card">
+      <div class="chat" id="sup-chat"></div>
+      <form class="composer" id="sup-form" autocomplete="off">
+        <textarea id="sup-input" rows="1" placeholder="Опишите вопрос или проблему…"></textarea>
+        <button class="send" id="sup-send" type="submit" aria-label="Отправить">▶</button>
+      </form>
+      <div class="foot">Поддержка Сократа · вопросы по сервису и сообщения об ошибках</div>
     </div>
   </section>
 
@@ -501,6 +514,40 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
     busy=false;send.disabled=false;input.focus();
   }
   form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v&&!cImg)return;const img=cImg;input.value='';input.style.height='auto';cClear();ask(v,img);});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
+})();
+
+/* чат Поддержки → /c/sokrat/support (консультация по сервису + приём багов) */
+(function(){
+  const API=SOK_API_BASE+'/c/sokrat/support';
+  const chat=document.getElementById('sup-chat'), form=document.getElementById('sup-form'),
+        input=document.getElementById('sup-input'), send=document.getElementById('sup-send');
+  if(!chat||!form) return;
+  const WELCOME='Здравствуйте! Это поддержка Сократа 🛟\n\nПомогу разобраться с сервисом (вкладки, вход, оплата) и приму сообщение об ошибке, если что-то работает не так. Опишите вопрос или проблему — если это баг, коротко уточню детали и передам в техподдержку.';
+  let sess='',hist=[];
+  try{sess=localStorage.getItem('sup_sess')||'';}catch(e){}
+  if(!sess){sess='u'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);try{localStorage.setItem('sup_sess',sess);}catch(e){}}
+  try{hist=JSON.parse(localStorage.getItem('sup_hist')||'[]');}catch(e){hist=[];}
+  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function fmt(s){s=esc(s).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)/g,'$1<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$2</a>');return s;}
+  function bubble(role,text){const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'🛟')+'</div><div class="bub">'+fmt(text)+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;}
+  function save(){try{localStorage.setItem('sup_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
+  if(hist.length){hist.forEach(m=>bubble(m.role,m.content));}else{bubble('assistant',WELCOME);}
+  input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
+  let busy=false;
+  async function ask(text){
+    if(busy)return;busy=true;send.disabled=true;
+    bubble('user',text);hist.push({role:'user',content:text});save();
+    const t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">🛟</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
+    try{
+      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sess:sess,message:text})});
+      const d=await r.json();t.remove();
+      const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
+      bubble('assistant',reply);hist.push({role:'assistant',content:reply});save();
+    }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
+    busy=false;send.disabled=false;input.focus();
+  }
+  form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v)return;input.value='';input.style.height='auto';ask(v);});
   input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
 })();
 

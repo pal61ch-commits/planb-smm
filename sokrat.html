@@ -7,7 +7,7 @@
 <meta name="description" content="Сократ — бесплатный ИИ-авитолог Plan B. Консультация по Авито 24/7: выдача, тексты, фото, продвижение. Платные инструменты: дизайнер, копирайтер, автозагрузка.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b0b0d;--yellow:#F5C400;--yellow2:#ffd84a;
@@ -18,7 +18,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
 h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;font-weight:800}
 .yel{color:var(--yellow)}
 .bgimg{position:fixed;inset:-2%;z-index:0;background:#04040a url('/c/sokrat-bg.jpg') center/cover no-repeat;animation:kb 75s ease-in-out infinite alternate}
@@ -32,19 +32,20 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .head .hl{display:flex;align-items:center;gap:15px;min-width:0}
 .orb{width:56px;height:56px;border-radius:50%;flex:none;display:grid;place-items:center;
   background:radial-gradient(circle at 35% 30%,rgba(245,196,0,.4),rgba(245,196,0,.05) 70%);
-  border:1.5px solid var(--gb2);box-shadow:0 0 40px rgba(245,196,0,.22),inset 0 0 22px rgba(245,196,0,.12);
+  border:1.5px solid var(--gb2);box-shadow:0 4px 16px rgba(0,0,0,.45),inset 0 0 12px rgba(245,196,0,.06);
   animation:float 7s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-6px)}}
-.orb span{font-family:'Manrope';font-weight:800;font-size:30px;color:var(--yellow);text-shadow:0 3px 16px rgba(245,196,0,.5)}
+.orb span{font-family:'Manrope';font-weight:800;font-size:30px;color:var(--yellow)}
+.hlogo{height:56px;width:auto;flex:none;display:block}
 .head h1{font-size:28px;line-height:1.04}
-.role{font-family:'Manrope';font-weight:800;font-size:16.5px;color:var(--yellow);letter-spacing:.01em;margin-top:3px;text-shadow:0 2px 14px rgba(245,196,0,.4)}
+.role{font-family:'Manrope';font-weight:800;font-size:16.5px;color:var(--yellow);letter-spacing:.01em;margin-top:3px}
 .head .sub{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px;margin-top:6px}
 .head .sub b{width:7px;height:7px;border-radius:50%;background:#3ad07a;box-shadow:0 0 9px #3ad07a;animation:pulse 1.8s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.4}}
 
 /* auth box (header right) */
 #authbox{display:flex;align-items:center;gap:10px;flex:none}
-.authbtn{font-family:'Inter';font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:11px;border:1px solid transparent;background:var(--yellow);color:#15140c;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.authbtn{font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:11px;border:1px solid transparent;background:var(--yellow);color:#15140c;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
 .authbtn:hover{background:var(--yellow2);transform:translateY(-1px)}
 .authbtn.ghost{background:var(--glass2);color:var(--text);border-color:var(--gb)}
 .authchip{font-size:13px;color:var(--text);display:flex;align-items:center;gap:7px;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(10,11,17,.82);border:1px solid var(--gb2);border-radius:11px;padding:8px 12px;cursor:pointer}
@@ -52,11 +53,11 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 
 /* tabs */
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.tab{display:inline-flex;align-items:center;gap:8px;font-family:'Inter';font-size:14px;font-weight:600;
+.tab{display:inline-flex;align-items:center;gap:8px;font-family:'Golos Text';font-size:14px;font-weight:600;
   padding:11px 17px;border-radius:14px;border:1px solid var(--gb);background:var(--glass);color:var(--muted);
   cursor:pointer;transition:.2s var(--ease)}
 .tab:hover{color:var(--text);border-color:var(--gb2)}
-.tab.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700;box-shadow:0 8px 24px -6px rgba(245,196,0,.45)}
+.tab.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700;box-shadow:0 5px 14px -6px rgba(0,0,0,.5)}
 .tab .free{font-size:11px;font-weight:700;background:rgba(58,208,122,.16);color:#3ad07a;padding:2px 7px;border-radius:100px}
 .tab.on .free{background:rgba(21,20,12,.18);color:#15140c}
 .tab .lk{font-size:12px;opacity:.8}
@@ -68,7 +69,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 
 /* chat (Сократ) */
 .card{border-radius:24px;border:1px solid var(--gb2);background:rgba(10,11,17,.74);backdrop-filter:blur(26px) saturate(1.1);
-  box-shadow:var(--shadow),0 0 60px -20px rgba(150,90,255,.4);overflow:hidden;display:flex;flex-direction:column}
+  box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
 .chat{height:clamp(380px,56vh,580px);overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
 .msg{display:flex;gap:10px;max-width:88%;animation:in .3s var(--ease)}
 @keyframes in{from{opacity:0;transform:translateY(8px)}}
@@ -85,7 +86,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
 .composer{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--gb);align-items:flex-end;background:rgba(255,255,255,.02)}
 .composer textarea{flex:1;background:var(--glass2);border:1px solid var(--gb);border-radius:13px;color:var(--text);
-  font-family:'Inter';font-size:16px;padding:13px 15px;resize:none;max-height:130px;line-height:1.4;transition:border-color .2s}
+  font-family:'Golos Text';font-size:16px;padding:13px 15px;resize:none;max-height:130px;line-height:1.4;transition:border-color .2s}
 .composer textarea::placeholder{color:#6c6c74}
 .composer textarea:focus{outline:none;border-color:var(--gb2)}
 .send{background:var(--yellow);color:#15140c;border:none;border-radius:13px;padding:13px 22px;font-size:17px;font-weight:800;
@@ -97,7 +98,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 
 /* paywall (платные вкладки) */
 .lockwrap{border-radius:24px;border:1px solid var(--gb2);background:linear-gradient(150% 140% at 50% 0%,rgba(245,196,0,.10),rgba(10,11,17,.76));backdrop-filter:blur(26px);
-  box-shadow:var(--shadow),0 0 60px -20px rgba(245,196,0,.35);padding:46px 36px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+  box-shadow:var(--shadow);padding:46px 36px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
 .lockwrap .ic{font-size:54px;filter:drop-shadow(0 8px 22px rgba(245,196,0,.3))}
 .lockwrap h2{font-size:clamp(24px,4vw,32px)}
 .lockwrap .what{color:var(--muted);font-size:15.5px;max-width:520px}
@@ -110,7 +111,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .gbtn{display:inline-flex;align-items:center;gap:9px;padding:14px 30px;border-radius:14px;background:var(--glass2);
   border:1px solid var(--gb2);color:var(--text);font-family:'Manrope';font-weight:700;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
 .gbtn:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
-.gbtn.pay{background:var(--yellow);color:#15140c;border-color:transparent;box-shadow:0 10px 28px -8px rgba(245,196,0,.5)}
+.gbtn.pay{background:var(--yellow);color:#15140c;border-color:transparent;box-shadow:0 6px 16px -8px rgba(245,196,0,.25)}
 .gbtn.pay:hover{background:var(--yellow2)}
 .gbtn:disabled{opacity:.6;cursor:wait;transform:none}
 .ghint{font-size:12.5px;color:#8a8a93;max-width:460px}
@@ -124,7 +125,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .mcard .msub{font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5}
 .mcard label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
 .mcard input{width:100%;background:var(--glass2);border:1px solid var(--gb);border-radius:12px;color:var(--text);
-  font-family:'Inter';font-size:16px;padding:13px 14px;transition:border-color .2s}
+  font-family:'Golos Text';font-size:16px;padding:13px 14px;transition:border-color .2s}
 .mcard input:focus{outline:none;border-color:var(--gb2)}
 .msubmit{width:100%;margin-top:20px;padding:14px;border-radius:13px;background:var(--yellow);color:#15140c;border:none;
   font-family:'Manrope';font-weight:800;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
@@ -163,7 +164,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .al-btn.dl{background:var(--yellow);color:#15140c;border-color:transparent}
 .al-btn.dl:disabled{opacity:.45;cursor:not-allowed;background:var(--glass2);color:var(--muted)}
 .dz-modes{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px 0}
-.dzmode{font-family:'Inter';font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:100px;border:1px solid var(--gb);background:var(--glass2);color:var(--muted);cursor:pointer;transition:.15s}
+.dzmode{font-family:'Golos Text';font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:100px;border:1px solid var(--gb);background:var(--glass2);color:var(--muted);cursor:pointer;transition:.15s}
 .dzmode.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700}
 .dz-out{padding:18px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
 .dz-out img{max-width:100%;border-radius:14px;border:1px solid var(--gb)}
@@ -183,7 +184,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .dz-msg{padding:8px!important}
 .dz-msg figcaption{font-size:12px;color:var(--muted);margin:2px 0 7px 2px}
 .dz-msg img{max-width:100%;border-radius:12px;border:1px solid var(--gb);display:block}
-.howbtn{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;font-family:'Inter';font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:14px;border:1px solid var(--gb2);background:linear-gradient(120deg,rgba(245,196,0,.18),var(--glass2));color:var(--text);cursor:pointer;transition:.2s var(--ease)}
+.howbtn{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:14px;border:1px solid var(--gb2);background:linear-gradient(120deg,rgba(245,196,0,.18),var(--glass2));color:var(--text);cursor:pointer;transition:.2s var(--ease)}
 .howbtn:hover{border-color:var(--yellow);transform:translateY(-1px)}
 .hmcard{width:100%;max-width:560px;max-height:86vh;overflow-y:auto;background:rgba(16,17,24,.98);border:1px solid var(--gb2);border-radius:22px;padding:26px 24px;box-shadow:var(--shadow);position:relative}
 .hmcard h3{font-size:22px;margin-bottom:4px}
@@ -199,7 +200,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .sitefoot{margin:28px auto 0;max-width:880px;padding:22px 4px 16px;border-top:1px solid var(--gb);display:flex;flex-direction:column;align-items:center;gap:13px;position:relative;z-index:2}
 .sitefoot .ftitle{font-family:'Manrope';font-weight:700;font-size:14.5px;color:var(--text)}
 .fbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.fbtn{display:inline-flex;align-items:center;gap:7px;font-family:'Inter';font-size:13.5px;font-weight:600;padding:11px 17px;border-radius:12px;background:rgba(10,11,17,.85);border:1px solid var(--gb2);color:var(--text);text-decoration:none;backdrop-filter:blur(10px);transition:.2s var(--ease);white-space:nowrap}
+.fbtn{display:inline-flex;align-items:center;gap:7px;font-family:'Golos Text';font-size:13.5px;font-weight:600;padding:11px 17px;border-radius:12px;background:rgba(10,11,17,.85);border:1px solid var(--gb2);color:var(--text);text-decoration:none;backdrop-filter:blur(10px);transition:.2s var(--ease);white-space:nowrap}
 .fbtn:hover{background:rgba(22,23,32,.95);border-color:var(--yellow);transform:translateY(-1px)}
 .fbtn.support{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700}
 .fbtn.support:hover{background:var(--yellow2)}
@@ -210,7 +211,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     padding:calc(env(safe-area-inset-top) + 8px) 12px 0;display:flex;flex-direction:column}
   .head{flex:none;margin-bottom:8px}
   .head .sub{display:none}   /* «На связи 24/7…» — 2 лишние строки на мобилке, убираем ради места под чат */
-  .head h1{font-size:21px}.role{font-size:13.5px}.orb{width:42px;height:42px}.orb span{font-size:23px}
+  .head h1{font-size:21px}.role{font-size:13.5px}.orb{width:42px;height:42px}.orb span{font-size:23px}.hlogo{height:46px}
   .authbtn{padding:8px 12px;font-size:12.5px}.authchip{max-width:110px}
   .tabs{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}   /* 2×2 равные вкладки — симметрично на любом экране */
   .tab{justify-content:center;padding:11px 8px;font-size:13px;min-width:0}
@@ -241,7 +242,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 <main class="wrap">
   <header class="head">
     <div class="hl">
-      <div class="orb"><span>Σ</span></div>
+      <img class="hlogo" src="sokrat-owl.png" alt="Сократ — ИИ-авитолог">
       <div>
         <h1>Сократ</h1>
         <div class="role">ИИ-авитолог</div>

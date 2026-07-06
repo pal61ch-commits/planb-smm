@@ -170,6 +170,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .attach{background:var(--glass2);border:1px solid var(--gb);color:var(--muted);border-radius:13px;height:46px;min-width:46px;font-size:18px;cursor:pointer;transition:.15s;flex-shrink:0}
 .attach:hover{border-color:var(--yellow);color:var(--yellow)}
 .chip{display:flex;align-items:center;gap:9px;margin:0 20px 4px;padding:7px 11px;font-size:12.5px;background:var(--glass2);border:1px solid var(--gb2);border-radius:11px;color:var(--text)}
+.chip[hidden]{display:none}   /* класс .chip перебивал атрибут hidden → пустая рамка над полем. Прячем по-настоящему */
 .chip img{width:34px;height:34px;object-fit:cover;border-radius:7px;flex-shrink:0}
 .chip .chipx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0 2px;flex-shrink:0}
 .chip .chipx:hover{color:#ff7a7a}
@@ -207,13 +208,14 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 @media(max-width:640px){
   .wrap{min-height:var(--vvh,100dvh);max-width:none;margin:0;
     padding:calc(env(safe-area-inset-top) + 8px) 12px 0;display:flex;flex-direction:column}
-  .head{flex:none;margin-bottom:10px}
-  .head h1{font-size:22px}.role{font-size:14px}.orb{width:44px;height:44px}.orb span{font-size:24px}
+  .head{flex:none;margin-bottom:8px}
+  .head .sub{display:none}   /* «На связи 24/7…» — 2 лишние строки на мобилке, убираем ради места под чат */
+  .head h1{font-size:21px}.role{font-size:13.5px}.orb{width:42px;height:42px}.orb span{font-size:23px}
   .authbtn{padding:8px 12px;font-size:12.5px}.authchip{max-width:110px}
   .tabs{flex:none;flex-wrap:nowrap;overflow-x:auto;gap:7px;margin-bottom:10px;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
   .tab{flex:none;padding:9px 13px;font-size:13px}
-  .howbtn{flex:none;margin-bottom:10px}
+  .howbtn{flex:none;margin-bottom:8px}
   .panel.on{flex:1;min-height:0;display:flex;flex-direction:column}
   .card{flex:1;min-height:0}
   .chat,.toolchat{height:auto;flex:1;min-height:0;padding:15px;overscroll-behavior:contain}
@@ -265,7 +267,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="chat" id="chat"></div>
       <div class="chip" id="cChip" hidden></div>
       <form class="composer" id="form" autocomplete="off">
-        <textarea id="input" rows="1" placeholder="Спросите Сократа про Авито — или пришлите скриншот экрана 📎"></textarea>
+        <textarea id="input" rows="1" placeholder="Спросите про Авито…"></textarea>
         <button type="button" class="attach" id="cAttach" title="Прикрепить скриншот">📎</button>
         <input type="file" id="cFile" hidden accept="image/*">
         <button class="send" id="send" type="submit" aria-label="Отправить">▶</button>

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Сократ — ИИ-авитолог Plan B · Бесплатная консультация по Авито</title>
+<meta name="description" content="Сократ — бесплатный ИИ-авитолог Plan B. Консультация по Авито 24/7: выдача, тексты, фото, продвижение. Платные инструменты: дизайнер, копирайтер, автозагрузка.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0b0d;--yellow:#F5C400;--yellow2:#ffd84a;
+  --text:#f3f3f1;--muted:#9b9ba3;
+  --glass:rgba(255,255,255,.045);--glass2:rgba(255,255,255,.07);
+  --gb:rgba(255,255,255,.10);--gb2:rgba(245,196,0,.28);
+  --ease:cubic-bezier(.16,.84,.34,1);--shadow:0 24px 60px -24px rgba(0,0,0,.7);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;font-weight:800}
+.yel{color:var(--yellow)}
+.bgimg{position:fixed;inset:-2%;z-index:0;background:#04040a url('/c/sokrat-bg.jpg') center/cover no-repeat;animation:kb 75s ease-in-out infinite alternate}
+@keyframes kb{from{transform:scale(1.04)}to{transform:scale(1.14) translate(-1.5%,-1%)}}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none;display:block}
+
+.wrap{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:26px 20px 30px}
+
+/* header */
+.head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}
+.head .hl{display:flex;align-items:center;gap:15px;min-width:0}
+.orb{width:56px;height:56px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,rgba(245,196,0,.4),rgba(245,196,0,.05) 70%);
+  border:1.5px solid var(--gb2);box-shadow:0 4px 16px rgba(0,0,0,.45),inset 0 0 12px rgba(245,196,0,.06);
+  animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-6px)}}
+.orb span{font-family:'Manrope';font-weight:800;font-size:30px;color:var(--yellow)}
+.head h1{font-size:28px;line-height:1.04}
+.role{font-family:'Manrope';font-weight:800;font-size:16.5px;color:var(--yellow);letter-spacing:.01em;margin-top:3px}
+.head .sub{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px;margin-top:6px}
+.head .sub b{width:7px;height:7px;border-radius:50%;background:#3ad07a;box-shadow:0 0 9px #3ad07a;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.4}}
+
+/* auth box (header right) */
+#authbox{display:flex;align-items:center;gap:10px;flex:none}
+.authbtn{font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:11px;border:1px solid transparent;background:var(--yellow);color:#15140c;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.authbtn:hover{background:var(--yellow2);transform:translateY(-1px)}
+.authbtn.ghost{background:var(--glass2);color:var(--text);border-color:var(--gb)}
+.authchip{font-size:13px;color:var(--text);display:flex;align-items:center;gap:7px;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(10,11,17,.82);border:1px solid var(--gb2);border-radius:11px;padding:8px 12px;cursor:pointer}
+.subok{font-size:11px;font-weight:700;color:#3ad07a;background:rgba(58,208,122,.14);padding:2px 7px;border-radius:100px;flex:none}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{display:inline-flex;align-items:center;gap:8px;font-family:'Golos Text';font-size:14px;font-weight:600;
+  padding:11px 17px;border-radius:14px;border:1px solid var(--gb);background:var(--glass);color:var(--muted);
+  cursor:pointer;transition:.2s var(--ease)}
+.tab:hover{color:var(--text);border-color:var(--gb2)}
+.tab.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700;box-shadow:0 5px 14px -6px rgba(0,0,0,.5)}
+.tab .free{font-size:11px;font-weight:700;background:rgba(58,208,122,.16);color:#3ad07a;padding:2px 7px;border-radius:100px}
+.tab.on .free{background:rgba(21,20,12,.18);color:#15140c}
+.tab .lk{font-size:12px;opacity:.8}
+
+/* panels */
+.panel{display:none;animation:fade .35s var(--ease)}
+.panel.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+
+/* chat (Сократ) */
+.card{border-radius:24px;border:1px solid var(--gb2);background:rgba(10,11,17,.74);backdrop-filter:blur(26px) saturate(1.1);
+  box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.chat{height:clamp(380px,56vh,580px);overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.msg{display:flex;gap:10px;max-width:88%;animation:in .3s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.msg.u{align-self:flex-end;flex-direction:row-reverse}
+.av{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:'Manrope';font-weight:800;font-size:13px}
+.msg.s .av{background:radial-gradient(circle at 35% 30%,rgba(245,196,0,.4),rgba(245,196,0,.08));color:var(--yellow);border:1px solid var(--gb2)}
+.msg.u .av{background:var(--glass2);color:var(--muted);border:1px solid var(--gb)}
+.bub{padding:12px 16px;border-radius:16px;font-size:14.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.s .bub{background:var(--glass2);border:1px solid var(--gb);border-top-left-radius:5px}
+.msg.u .bub{background:var(--yellow);color:#15140c;border-top-right-radius:5px;font-weight:500}
+.typing{display:flex;gap:4px;padding:5px 2px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+.composer{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--gb);align-items:flex-end;background:rgba(255,255,255,.02)}
+.composer textarea{flex:1;background:var(--glass2);border:1px solid var(--gb);border-radius:13px;color:var(--text);
+  font-family:'Golos Text';font-size:16px;padding:13px 15px;resize:none;max-height:130px;line-height:1.4;transition:border-color .2s}
+.composer textarea::placeholder{color:#6c6c74}
+.composer textarea:focus{outline:none;border-color:var(--gb2)}
+.send{background:var(--yellow);color:#15140c;border:none;border-radius:13px;padding:13px 22px;font-size:17px;font-weight:800;
+  cursor:pointer;transition:.2s var(--ease);align-self:stretch}
+.send:hover{background:var(--yellow2);transform:translateY(-1px)}
+.send:disabled{opacity:.5;cursor:wait;transform:none}
+.foot{font-size:12px;color:#8a8a93;text-align:center;padding:13px 20px;border-top:1px solid var(--gb)}
+.foot a{color:var(--muted)}
+
+/* paywall (платные вкладки) */
+.lockwrap{border-radius:24px;border:1px solid var(--gb2);background:linear-gradient(150% 140% at 50% 0%,rgba(245,196,0,.10),rgba(10,11,17,.76));backdrop-filter:blur(26px);
+  box-shadow:var(--shadow);padding:46px 36px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.lockwrap .ic{font-size:54px;filter:drop-shadow(0 8px 22px rgba(245,196,0,.3))}
+.lockwrap h2{font-size:clamp(24px,4vw,32px)}
+.lockwrap .what{color:var(--muted);font-size:15.5px;max-width:520px}
+.price{display:inline-flex;align-items:baseline;gap:8px;margin:6px 0 2px}
+.price b{font-family:'Manrope';font-weight:800;font-size:40px;color:var(--yellow);line-height:1}
+.price span{color:var(--muted);font-size:15px}
+
+/* gate (динамический CTA в платной вкладке) */
+.gate{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;min-height:58px;justify-content:center}
+.gbtn{display:inline-flex;align-items:center;gap:9px;padding:14px 30px;border-radius:14px;background:var(--glass2);
+  border:1px solid var(--gb2);color:var(--text);font-family:'Manrope';font-weight:700;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
+.gbtn:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.gbtn.pay{background:var(--yellow);color:#15140c;border-color:transparent;box-shadow:0 6px 16px -8px rgba(245,196,0,.25)}
+.gbtn.pay:hover{background:var(--yellow2)}
+.gbtn:disabled{opacity:.6;cursor:wait;transform:none}
+.ghint{font-size:12.5px;color:#8a8a93;max-width:460px}
+.subactive{font-family:'Manrope';font-weight:700;font-size:18px;color:#3ad07a}
+
+/* modal вход/регистрация */
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(4,4,10,.72);backdrop-filter:blur(7px)}
+.modal.on{display:flex;animation:fade .25s var(--ease)}
+.mcard{width:100%;max-width:386px;background:rgba(16,17,24,.97);border:1px solid var(--gb2);border-radius:22px;padding:30px 26px;box-shadow:var(--shadow);position:relative}
+.mcard h3{font-size:23px;margin-bottom:6px}
+.mcard .msub{font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5}
+.mcard label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
+.mcard input{width:100%;background:var(--glass2);border:1px solid var(--gb);border-radius:12px;color:var(--text);
+  font-family:'Golos Text';font-size:16px;padding:13px 14px;transition:border-color .2s}
+.mcard input:focus{outline:none;border-color:var(--gb2)}
+.msubmit{width:100%;margin-top:20px;padding:14px;border-radius:13px;background:var(--yellow);color:#15140c;border:none;
+  font-family:'Manrope';font-weight:800;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
+.msubmit:hover{background:var(--yellow2)}
+.mcard.acct{max-width:420px;max-height:90vh;overflow-y:auto}
+.acctsub{font-size:13.5px;line-height:1.5;padding:13px 15px;border-radius:13px;background:var(--glass2);border:1px solid var(--gb);margin:12px 0 4px}
+.acctsub .days{color:var(--yellow);font-weight:700}
+.acctsub .renew{width:100%;margin-top:11px;padding:11px;border-radius:11px;background:var(--yellow);color:#15140c;border:none;font-weight:700;cursor:pointer}
+.acctsub .renew:hover{background:var(--yellow2)}
+.acctsec{margin-top:16px;padding-top:15px;border-top:1px solid var(--gb)}
+.acctsec .accth{font-family:'Manrope';font-weight:700;font-size:14.5px;margin-bottom:11px}
+.acctsec input{margin-bottom:9px}
+.msubmit.slim{margin-top:4px;padding:11px;font-size:14px}
+.merr.ok{color:#3ad07a}
+.msubmit:disabled{opacity:.6;cursor:wait}
+.mtoggle{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
+.mtoggle a{color:var(--yellow);cursor:pointer}
+.merr{color:#ff7a7a;font-size:13px;text-align:center;margin-top:12px;min-height:16px}
+.mclose{position:absolute;top:13px;right:15px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1}
+.mclose:hover{color:var(--text)}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);z-index:60;background:rgba(16,17,24,.98);
+  border:1px solid var(--gb2);color:var(--text);font-size:13.5px;padding:13px 20px;border-radius:13px;box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:.3s var(--ease);max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.toolui .card{margin-top:0}
+.toolhead{font-family:'Manrope';font-weight:700;font-size:15.5px;padding:15px 20px;border-bottom:1px solid var(--gb);color:var(--text)}
+.toolchat{height:clamp(300px,44vh,460px)}
+.dlfile{display:inline-flex;align-items:center;gap:7px;color:var(--yellow);font-weight:600;text-decoration:none;padding:9px 13px;border:1px solid var(--gb2);border-radius:11px;background:var(--glass2);cursor:pointer}
+.dlfile:hover{border-color:var(--yellow);background:rgba(245,196,0,.1)}
+.al-bar{display:flex;gap:10px;padding:12px 18px 0;flex-wrap:wrap}
+.al-btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:11px;border:1px solid var(--gb2);background:var(--glass2);color:var(--text);cursor:pointer;transition:.15s}
+.al-btn:hover{border-color:var(--yellow)}
+.al-btn.dl{background:var(--yellow);color:#15140c;border-color:transparent}
+.al-btn.dl:disabled{opacity:.45;cursor:not-allowed;background:var(--glass2);color:var(--muted)}
+.dz-modes{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px 0}
+.dzmode{font-family:'Golos Text';font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:100px;border:1px solid var(--gb);background:var(--glass2);color:var(--muted);cursor:pointer;transition:.15s}
+.dzmode.on{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700}
+.dz-out{padding:18px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.dz-out img{max-width:100%;border-radius:14px;border:1px solid var(--gb)}
+.attach{background:var(--glass2);border:1px solid var(--gb);color:var(--muted);border-radius:13px;height:46px;min-width:46px;font-size:18px;cursor:pointer;transition:.15s;flex-shrink:0}
+.attach:hover{border-color:var(--yellow);color:var(--yellow)}
+.chip{display:flex;align-items:center;gap:9px;margin:0 20px 4px;padding:7px 11px;font-size:12.5px;background:var(--glass2);border:1px solid var(--gb2);border-radius:11px;color:var(--text)}
+.chip[hidden]{display:none}   /* класс .chip перебивал атрибут hidden → пустая рамка над полем. Прячем по-настоящему */
+.chip img{width:34px;height:34px;object-fit:cover;border-radius:7px;flex-shrink:0}
+.chip .chipx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0 2px;flex-shrink:0}
+.chip .chipx:hover{color:#ff7a7a}
+.cw-field{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--yellow);margin-bottom:7px;opacity:.85}
+.cw-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.copyrow{display:flex;justify-content:flex-end;margin-top:10px}
+.copybtn,.regen{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:7px 13px;border-radius:9px;border:1px solid var(--gb2);background:var(--glass2);color:var(--yellow);cursor:pointer;transition:.15s}
+.copybtn:hover,.regen:hover{border-color:var(--yellow);background:rgba(245,196,0,.1)}
+.regen{color:var(--text)}
+.dz-msg{padding:8px!important}
+.dz-msg figcaption{font-size:12px;color:var(--muted);margin:2px 0 7px 2px}
+.dz-msg img{max-width:100%;border-radius:12px;border:1px solid var(--gb);display:block}
+.howbtn{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:14px;border:1px solid var(--gb2);background:linear-gradient(120deg,rgba(245,196,0,.18),var(--glass2));color:var(--text);cursor:pointer;transition:.2s var(--ease)}
+.howbtn:hover{border-color:var(--yellow);transform:translateY(-1px)}
+.hmcard{width:100%;max-width:560px;max-height:86vh;overflow-y:auto;background:rgba(16,17,24,.98);border:1px solid var(--gb2);border-radius:22px;padding:26px 24px;box-shadow:var(--shadow);position:relative}
+.hmcard h3{font-size:22px;margin-bottom:4px}
+.hmsub{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.hitem{border:1px solid var(--gb);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.hhead{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;font-family:'Manrope';font-weight:700;font-size:15px}
+.hhead .ha{margin-left:auto;color:var(--muted);transition:.2s}
+.hitem.op .hhead .ha{transform:rotate(180deg)}
+.hbody{display:none;padding:2px 18px 16px 18px;font-size:13.5px;color:#c9c9cf;line-height:1.6}
+.hitem.op .hbody{display:block}
+.hbody ol{margin:0;padding-left:20px}.hbody li{margin:6px 0}
+.hfree{font-size:11px;font-weight:700;color:#3ad07a;background:rgba(58,208,122,.14);padding:2px 8px;border-radius:100px}
+.sitefoot{margin:28px auto 0;max-width:880px;padding:22px 4px 16px;border-top:1px solid var(--gb);display:flex;flex-direction:column;align-items:center;gap:13px;position:relative;z-index:2}
+.sitefoot .ftitle{font-family:'Manrope';font-weight:700;font-size:14.5px;color:var(--text)}
+.fbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.fbtn{display:inline-flex;align-items:center;gap:7px;font-family:'Golos Text';font-size:13.5px;font-weight:600;padding:11px 17px;border-radius:12px;background:rgba(10,11,17,.85);border:1px solid var(--gb2);color:var(--text);text-decoration:none;backdrop-filter:blur(10px);transition:.2s var(--ease);white-space:nowrap}
+.fbtn:hover{background:rgba(22,23,32,.95);border-color:var(--yellow);transform:translateY(-1px)}
+.fbtn.support{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700}
+.fbtn.support:hover{background:var(--yellow2)}
+.sitefoot .fc{color:#9b9ba3;font-size:12px;margin-top:2px;text-align:center}
+/* ===== МОБИЛКА: чат-экран как в приложении — композер сразу внизу, без iOS-зума, футер доскроллом ===== */
+@media(max-width:640px){
+  .wrap{min-height:var(--vvh,100dvh);max-width:none;margin:0;
+    padding:calc(env(safe-area-inset-top) + 8px) 12px 0;display:flex;flex-direction:column}
+  .head{flex:none;margin-bottom:8px}
+  .head .sub{display:none}   /* «На связи 24/7…» — 2 лишние строки на мобилке, убираем ради места под чат */
+  .head h1{font-size:21px}.role{font-size:13.5px}.orb{width:42px;height:42px}.orb span{font-size:23px}
+  .authbtn{padding:8px 12px;font-size:12.5px}.authchip{max-width:110px}
+  .tabs{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}   /* 2×2 равные вкладки — симметрично на любом экране */
+  .tab{justify-content:center;padding:11px 8px;font-size:13px;min-width:0}
+  .howbtn{flex:none;margin-bottom:8px}
+  .panel.on{flex:1;min-height:0;display:flex;flex-direction:column}
+  .card{flex:1;min-height:0}
+  .chat,.toolchat{height:auto;flex:1;min-height:0;padding:15px;overscroll-behavior:contain}
+  .composer{flex:none;padding:11px 12px;gap:8px}
+  .send{padding:12px 16px;font-size:16px}
+  .foot{flex:none;font-size:11px;padding:9px 14px calc(9px + env(safe-area-inset-bottom))}
+  .lockwrap{padding:30px 20px}.lockwrap h2{font-size:24px}.lockwrap .what{font-size:14.5px}
+  .price b{font-size:34px}
+  .modal{padding:14px}.mcard{padding:26px 20px}
+  .sitefoot{margin-top:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  #toast{bottom:calc(20px + env(safe-area-inset-bottom))}
+}
+</style>
+</head>
+<body>
+<div class="bgimg"></div>
+<canvas id="sky"></canvas>
+<script>
+/* Мобилка: высота экрана = ВИДИМАЯ часть (visualViewport). На iOS клавиатура НЕ ужимает layout viewport —
+   без этого композер уходит под клаву и «всё съезжает». Тут --vvh ужимается → композер всегда виден. */
+(function(){var vv=window.visualViewport,r=document.documentElement;function a(){var h=vv?vv.height:window.innerHeight;r.style.setProperty('--vvh',h+'px');}a();if(vv){vv.addEventListener('resize',a);vv.addEventListener('scroll',a);}window.addEventListener('resize',a);window.addEventListener('orientationchange',a);})();
+</script>
+
+<main class="wrap">
+  <header class="head">
+    <div class="hl">
+      <div class="orb"><span>Σ</span></div>
+      <div>
+        <h1>Сократ</h1>
+        <div class="role">ИИ-авитолог</div>
+        <div class="sub"><b></b> На связи 24/7 · консультация бесплатно</div>
+      </div>
+    </div>
+    <div id="authbox"></div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab on" data-tab="sokrat">🦉 Сократ <span class="free">бесплатно</span></button>
+    <button class="tab" data-tab="designer">🎨 Дизайнер <span class="lk">🔒</span></button>
+    <button class="tab" data-tab="copywriter">✍️ Копирайтер <span class="lk">🔒</span></button>
+    <button class="tab" data-tab="autoload">📦 Автозагрузка <span class="lk">🔒</span></button>
+  </nav>
+
+  <button class="howbtn" id="howBtn">❓ Как пользоваться Сократом</button>
+
+  <!-- СОКРАТ — бесплатный консультант -->
+  <section class="panel on" data-panel="sokrat">
+    <div class="card">
+      <div class="chat" id="chat"></div>
+      <div class="chip" id="cChip" hidden></div>
+      <form class="composer" id="form" autocomplete="off">
+        <textarea id="input" rows="1" placeholder="Спросите про Авито…"></textarea>
+        <button type="button" class="attach" id="cAttach" title="Прикрепить скриншот">📎</button>
+        <input type="file" id="cFile" hidden accept="image/*">
+        <button class="send" id="send" type="submit" aria-label="Отправить">▶</button>
+      </form>
+      <div class="foot">Сократ — бесплатный ИИ-авитолог Plan B. Не раздаёт гарантий и не выдумывает цифры · <a href="#" data-tab-go="designer">платные инструменты ↑</a></div>
+    </div>
+  </section>
+
+  <!-- ПОДДЕРЖКА — бесплатная: ИИ помогает по сервису и принимает баги (сам не чинит) -->
+  <section class="panel" data-panel="support">
+    <div class="card">
+      <div class="chat" id="sup-chat"></div>
+      <form class="composer" id="sup-form" autocomplete="off">
+        <textarea id="sup-input" rows="1" placeholder="Опишите вопрос или проблему…"></textarea>
+        <button class="send" id="sup-send" type="submit" aria-label="Отправить">▶</button>
+      </form>
+      <div class="foot">Поддержка Сократа · вопросы по сервису и сообщения об ошибках</div>
+    </div>
+  </section>
+
+  <!-- ПЛАТНЫЕ ВКЛАДКИ -->
+  <section class="panel" data-panel="designer">
+    <div class="lockwrap">
+      <div class="ic">🎨</div>
+      <h2>Дизайнер <span class="yel">объявлений</span></h2>
+      <p class="what">Продающие баннеры и картинки для Авито — по тексту или вашему образцу. Один запрос — готовое цельное изображение под объявление (без коллажей).</p>
+      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="gate" data-gate="designer"></div>
+    </div>
+    <div class="toolui" data-tool="designer" hidden>
+      <div class="card">
+        <div class="toolhead">🎨 Дизайнер — картинки для объявлений</div>
+        <div class="dz-modes">
+          <button type="button" class="dzmode on" data-mode="listing">📸 Картинка для объявления</button>
+          <button type="button" class="dzmode" data-mode="banner">🖼 Баннер профиля (ПК+моб)</button>
+        </div>
+        <div class="chat toolchat" id="dz-chat"></div>
+        <div class="chip" data-chip hidden></div>
+        <form class="composer" data-toolform="designer" autocomplete="off">
+          <textarea rows="2" placeholder="Опишите картинку… или прикрепите свой образец 📎 и скажите, что изменить"></textarea>
+          <button type="button" class="attach" data-attach title="Прикрепить образец">📎</button>
+          <input type="file" hidden data-file accept="image/*">
+          <button class="send" type="submit" aria-label="Сгенерировать">▶</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="copywriter">
+    <div class="lockwrap">
+      <div class="ic">✍️</div>
+      <h2>Копирайтер <span class="yel">для Авито</span></h2>
+      <p class="what">Продающие тексты объявлений с SEO-ключами под поиск Авито: цепляющий заголовок + структура Боль → Решение → Выгоды → Призыв. Тон на выбор.</p>
+      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="gate" data-gate="copywriter"></div>
+    </div>
+    <div class="toolui" data-tool="copywriter" hidden>
+      <div class="card">
+        <div class="toolhead">✍️ Копирайтер — продающие тексты для Авито</div>
+        <div class="chat toolchat" id="cw-chat"></div>
+        <form class="composer" data-toolform="copywriter" autocomplete="off">
+          <textarea rows="2" placeholder="Что продаёте? Напр.: кожаный диван б/у, Москва, самовывоз"></textarea>
+          <button class="send" type="submit" aria-label="Сгенерировать">▶</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="autoload">
+    <div class="lockwrap">
+      <div class="ic">📦</div>
+      <h2>Автозагрузка <span class="yel">Авито</span></h2>
+      <p class="what">Массовое размещение и размножение объявлений по городам, уникализация фото и текстов, проверка фида автозагрузки. Сотни объявлений за минуты.</p>
+      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="gate" data-gate="autoload"></div>
+    </div>
+    <div class="toolui" data-tool="autoload" hidden>
+      <div class="card">
+        <div class="toolhead">📦 Автозагрузка — работа с файлом фида</div>
+        <div class="chat toolchat" id="al-chat"></div>
+        <div class="chip" data-chip hidden></div>
+        <form class="composer" data-toolform="autoload" autocomplete="off">
+          <textarea rows="2" placeholder="Загрузите xlsx 📎 и скажите что сделать: «размножь по городам», «поставь цену 700»…"></textarea>
+          <button type="button" class="attach" data-attach title="Загрузить xlsx">📎</button>
+          <input type="file" hidden data-file accept=".xlsx,.xls">
+          <button class="send" type="submit" aria-label="Отправить">▶</button>
+        </form>
+      </div>
+    </div>
+  </section>
+    <footer class="sitefoot">
+    <div class="ftitle">Полезная информация</div>
+    <div class="fbtns">
+      <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-tarify.html" target="_blank" rel="noopener">📄 Тарифы</a>
+      <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-oferta.html" target="_blank" rel="noopener">📃 Пользовательское соглашение</a>
+      <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-privacy.html" target="_blank" rel="noopener">🔒 Политика конфиденциальности</a>
+      <button class="fbtn support" type="button" data-tab-go="support">🛟 Поддержка</button>
+    </div>
+    <div class="fc">Сервис «Сократ» — ИИ-авитолог</div>
+  </footer>
+</main>
+
+<!-- модалка «как пользоваться» -->
+<div class="modal" id="howModal">
+  <div class="hmcard">
+    <button class="mclose" id="hmClose" aria-label="Закрыть">×</button>
+    <h3>Как пользоваться Сократом</h3>
+    <div class="hmsub" id="hmSub"></div>
+    <div id="hmList"></div>
+  </div>
+</div>
+
+<!-- модалка вход/регистрация -->
+<div class="modal" id="authModal">
+  <div class="mcard">
+    <button class="mclose" id="mClose" aria-label="Закрыть">×</button>
+    <h3 id="mTitle">Вход</h3>
+    <div class="msub">Доступ к платным инструментам Plan B. Консультация у Сократа — всегда бесплатна и без входа.</div>
+    <form id="mForm" autocomplete="on">
+      <label>Email</label>
+      <input id="mEmail" type="email" autocomplete="email" placeholder="you@mail.ru" required>
+      <label>Пароль</label>
+      <input id="mPass" type="password" autocomplete="current-password" placeholder="минимум 6 символов" required>
+      <button class="msubmit" id="mSubmit" type="submit">Войти</button>
+      <div class="merr" id="mErr"></div>
+    </form>
+    <div class="mtoggle" id="mToggle"></div>
+  </div>
+</div>
+
+<div class="modal" id="acctModal">
+  <div class="mcard acct">
+    <button class="mclose" id="aClose" aria-label="Закрыть">×</button>
+    <h3>Личный кабинет</h3>
+    <div class="msub" id="aEmailLine"></div>
+    <div class="acctsub" id="aSub"></div>
+    <div class="acctsec">
+      <div class="accth">🔑 Сменить пароль</div>
+      <input id="aOldPw" type="password" autocomplete="current-password" placeholder="текущий пароль">
+      <input id="aNewPw" type="password" autocomplete="new-password" placeholder="новый пароль (мин. 6)">
+      <button class="msubmit slim" id="aPwBtn" type="button">Сменить пароль</button>
+      <div class="merr" id="aPwErr"></div>
+    </div>
+    <div class="acctsec">
+      <div class="accth">✉️ Сменить почту</div>
+      <input id="aNewEmail" type="email" autocomplete="email" placeholder="новая почта">
+      <input id="aEmailPw" type="password" autocomplete="current-password" placeholder="текущий пароль">
+      <button class="msubmit slim" id="aEmailBtn" type="button">Сменить почту</button>
+      <div class="merr" id="aEmailErr"></div>
+    </div>
+    <button class="authbtn ghost" id="aLogout" style="width:100%;margin-top:18px">Выйти из аккаунта</button>
+  </div>
+</div>
+
+<script>
+/* Базовый адрес API. На кабинете/локалхосте — относительный; на сайте (GitHub Pages) — абсолютный до бэкенда-кабинета. Один файл работает в обоих местах. */
+var SOK_API_BASE=(location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname.indexOf('sslip.io')>=0)?'':'https://93-77-191-3.sslip.io';
+
+/* ── Аналитика: сквозной id посетителя + первичный источник (UTM) + маяк визита ── */
+var SOK_VIS=(function(){try{var v=localStorage.getItem('sok_vis');if(!v){v='v'+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem('sok_vis',v);}return v;}catch(e){return 'v'+Math.random().toString(36).slice(2,10);}})();
+var SOK_UTM=(function(){try{var q=new URLSearchParams(location.search),o={},any=false;['utm_source','utm_medium','utm_campaign'].forEach(function(k){var val=q.get(k);if(val){o[k]=val.slice(0,120);any=true;}});var ref=q.get('ref');if(ref&&!o.utm_source){o.utm_source=ref.slice(0,120);o.utm_medium=o.utm_medium||'referral';any=true;}if(any){localStorage.setItem('sok_utm',JSON.stringify(o));return o;}return JSON.parse(localStorage.getItem('sok_utm')||'{}');}catch(e){return {};}})();
+function sokTrack(ev){try{var b=Object.assign({event:ev,visitor:SOK_VIS,ref:document.referrer||'',path:location.pathname},SOK_UTM);fetch(SOK_API_BASE+'/c/sokrat/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b),keepalive:true}).catch(function(){});}catch(e){}}
+try{sokTrack('visit');}catch(e){}
+
+/* ── Лёгкое мерцание звёзд поверх фото-галактики ── */
+(function(){
+  var cv=document.getElementById('sky'); if(!cv) return;
+  var ctx=cv.getContext('2d'), W=0,H=0, dpr=Math.min(window.devicePixelRatio||1,2), stars=[];
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function build(){
+    W=cv.width=Math.floor(innerWidth*dpr); H=cv.height=Math.floor(innerHeight*dpr);
+    cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px';
+    stars=[]; var n=Math.min(150,Math.round(innerWidth*innerHeight/11000));
+    for(var i=0;i<n;i++) stars.push({x:Math.random()*W,y:Math.random()*H,r:rnd(.6,1.9)*dpr,a:rnd(.4,1),tw:rnd(.5,2),ph:rnd(0,6.28),
+      c:(Math.random()<.3?'rgba(170,200,255,':'rgba(255,255,255,')});
+  }
+  function draw(ts){
+    var t=ts/1000; ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation='lighter';
+    for(var k=0;k<stars.length;k++){var s=stars[k];
+      var a=s.a*(0.25+0.75*Math.sin(t*s.tw+s.ph)); if(a<0)a=0;
+      ctx.fillStyle=s.c+a.toFixed(3)+')'; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,6.2832); ctx.fill();}
+    requestAnimationFrame(draw);
+  }
+  build(); requestAnimationFrame(draw);
+  var rt; addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,200);},{passive:true});
+})();
+
+/* вкладки */
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('on', t.dataset.tab===name); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('on', p.dataset.panel===name); });
+}
+document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click', function(){ showTab(t.dataset.tab); }); });
+document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); showTab(a.dataset.tabGo); window.scrollTo({top:0,behavior:'smooth'}); }); });
+
+/* чат Сократа → /c/sokrat/api */
+(function(){
+  const API=SOK_API_BASE+'/c/sokrat/api';
+  const chat=document.getElementById('chat'), form=document.getElementById('form'),
+        input=document.getElementById('input'), send=document.getElementById('send');
+  const WELCOME='Здравствуйте! Я Сократ — ваш ИИ-авитолог 🦉.\n\nБесплатно проконсультирую по любым вопросам Авито: как правильно опубликовать объявление, какое продвижение подключить, как поднять выдачу и продажи. Подскажу по стратегии и помогу с публикацией.\n\nРасскажите, что продаёте и какой у вас вопрос?';
+  let sess='',hist=[];
+  try{sess=localStorage.getItem('sok_sess')||'';}catch(e){}
+  if(!sess){sess='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);try{localStorage.setItem('sok_sess',sess);}catch(e){}}
+  try{hist=JSON.parse(localStorage.getItem('sok_hist')||'[]');}catch(e){hist=[];}
+  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function linkify(s){
+    s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$1</a>');
+    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}return pre+'<a href="'+url+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+url+'</a>'+t;});
+    return s;
+  }
+  function bubble(role,text,image){
+    const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');
+    const img=image?'<img src="'+image+'" alt="скриншот" style="max-width:100%;border-radius:10px;display:block;'+(text?'margin-bottom:6px':'')+'">':'';
+    const body=text?linkify(esc(text)).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>'):'';
+    m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+img+body+'</div>';
+    chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
+  }
+  function save(){try{localStorage.setItem('sok_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
+  if(hist.length){hist.forEach(m=>bubble(m.role,m.content));}else{bubble('assistant',WELCOME);}
+  input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
+  let busy=false;
+  var cImg=null;
+  var cAttach=document.getElementById('cAttach'), cFile=document.getElementById('cFile'), cChip=document.getElementById('cChip');
+  function cClear(){cImg=null;if(cFile)cFile.value='';if(cChip){cChip.hidden=true;cChip.innerHTML='';}}
+  if(cAttach&&cFile){
+    cAttach.addEventListener('click',function(){cFile.click();});
+    cFile.addEventListener('change',function(){var f=cFile.files[0];if(!f){cClear();return;}var rd=new FileReader();rd.onload=function(){cImg=rd.result;if(cChip){cChip.hidden=false;cChip.innerHTML='<img src="'+cImg+'"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(f.name)+'</span><button type="button" class="chipx">✕</button>';cChip.querySelector('.chipx').onclick=cClear;}};rd.readAsDataURL(f);});
+  }
+  async function ask(text,image){
+    if(busy)return;busy=true;send.disabled=true;
+    bubble('user',text,image);hist.push({role:'user',content:text||'📷 скриншот'});save();
+    const t=document.createElement('div');t.className='msg s';
+    t.innerHTML='<div class="av">Σ</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';
+    chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
+    try{
+      const payload=Object.assign({sess:sess,message:text,visitor:SOK_VIS},SOK_UTM); if(image)payload.image=image;
+      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const d=await r.json();t.remove();
+      const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
+      bubble('assistant',reply);hist.push({role:'assistant',content:reply});save();
+    }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
+    busy=false;send.disabled=false;input.focus();
+  }
+  form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v&&!cImg)return;const img=cImg;input.value='';input.style.height='auto';cClear();ask(v,img);});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
+})();
+
+/* чат Поддержки → /c/sokrat/support (консультация по сервису + приём багов) */
+(function(){
+  const API=SOK_API_BASE+'/c/sokrat/support';
+  const chat=document.getElementById('sup-chat'), form=document.getElementById('sup-form'),
+        input=document.getElementById('sup-input'), send=document.getElementById('sup-send');
+  if(!chat||!form) return;
+  const WELCOME='Здравствуйте! Это поддержка Сократа 🛟\n\nПомогу разобраться с сервисом (вкладки, вход, оплата) и приму сообщение об ошибке, если что-то работает не так. Опишите вопрос или проблему — если это баг, коротко уточню детали и передам в техподдержку.';
+  let sess='',hist=[];
+  try{sess=localStorage.getItem('sup_sess')||'';}catch(e){}
+  if(!sess){sess='u'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);try{localStorage.setItem('sup_sess',sess);}catch(e){}}
+  try{hist=JSON.parse(localStorage.getItem('sup_hist')||'[]');}catch(e){hist=[];}
+  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function fmt(s){s=esc(s).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)/g,'$1<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$2</a>');return s;}
+  function bubble(role,text){const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'🛟')+'</div><div class="bub">'+fmt(text)+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;}
+  function save(){try{localStorage.setItem('sup_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
+  if(hist.length){hist.forEach(m=>bubble(m.role,m.content));}else{bubble('assistant',WELCOME);}
+  input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
+  let busy=false;
+  async function ask(text){
+    if(busy)return;busy=true;send.disabled=true;
+    bubble('user',text);hist.push({role:'user',content:text});save();
+    const t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">🛟</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
+    try{
+      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sess:sess,message:text})});
+      const d=await r.json();t.remove();
+      const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
+      bubble('assistant',reply);hist.push({role:'assistant',content:reply});save();
+    }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
+    busy=false;send.disabled=false;input.focus();
+  }
+  form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v)return;input.value='';input.style.height='auto';ask(v);});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
+})();
+
+/* ── авторизация + гейт платных вкладок ── */
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+  let token='', state={auth:false,subscribed:false,until:null,email:''}, mode='login';
+  try{token=localStorage.getItem('sok_auth')||'';}catch(e){}
+  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function fmtDate(iso){try{return new Date(iso).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
+  function setToken(t){token=t||'';try{t?localStorage.setItem('sok_auth',t):localStorage.removeItem('sok_auth');}catch(e){}}
+
+  async function api(path,body){
+    const h={'Content-Type':'application/json'}; if(token)h['X-Auth-Token']=token;
+    let st=0,d={};
+    try{const r=await fetch(SOK_API_BASE+path,{method:'POST',headers:h,body:JSON.stringify(Object.assign({visitor:SOK_VIS},SOK_UTM,body||{}))});st=r.status;try{d=await r.json();}catch(e){}}catch(e){}
+    return {st,d};
+  }
+
+  function renderAuthbox(){
+    const box=$('#authbox'); if(!box)return;
+    if(state.auth){
+      const badge=state.subscribed?'<span class="subok">✓ подписка</span>':'';
+      box.innerHTML='<button class="authchip" id="acctBtn" title="Личный кабинет" style="cursor:pointer">'+esc(state.email)+badge+' ⚙</button><button class="authbtn ghost" id="logoutBtn">Выйти</button>';
+      $('#acctBtn').onclick=openAcct;
+      $('#logoutBtn').onclick=doLogout;
+    }else{
+      box.innerHTML='<button class="authbtn" id="loginBtn">Войти</button>';
+      $('#loginBtn').onclick=function(){openModal('login');};
+    }
+  }
+
+  function renderGates(){
+    let html,fn;
+    if(!state.auth){
+      html='<button class="gbtn">Войти / зарегистрироваться</button><p class="ghint">Регистрация по почте — минута. Консультация у Сократа бесплатна и без входа.</p>';
+      fn=function(){openModal('register');};
+    }else if(state.subscribed){
+      html='<div class="subactive">✅ Подписка активна до '+fmtDate(state.until)+'</div><p class="ghint">Инструмент подключается — совсем скоро. Спасибо, что с нами!</p>';
+      fn=function(){};
+    }else{
+      html='<button class="gbtn pay">Оплатить 3000 ₽ / месяц</button><p class="ghint">Картой или СБП. Доступ ко всем инструментам сразу после оплаты.</p>';
+      fn=doSubscribe;
+    }
+    $$('.gate').forEach(function(g){g.innerHTML=html;});
+    $$('.gate .gbtn').forEach(function(b){b.onclick=fn;});
+    document.querySelectorAll('.toolui').forEach(function(ui){
+      var panel=ui.closest('.panel'), lock=panel?panel.querySelector('.lockwrap'):null;
+      if(state.subscribed){ if(lock)lock.style.display='none'; ui.hidden=false; initTool(ui.getAttribute('data-tool')); }
+      else { if(lock)lock.style.display=''; ui.hidden=true; }
+    });
+    // замочки 🔒 на вкладках — снимаем при активной подписке
+    document.querySelectorAll('.tab .lk').forEach(function(el){ el.style.display = state.subscribed ? 'none' : ''; });
+  }
+
+  async function refresh(){
+    if(!token){state={auth:false};renderAuthbox();renderGates();return;}
+    const {d}=await api('/c/sokrat/me',{});
+    if(d&&d.auth){state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until};}
+    else{const had=token;setToken('');state={auth:false};if(had)toast('Вы вошли с другого устройства — сессия здесь завершена.');}
+    renderAuthbox();renderGates();
+  }
+
+  async function doSubscribe(){
+    if(!state.auth){openModal('login');return;}
+    const btn=document.querySelector('.gate .gbtn.pay'); if(btn){btn.disabled=true;btn.textContent='Создаём оплату…';}
+    const {st,d}=await api('/c/sokrat/subscribe',{});
+    if(d&&d.redirect){window.location.href=d.redirect;return;}
+    toast((d&&d.error)||'Не удалось создать оплату, попробуйте позже.');
+    renderGates();
+  }
+  async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();toast('Вы вышли.');}
+
+  /* Личный кабинет: подписка (дней осталось + продление) + смена пароля/почты */
+  function acctDays(){ if(!state.until) return null; return Math.max(0, Math.ceil((new Date(state.until)-new Date())/86400000)); }
+  function renderAcctSub(){
+    var el=$('#aSub'); if(!el) return;
+    if(state.subscribed){
+      var dl=acctDays();
+      el.innerHTML='✅ Подписка активна <b>до '+fmtDate(state.until)+'</b>'+(dl!=null?' · осталось <span class="days">'+dl+' дн.</span>':'')+'<button class="renew" id="aRenew">Продлить на месяц · 3000 ₽</button>';
+    }else{
+      el.innerHTML='Подписка не активна. Оформите доступ ко всем инструментам.<button class="renew" id="aRenew">Оформить · 3000 ₽ / мес</button>';
+    }
+    var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); doSubscribe(); };
+  }
+  function openAcct(){
+    if(!state.auth){ openModal('login'); return; }
+    $('#aEmailLine').textContent=state.email||'';
+    renderAcctSub();
+    ['aPwErr','aEmailErr'].forEach(function(id){var e=$('#'+id);if(e){e.className='merr';e.textContent='';}});
+    ['aOldPw','aNewPw','aNewEmail','aEmailPw'].forEach(function(id){var e=$('#'+id);if(e)e.value='';});
+    $('#acctModal').classList.add('on');
+  }
+  function closeAcct(){ $('#acctModal').classList.remove('on'); }
+
+  /* модалка */
+  function openModal(m){mode=m;renderModal();$('#authModal').classList.add('on');setTimeout(function(){$('#mEmail').focus();},50);}
+  function closeModal(){$('#authModal').classList.remove('on');$('#mErr').textContent='';}
+  function renderModal(){
+    $('#mTitle').textContent=mode==='login'?'Вход':'Регистрация';
+    $('#mSubmit').textContent=mode==='login'?'Войти':'Зарегистрироваться';
+    $('#mPass').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');
+    $('#mToggle').innerHTML=mode==='login'?'Нет аккаунта? <a id="mSwap">Зарегистрироваться</a>':'Уже есть аккаунт? <a id="mSwap">Войти</a>';
+    $('#mSwap').onclick=function(){mode=(mode==='login'?'register':'login');renderModal();};
+    $('#mErr').textContent='';
+  }
+  async function submitModal(e){
+    if(e)e.preventDefault();
+    const email=$('#mEmail').value.trim(), pw=$('#mPass').value;
+    if(!email||!pw){$('#mErr').textContent='Заполните почту и пароль';return;}
+    const btn=$('#mSubmit');btn.disabled=true;
+    const {st,d}=await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
+    btn.disabled=false;
+    if(d&&d.token){setToken(d.token);state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until};closeModal();renderAuthbox();renderGates();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉');}
+    else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
+  }
+
+  /* тост */
+  let toastTimer;
+  function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('on');},5000);}
+
+  /* возврат с оплаты */
+  function handleReturn(){
+    const q=new URLSearchParams(location.search);
+    if(q.get('paid')==='ok'){
+      toast('Оплата получена — активируем подписку…');
+      let n=0;const iv=setInterval(async function(){n++;await refresh();if(state.subscribed||n>=8){clearInterval(iv);if(state.subscribed)toast('Подписка активна! 🎉');}},2000);
+      history.replaceState({},'',location.pathname);
+    }else if(q.get('paid')==='fail'){toast('Оплата не прошла. Попробуйте ещё раз.');history.replaceState({},'',location.pathname);}
+  }
+
+  $('#mForm').addEventListener('submit',submitModal);
+  $('#mClose').addEventListener('click',closeModal);
+  $('#authModal').addEventListener('click',function(e){if(e.target.id==='authModal')closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeAcct();}});
+
+  $('#aClose').addEventListener('click',closeAcct);
+  $('#acctModal').addEventListener('click',function(e){if(e.target.id==='acctModal')closeAcct();});
+  $('#aLogout').addEventListener('click',function(){closeAcct();doLogout();});
+  $('#aPwBtn').addEventListener('click',async function(){
+    var er=$('#aPwErr');er.className='merr';er.textContent='';
+    var old=$('#aOldPw').value, nw=$('#aNewPw').value;
+    if(!old||!nw){er.textContent='Заполните оба поля';return;}
+    this.disabled=true;
+    var res=await api('/c/sokrat/account/password',{old:old,new:nw});var d=res.d;
+    this.disabled=false;
+    if(d&&d.ok){er.className='merr ok';er.textContent='Пароль изменён ✓';$('#aOldPw').value='';$('#aNewPw').value='';}
+    else{er.textContent=(d&&d.error)||'Не удалось сменить пароль';}
+  });
+  $('#aEmailBtn').addEventListener('click',async function(){
+    var er=$('#aEmailErr');er.className='merr';er.textContent='';
+    var em=$('#aNewEmail').value.trim(), pw=$('#aEmailPw').value;
+    if(!em||!pw){er.textContent='Введите новую почту и текущий пароль';return;}
+    this.disabled=true;
+    var res=await api('/c/sokrat/account/email',{email:em,password:pw});var d=res.d;
+    this.disabled=false;
+    if(d&&d.ok){er.className='merr ok';er.textContent='Почта изменена ✓';state.email=d.email||em;renderAuthbox();$('#aEmailLine').textContent=state.email;$('#aNewEmail').value='';$('#aEmailPw').value='';}
+    else{er.textContent=(d&&d.error)||'Не удалось сменить почту';}
+  });
+
+  var _toolInit={};
+  function te(s){return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function mdbold(s){return s.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');}
+  function linkify(s){
+    s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$1</a>');
+    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}return pre+'<a href="'+url+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+url+'</a>'+t;});
+    return s;
+  }
+  function fmt(s){return mdbold(linkify(te(s)));}
+  function copyText(t,btn){navigator.clipboard.writeText(t).then(function(){toast('Скопировано ✓');if(btn){var o=btn.innerHTML;btn.innerHTML='✓ Скопировано';setTimeout(function(){btn.innerHTML=o;},1600);}}).catch(function(){toast('Не удалось скопировать');});}
+  function wireAttach(form){
+    var fileInp=form.querySelector('[data-file]'),attachBtn=form.querySelector('[data-attach]'),chip=form.parentNode.querySelector('[data-chip]'),st={file:null};
+    if(attachBtn)attachBtn.addEventListener('click',function(){if(fileInp)fileInp.click();});
+    function render(){if(!chip)return;if(st.file){chip.hidden=false;var isImg=/^image\//.test(st.file.type||'');chip.innerHTML=(isImg?'<img src="'+URL.createObjectURL(st.file)+'">':'<span style="font-size:16px">📎</span>')+'<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+te(st.file.name)+'</span><button type="button" class="chipx" aria-label="Убрать">✕</button>';chip.querySelector('.chipx').onclick=function(){st.file=null;if(fileInp)fileInp.value='';render();};}else{chip.hidden=true;chip.innerHTML='';}}
+    if(fileInp)fileInp.addEventListener('change',function(){st.file=fileInp.files[0]||null;render();});
+    return {get:function(){return st.file;},clear:function(){st.file=null;if(fileInp)fileInp.value='';render();}};
+  }
+  function initTool(name){
+    if(_toolInit[name])return; var form=document.querySelector('[data-toolform="'+name+'"]'); if(!form)return; _toolInit[name]=true;
+    if(name==='copywriter'){
+      var chat=document.getElementById('cw-chat'), hist=[];
+      var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'✍️')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
+      var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
+      var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});};
+      say('assistant','Опишите товар или услугу — выдам готовый заголовок и текст объявления, каждый со своей кнопкой «Копировать». Готово к вставке в Авито.');
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var d=r.d||{};if(d.error){say('assistant',d.error);}else{if(d.title)copyBubble('Заголовок',d.title);if(d.body)copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});}btn.disabled=false;ta.focus();});
+    } else if(name==='autoload'){
+      var chat=document.getElementById('al-chat'), att=wireAttach(form);
+      var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
+      var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
+      say('assistant','Загрузите файл автозагрузки (xlsx) кнопкой 📎 и скажите, что сделать: «размножь по городам Владимирской области», «поставь цену 700», «перепиши заголовки». Готовый файл заберёте ссылкой в чате.\n\nВставите ваши ключи Avito API — проверю отчёты автозагрузки и поставлю цену за просмотр (CPV).');
+      async function alDownload(){var h={};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h});if(!r.ok){say('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){say('assistant','Ошибка скачивания');}}
+      function dlBubble(){var m=document.createElement('div');m.className='msg s';m.innerHTML='<div class="av">📦</div><div class="bub" style="background:none;border:none;padding:0"><a class="dlfile" href="#">📄 avito_feed.xlsx — скачать</a></div>';m.querySelector('.dlfile').addEventListener('click',function(ev){ev.preventDefault();alDownload();});chat.appendChild(m);chat.scrollTop=chat.scrollHeight;}
+      async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','Загрузил: '+d.summary+' Что сделать?');}else{say('assistant',d.error||'Не смог прочитать файл');}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.ready)dlBubble();}btn.disabled=false;ta.focus();});
+    } else if(name==='designer'){
+      var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form);
+      ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
+      var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'🎨')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
+      var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
+      var DZWELCOME='Опишите картинку для объявления — сгенерирую точно под размеры Авито. Есть образец? Прикрепите 📎 и скажите, что изменить (цвет, фон, текст, стиль).';
+      say('assistant',DZWELCOME);
+      function fnameFor(idx){return mode==='banner'?('avito_banner_'+(idx===0?'pc_1202x436':'mobile_1242x936')+'.jpg'):'avito_1280x960.jpg';}
+      async function gen(promptText,fl){
+        add('user',te(promptText)+(fl?' <span style="opacity:.65">📎 '+te(fl.name)+'</span>':''));
+        var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');
+        var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);if(fl)fd.append('file',fl);
+        var h={};if(token)h['X-Auth-Token']=token;
+        try{
+          var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});
+          var d=await r.json();t.remove();var imgs=d.images||[];
+          if(d.warning){say('assistant',d.warning);}
+          if(imgs.length){
+            imgs.forEach(function(im,idx){add('assistant','<a class="dlfile" download="'+fnameFor(idx)+'" href="'+im.url+'">📥 Скачать без сжатия · '+te(im.label)+'</a><img src="'+im.url+'" alt="'+te(im.label)+'" style="margin-top:9px">','dz-msg');});
+            var ctl=add('assistant','<div style="font-size:13.5px;margin-bottom:3px"><b>Промпт:</b> '+te(promptText)+'</div><div style="color:var(--muted);font-size:13px;margin:6px 0 11px">Напишите в чат, если нужно изменить что-то ещё.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🔄 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
+            ctl.querySelector('.r-repeat').addEventListener('click',function(){gen(promptText,fl);});
+            ctl.querySelector('.r-restart').addEventListener('click',function(){chat.innerHTML='';att.clear();say('assistant',DZWELCOME);});
+          } else { say('assistant',d.error||'Не удалось сгенерировать'); }
+        }catch(e){t.remove();say('assistant','Ошибка генерации');}
+      }
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;await gen(v,fl);att.clear();btn.disabled=false;ta.focus();});
+    }
+  }
+  var HOW=[
+    {ic:'🦉',name:'Сократ-консультант',free:true,steps:{any:'Просто напишите свой вопрос по Авито в чате слева — отвечу бесплатно, 24/7. Регистрация и оплата не нужны.'}},
+    {ic:'🎨',name:'Дизайнер — картинки и баннеры',steps:{
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху (почта + пароль).','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Дизайнер».','Выберите режим: «Картинка для объявления» (1280×960, формат Авито 4:3) или «Баннер профиля» (ПК + моб).','Опишите картинку — получите готовое изображение точно под размеры Авито.'],
+      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Дизайнер» → выберите режим → опишите картинку → готовое изображение.'],
+      sub:['Откройте вкладку «Дизайнер» → выберите режим (объявление / баннер профиля) → опишите картинку → получите готовое изображение под размеры Авито.']}},
+    {ic:'✍️',name:'Копирайтер — тексты объявлений',steps:{
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху.','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Копирайтер».','Напишите, что продаёте — получите готовый продающий текст: заголовок + структура + ключи под поиск Авито.'],
+      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Копирайтер» → напишите что продаёте → готовый текст объявления.'],
+      sub:['Откройте вкладку «Копирайтер» → напишите что продаёте → получите готовый текст объявления под Авито.']}},
+    {ic:'📦',name:'Автозагрузка — работа с фидом',steps:{
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху.','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Автозагрузка».','Загрузите свой xlsx-фид (или создайте объявление с нуля командой).','Командами: «размножь по городам», «поставь цену», «перепиши заголовки по правилам» → скачайте готовый файл.','Добавите свои ключи Avito API — проверю отчёты автозагрузки с ошибками и поставлю цену за просмотр (CPV) на объявления.'],
+      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Автозагрузка» → загрузите фид → командами правьте/масштабируйте → скачайте готовый файл.'],
+      sub:['Откройте вкладку «Автозагрузка» → загрузите xlsx или создайте с нуля → командами масштабируйте по городам / меняйте цены / правьте тексты → скачайте. С ключами Avito API — отчёты + цена за просмотр.']}}
+  ];
+  function renderHow(){
+    var st=state.subscribed?'sub':(state.auth?'nosub':'noauth');
+    document.getElementById('hmSub').textContent = state.subscribed?'Подписка активна — все инструменты открыты. Жмите на функцию для инструкции.':(state.auth?'Вы вошли. Осталось оплатить подписку, чтобы открыть инструменты.':'Консультация бесплатна и без входа. Инструменты — по подписке после регистрации.');
+    var list=document.getElementById('hmList');
+    list.innerHTML=HOW.map(function(fe){
+      var body = fe.steps.any ? '<p>'+te(fe.steps.any)+'</p>' : '<ol>'+(fe.steps[st]||[]).map(function(x){return '<li>'+te(x)+'</li>';}).join('')+'</ol>';
+      return '<div class="hitem"><div class="hhead">'+fe.ic+' '+te(fe.name)+(fe.free?' <span class="hfree">бесплатно</span>':'')+'<span class="ha">▾</span></div><div class="hbody">'+body+'</div></div>';
+    }).join('');
+    list.querySelectorAll('.hitem').forEach(function(it){it.querySelector('.hhead').addEventListener('click',function(){it.classList.toggle('op');});});
+  }
+  $('#howBtn').addEventListener('click',function(){renderHow();$('#howModal').classList.add('on');});
+  $('#hmClose').addEventListener('click',function(){$('#howModal').classList.remove('on');});
+  $('#howModal').addEventListener('click',function(e){if(e.target.id==='howModal')$('#howModal').classList.remove('on');});
+  renderModal();renderAuthbox();renderGates();refresh();handleReturn();
+})();
+</script>
+</body>
+</html>

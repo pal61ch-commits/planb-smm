@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Сократ — ИИ-авитолог Plan B · Бесплатная консультация по Авито</title>
 <meta name="description" content="Сократ — бесплатный ИИ-авитолог Plan B. Консультация по Авито 24/7: выдача, тексты, фото, продвижение. Платные инструменты: дизайнер, копирайтер, автозагрузка.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,14 +85,14 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
 .composer{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--gb);align-items:flex-end;background:rgba(255,255,255,.02)}
 .composer textarea{flex:1;background:var(--glass2);border:1px solid var(--gb);border-radius:13px;color:var(--text);
-  font-family:'Inter';font-size:14.5px;padding:13px 15px;resize:none;max-height:130px;line-height:1.4;transition:border-color .2s}
+  font-family:'Inter';font-size:16px;padding:13px 15px;resize:none;max-height:130px;line-height:1.4;transition:border-color .2s}
 .composer textarea::placeholder{color:#6c6c74}
 .composer textarea:focus{outline:none;border-color:var(--gb2)}
 .send{background:var(--yellow);color:#15140c;border:none;border-radius:13px;padding:13px 22px;font-size:17px;font-weight:800;
   cursor:pointer;transition:.2s var(--ease);align-self:stretch}
 .send:hover{background:var(--yellow2);transform:translateY(-1px)}
 .send:disabled{opacity:.5;cursor:wait;transform:none}
-.foot{font-size:12px;color:#67676e;text-align:center;padding:13px 20px;border-top:1px solid var(--gb)}
+.foot{font-size:12px;color:#8a8a93;text-align:center;padding:13px 20px;border-top:1px solid var(--gb)}
 .foot a{color:var(--muted)}
 
 /* paywall (платные вкладки) */
@@ -113,7 +113,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .gbtn.pay{background:var(--yellow);color:#15140c;border-color:transparent;box-shadow:0 10px 28px -8px rgba(245,196,0,.5)}
 .gbtn.pay:hover{background:var(--yellow2)}
 .gbtn:disabled{opacity:.6;cursor:wait;transform:none}
-.ghint{font-size:12.5px;color:#67676e;max-width:460px}
+.ghint{font-size:12.5px;color:#8a8a93;max-width:460px}
 .subactive{font-family:'Manrope';font-weight:700;font-size:18px;color:#3ad07a}
 
 /* modal вход/регистрация */
@@ -124,7 +124,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .mcard .msub{font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5}
 .mcard label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
 .mcard input{width:100%;background:var(--glass2);border:1px solid var(--gb);border-radius:12px;color:var(--text);
-  font-family:'Inter';font-size:15px;padding:13px 14px;transition:border-color .2s}
+  font-family:'Inter';font-size:16px;padding:13px 14px;transition:border-color .2s}
 .mcard input:focus{outline:none;border-color:var(--gb2)}
 .msubmit{width:100%;margin-top:20px;padding:14px;border-radius:13px;background:var(--yellow);color:#15140c;border:none;
   font-family:'Manrope';font-weight:800;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
@@ -203,12 +203,39 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .fbtn.support{background:var(--yellow);color:#15140c;border-color:transparent;font-weight:700}
 .fbtn.support:hover{background:var(--yellow2)}
 .sitefoot .fc{color:#9b9ba3;font-size:12px;margin-top:2px;text-align:center}
-@media(max-width:560px){.wrap{padding:18px 14px}.head h1{font-size:23px}.role{font-size:15px}.orb{width:48px;height:48px}.tab{padding:10px 13px;font-size:13px}.lockwrap{padding:36px 22px}.authchip{max-width:120px}}
+/* ===== МОБИЛКА: чат-экран как в приложении — композер сразу внизу, без iOS-зума, футер доскроллом ===== */
+@media(max-width:640px){
+  .wrap{min-height:var(--vvh,100dvh);max-width:none;margin:0;
+    padding:calc(env(safe-area-inset-top) + 8px) 12px 0;display:flex;flex-direction:column}
+  .head{flex:none;margin-bottom:10px}
+  .head h1{font-size:22px}.role{font-size:14px}.orb{width:44px;height:44px}.orb span{font-size:24px}
+  .authbtn{padding:8px 12px;font-size:12.5px}.authchip{max-width:110px}
+  .tabs{flex:none;flex-wrap:nowrap;overflow-x:auto;gap:7px;margin-bottom:10px;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;padding:9px 13px;font-size:13px}
+  .howbtn{flex:none;margin-bottom:10px}
+  .panel.on{flex:1;min-height:0;display:flex;flex-direction:column}
+  .card{flex:1;min-height:0}
+  .chat,.toolchat{height:auto;flex:1;min-height:0;padding:15px;overscroll-behavior:contain}
+  .composer{flex:none;padding:11px 12px;gap:8px}
+  .send{padding:12px 16px;font-size:16px}
+  .foot{flex:none;font-size:11px;padding:9px 14px calc(9px + env(safe-area-inset-bottom))}
+  .lockwrap{padding:30px 20px}.lockwrap h2{font-size:24px}.lockwrap .what{font-size:14.5px}
+  .price b{font-size:34px}
+  .modal{padding:14px}.mcard{padding:26px 20px}
+  .sitefoot{margin-top:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  #toast{bottom:calc(20px + env(safe-area-inset-bottom))}
+}
 </style>
 </head>
 <body>
 <div class="bgimg"></div>
 <canvas id="sky"></canvas>
+<script>
+/* Мобилка: высота экрана = ВИДИМАЯ часть (visualViewport). На iOS клавиатура НЕ ужимает layout viewport —
+   без этого композер уходит под клаву и «всё съезжает». Тут --vvh ужимается → композер всегда виден. */
+(function(){var vv=window.visualViewport,r=document.documentElement;function a(){var h=vv?vv.height:window.innerHeight;r.style.setProperty('--vvh',h+'px');}a();if(vv){vv.addEventListener('resize',a);vv.addEventListener('scroll',a);}window.addEventListener('resize',a);window.addEventListener('orientationchange',a);})();
+</script>
 
 <main class="wrap">
   <header class="head">

@@ -212,8 +212,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   .head .sub{display:none}   /* «На связи 24/7…» — 2 лишние строки на мобилке, убираем ради места под чат */
   .head h1{font-size:21px}.role{font-size:13.5px}.orb{width:42px;height:42px}.orb span{font-size:23px}
   .authbtn{padding:8px 12px;font-size:12.5px}.authchip{max-width:110px}
-  .tabs{flex:none;flex-wrap:nowrap;overflow-x:auto;gap:7px;margin-bottom:10px;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
+  .tabs{flex:none;flex-wrap:wrap;gap:7px;margin-bottom:10px}   /* все вкладки видны (перенос на 2 ряда), без горизонт-скролла */
   .tab{flex:none;padding:9px 13px;font-size:13px}
   .howbtn{flex:none;margin-bottom:8px}
   .panel.on{flex:1;min-height:0;display:flex;flex-direction:column}
@@ -257,7 +256,6 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <button class="tab" data-tab="designer">🎨 Дизайнер <span class="lk">🔒</span></button>
     <button class="tab" data-tab="copywriter">✍️ Копирайтер <span class="lk">🔒</span></button>
     <button class="tab" data-tab="autoload">📦 Автозагрузка <span class="lk">🔒</span></button>
-    <button class="tab" data-tab="support">🛟 Поддержка <span class="free">бесплатно</span></button>
   </nav>
 
   <button class="howbtn" id="howBtn">❓ Как пользоваться Сократом</button>
@@ -365,7 +363,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-tarify.html" target="_blank" rel="noopener">📄 Тарифы</a>
       <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-oferta.html" target="_blank" rel="noopener">📃 Пользовательское соглашение</a>
       <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-privacy.html" target="_blank" rel="noopener">🔒 Политика конфиденциальности</a>
-      <a class="fbtn support" href="https://t.me/kislovkosta" target="_blank" rel="noopener">💬 Поддержка</a>
+      <button class="fbtn support" type="button" data-tab-go="support">🛟 Поддержка</button>
     </div>
     <div class="fc">Сервис «Сократ» — ИИ-авитолог</div>
   </footer>
@@ -462,7 +460,7 @@ function showTab(name){
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('on', p.dataset.panel===name); });
 }
 document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click', function(){ showTab(t.dataset.tab); }); });
-document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); showTab(a.dataset.tabGo); }); });
+document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); showTab(a.dataset.tabGo); window.scrollTo({top:0,behavior:'smooth'}); }); });
 
 /* чат Сократа → /c/sokrat/api */
 (function(){

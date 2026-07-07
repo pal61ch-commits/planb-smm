@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Plan B — продвижение на Авито. Когда план А не сработал</title>
 <meta name="description" content="Plan B — ведение Авито-кабинетов и продвижение на Авито под ключ. Объявления в ТОП, больше заявок. Официальный партнёр Авито, 8 лет. Бесплатная консультация.">
 <!-- Yandex.Metrika counter -->
@@ -180,16 +180,17 @@ a{color:inherit;text-decoration:none}
 /* ai cta (главная) + слот ассистента (стр. Сократа) */
 .ai-sec{padding:34px 0 6px}
 .ai-cta{display:flex;align-items:center;gap:34px;border-radius:26px;padding:40px 46px;border:1px solid var(--gb2)!important;background:linear-gradient(120deg,rgba(245,196,0,.13),var(--glass));transition:transform .3s var(--ease),border-color .3s;cursor:pointer;position:relative;overflow:hidden}
-.ai-cta:hover{transform:translateY(-4px);border-color:var(--yellow)!important}
+.ai-cta:hover{transform:translateY(-4px);border-color:#3ad07a!important}
 .ai-cta-txt{flex:1;min-width:0}
 .ai-badge{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--yellow);margin-bottom:14px}
-.ai-badge b{width:7px;height:7px;border-radius:50%;background:var(--yellow);box-shadow:0 0 10px var(--yellow);animation:pulse 1.8s ease-in-out infinite}
+.ai-badge b{width:7px;height:7px;border-radius:50%;background:#3ad07a;box-shadow:0 0 10px #3ad07a;animation:pulse 1.8s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.35}}
 .ai-cta h2{font-size:clamp(26px,3.8vw,40px);margin-bottom:12px}
 .ai-cta p{color:var(--muted);font-size:15.5px;max-width:640px;margin-bottom:22px}
-.ai-orb{flex:none;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,rgba(245,196,0,.36),rgba(245,196,0,.05) 70%);border:1.5px solid var(--gb2);box-shadow:0 0 50px rgba(245,196,0,.22),inset 0 0 26px rgba(245,196,0,.14);animation:float 7s ease-in-out infinite}
-.ai-orb span{font-family:'Manrope';font-weight:800;font-size:60px;color:var(--yellow);text-shadow:0 4px 22px rgba(245,196,0,.5)}
-@media(max-width:780px){.ai-cta{flex-direction:column-reverse;text-align:center;padding:34px 26px;gap:22px}.ai-cta p{margin-inline:auto}.ai-orb{width:104px;height:104px}.ai-orb span{font-size:46px}}
+.ai-owl{flex:none;width:160px;height:auto;filter:drop-shadow(0 0 28px rgba(58,208,122,.4)) drop-shadow(0 10px 26px rgba(245,196,0,.22));animation:float 7s ease-in-out infinite}
+.ai-caps{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.ai-cap{font-size:12.5px;font-weight:600;color:#dcdcd6;background:var(--glass2);border:1px solid var(--gb);border-radius:100px;padding:6px 13px;white-space:nowrap}
+@media(max-width:780px){.ai-cta{flex-direction:column-reverse;text-align:center;padding:32px 22px;gap:18px}.ai-cta p{margin-inline:auto}.ai-caps{justify-content:center}.ai-owl{width:124px}}
 .sokrat-slot{border-radius:26px;padding:60px 40px;text-align:center;border:1.5px dashed var(--gb2)!important;display:flex;flex-direction:column;align-items:center;gap:16px;min-height:340px;justify-content:center;background:linear-gradient(150% 140% at 50% 0%,rgba(245,196,0,.06),var(--glass))}
 .sokrat-slot h2{font-size:clamp(24px,3.4vw,34px)}
 .sokrat-slot p{color:var(--muted);max-width:540px;font-size:15px}
@@ -278,10 +279,16 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
       <div class="ai-cta-txt">
         <span class="ai-badge"><b></b>Новинка · работает 24/7</span>
         <h2>ИИ-авитолог <span class="yel">Сократ</span></h2>
-        <p>Бесплатная консультация по Авито в любое время. <b class="yel">Дешевле живого авитолога в 10 раз</b> — отвечает мгновенно, без зарплаты, выходных и отпусков. Спросите что угодно про продвижение, объявления и кабинет.</p>
-        <span class="btn btn-y">Познакомиться с Сократом →</span>
+        <p>Бесплатная консультация по Авито в любое время — <b class="yel">дешевле живого авитолога в 10 раз</b>. Отвечает мгновенно, без зарплаты, выходных и отпусков.</p>
+        <div class="ai-caps">
+          <span class="ai-cap">💬 Консультация</span>
+          <span class="ai-cap">🎨 Картинки и инфографика</span>
+          <span class="ai-cap">✍️ Продающие тексты</span>
+          <span class="ai-cap">📤 Автозагрузка</span>
+        </div>
+        <span class="btn btn-y">Открыть Сократа →</span>
       </div>
-      <div class="ai-orb" aria-hidden="true"><span>Σ</span></div>
+      <img class="ai-owl" src="logos/owl-v4-cut.png" alt="Сократ — ИИ-авитолог" loading="lazy">
     </a>
   </div>
 </section>

@@ -700,21 +700,26 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
       async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','Загрузил: '+d.summary+' Что сделать?');}else{say('assistant',d.error||'Не смог прочитать файл');}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
       form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.ready)dlBubble();}btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
-      var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form);
+      var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form), curImg=null;
       ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
       var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'🎨')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
       var DZWELCOME='Опишите картинку для объявления — сгенерирую точно под размеры Авито. Есть образец? Прикрепите 📎 и скажите, что изменить (цвет, фон, текст, стиль).';
+      var DZNEWTASK='Отлично, переходим к следующей задаче 🎨 Напишите, что сгенерировать, — или прикрепите 📎 своё фото и скажите, что в нём поменять или добавить.';
       say('assistant',DZWELCOME);
       function fnameFor(idx){return mode==='banner'?('avito_banner_'+(idx===0?'pc_1202x436':'mobile_1242x936')+'.jpg'):'avito_1280x960.jpg';}
       function dzUrl(u){u=String(u||'');if(/^(https?:|data:image\/)/.test(u))return u;if(u.charAt(0)==='/')return SOK_API_BASE+u;return '';}
       async function dzDownload(url,fname){try{var r=await fetch(url);var bl=await r.blob();var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},5000);}catch(e){toast('Не удалось скачать');}}
       function dzShow(im,idx){var u=dzUrl(im.url);if(!u)return;var m=add('assistant','<a class="dlfile" href="#">📥 Скачать без сжатия · '+te(im.label||'')+'</a><img src="'+u.replace(/"/g,'%22')+'" alt="'+te(im.label||'')+'" style="margin-top:9px">','dz-msg');var a=m.querySelector('.dlfile');if(a)a.addEventListener('click',function(ev){ev.preventDefault();dzDownload(u,fnameFor(idx));});}
       (async function(){try{var r=await api('/c/sokrat/tool/designer/history',{});var hs=(r.d&&r.d.images)||[];if(hs.length){add('assistant','<span style="color:var(--muted);font-size:12.5px">Ваши недавние картинки (сохранены на сервере):</span>');hs.forEach(function(im,i){dzShow(im,i);});}}catch(e){}})();
+      async function asRefFile(im){var r=await fetch(dzUrl(im.url));var b=await r.blob();return new File([b],'base.png',{type:'image/png'});}
       async function gen(promptText,fl){
+        var baseImg=curImg;                          // картинка-основа ДО этого шага (её и правим); null = новая генерация
         add('user',te(promptText)+(fl?' <span style="opacity:.65">📎 '+te(fl.name)+'</span>':''));
         var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');
-        var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);if(fl)fd.append('file',fl);
+        var refFile=fl;                              // приоритет — фото, прикреплённое клиентом
+        if(!refFile&&baseImg){try{refFile=await asRefFile(baseImg);}catch(e){refFile=null;}}   // иначе правим ТЕКУЩУЮ картинку
+        var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);if(refFile)fd.append('file',refFile);
         var h={};if(token)h['X-Auth-Token']=token;
         try{
           var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});
@@ -722,9 +727,10 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
           if(d.warning){say('assistant',d.warning);}
           if(imgs.length){
             imgs.forEach(function(im,idx){dzShow(im,idx);});
-            var ctl=add('assistant','<div style="font-size:13.5px;margin-bottom:3px"><b>Промпт:</b> '+te(promptText)+'</div><div style="color:var(--muted);font-size:13px;margin:6px 0 11px">Напишите в чат, если нужно изменить что-то ещё.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🔄 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
-            ctl.querySelector('.r-repeat').addEventListener('click',function(){gen(promptText,fl);});
-            ctl.querySelector('.r-restart').addEventListener('click',function(){chat.innerHTML='';att.clear();say('assistant',DZWELCOME);});
+            curImg=imgs[0];                          // дальнейшие правки идут по этой свежей картинке
+            var ctl=add('assistant','<div style="color:var(--muted);font-size:13px;margin:2px 0 11px">Что ещё изменить в этой картинке? Напишите — уберу, добавлю, поменяю цвет или надпись. Довольны — скачайте её кнопкой над картинкой. Для новой картинки — «Начать заново».</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🆕 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
+            ctl.querySelector('.r-repeat').addEventListener('click',function(){curImg=baseImg;gen(promptText,fl);});
+            ctl.querySelector('.r-restart').addEventListener('click',function(){curImg=null;att.clear();mode='listing';ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-mode')==='listing');});say('assistant',DZNEWTASK);var ta=form.querySelector('textarea');if(ta){ta.value='';ta.focus();}});
           } else { say('assistant',d.error||'Не удалось сгенерировать'); }
         }catch(e){t.remove();say('assistant','Ошибка генерации');}
       }

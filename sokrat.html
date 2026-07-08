@@ -707,6 +707,10 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
       var DZWELCOME='Опишите картинку для объявления — сгенерирую точно под размеры Авито. Есть образец? Прикрепите 📎 и скажите, что изменить (цвет, фон, текст, стиль).';
       say('assistant',DZWELCOME);
       function fnameFor(idx){return mode==='banner'?('avito_banner_'+(idx===0?'pc_1202x436':'mobile_1242x936')+'.jpg'):'avito_1280x960.jpg';}
+      function dzUrl(u){u=String(u||'');if(/^(https?:|data:image\/)/.test(u))return u;if(u.charAt(0)==='/')return SOK_API_BASE+u;return '';}
+      async function dzDownload(url,fname){try{var r=await fetch(url);var bl=await r.blob();var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},5000);}catch(e){toast('Не удалось скачать');}}
+      function dzShow(im,idx){var u=dzUrl(im.url);if(!u)return;var m=add('assistant','<a class="dlfile" href="#">📥 Скачать без сжатия · '+te(im.label||'')+'</a><img src="'+u.replace(/"/g,'%22')+'" alt="'+te(im.label||'')+'" style="margin-top:9px">','dz-msg');var a=m.querySelector('.dlfile');if(a)a.addEventListener('click',function(ev){ev.preventDefault();dzDownload(u,fnameFor(idx));});}
+      (async function(){try{var r=await api('/c/sokrat/tool/designer/history',{});var hs=(r.d&&r.d.images)||[];if(hs.length){add('assistant','<span style="color:var(--muted);font-size:12.5px">Ваши недавние картинки (сохранены на сервере):</span>');hs.forEach(function(im,i){dzShow(im,i);});}}catch(e){}})();
       async function gen(promptText,fl){
         add('user',te(promptText)+(fl?' <span style="opacity:.65">📎 '+te(fl.name)+'</span>':''));
         var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');
@@ -717,7 +721,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
           var d=await r.json();t.remove();var imgs=d.images||[];
           if(d.warning){say('assistant',d.warning);}
           if(imgs.length){
-            imgs.forEach(function(im,idx){var u=String(im.url||'');if(!/^(https?:|data:image\/|\/)/.test(u)){return;}var uh=u.replace(/"/g,'%22');add('assistant','<a class="dlfile" download="'+fnameFor(idx)+'" href="'+uh+'">📥 Скачать без сжатия · '+te(im.label)+'</a><img src="'+uh+'" alt="'+te(im.label)+'" style="margin-top:9px">','dz-msg');});
+            imgs.forEach(function(im,idx){dzShow(im,idx);});
             var ctl=add('assistant','<div style="font-size:13.5px;margin-bottom:3px"><b>Промпт:</b> '+te(promptText)+'</div><div style="color:var(--muted);font-size:13px;margin:6px 0 11px">Напишите в чат, если нужно изменить что-то ещё.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🔄 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
             ctl.querySelector('.r-repeat').addEventListener('click',function(){gen(promptText,fl);});
             ctl.querySelector('.r-restart').addEventListener('click',function(){chat.innerHTML='';att.clear();say('assistant',DZWELCOME);});

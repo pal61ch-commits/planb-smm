@@ -24,6 +24,7 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
 h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;font-weight:800}
 .yel{color:var(--yellow)}
+.hlogo{height:54px;width:auto;flex:none;display:block}
 .bgimg{position:fixed;inset:-2%;z-index:0;background:#04040a url('/c/sokrat-bg.jpg') center/cover no-repeat;animation:kb 75s ease-in-out infinite alternate}
 @keyframes kb{from{transform:scale(1.04)}to{transform:scale(1.14) translate(-1.5%,-1%)}}
 #sky{position:fixed;inset:0;z-index:0;pointer-events:none;display:block}
@@ -39,7 +40,6 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   animation:float 7s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-6px)}}
 .orb span{font-family:'Manrope';font-weight:800;font-size:30px;color:var(--yellow)}
-.hlogo{height:56px;width:auto;flex:none;display:block}
 .head h1{font-size:28px;line-height:1.04}
 .role{font-family:'Manrope';font-weight:800;font-size:16.5px;color:var(--yellow);letter-spacing:.01em;margin-top:3px}
 .head .sub{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px;margin-top:6px}
@@ -174,7 +174,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .attach{background:var(--glass2);border:1px solid var(--gb);color:var(--muted);border-radius:13px;height:46px;min-width:46px;font-size:18px;cursor:pointer;transition:.15s;flex-shrink:0}
 .attach:hover{border-color:var(--yellow);color:var(--yellow)}
 .chip{display:flex;align-items:center;gap:9px;margin:0 20px 4px;padding:7px 11px;font-size:12.5px;background:var(--glass2);border:1px solid var(--gb2);border-radius:11px;color:var(--text)}
-.chip[hidden]{display:none}   /* класс .chip перебивал атрибут hidden → пустая рамка над полем. Прячем по-настоящему */
+.chip[hidden]{display:none}
 .chip img{width:34px;height:34px;object-fit:cover;border-radius:7px;flex-shrink:0}
 .chip .chipx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0 2px;flex-shrink:0}
 .chip .chipx:hover{color:#ff7a7a}
@@ -212,13 +212,13 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 @media(max-width:640px){
   .wrap{min-height:var(--vvh,100dvh);max-width:none;margin:0;
     padding:calc(env(safe-area-inset-top) + 8px) 12px 0;display:flex;flex-direction:column}
-  .head{flex:none;margin-bottom:8px}
-  .head .sub{display:none}   /* «На связи 24/7…» — 2 лишние строки на мобилке, убираем ради места под чат */
-  .head h1{font-size:21px}.role{font-size:13.5px}.orb{width:42px;height:42px}.orb span{font-size:23px}.hlogo{height:46px}
+  .head{flex:none;margin-bottom:10px}
+  .head h1{font-size:22px}.role{font-size:14px}.orb{width:44px;height:44px}.orb span{font-size:24px}
   .authbtn{padding:8px 12px;font-size:12.5px}.authchip{max-width:110px}
-  .tabs{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}   /* 2×2 равные вкладки — симметрично на любом экране */
-  .tab{justify-content:center;padding:11px 8px;font-size:13px;min-width:0}
-  .howbtn{flex:none;margin-bottom:8px}
+  .tabs{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;padding:9px 13px;font-size:13px}
+  .howbtn{flex:none;margin-bottom:10px}
   .panel.on{flex:1;min-height:0;display:flex;flex-direction:column}
   .card{flex:1;min-height:0}
   .chat,.toolchat{height:auto;flex:1;min-height:0;padding:15px;overscroll-behavior:contain}
@@ -245,7 +245,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 <main class="wrap">
   <header class="head">
     <div class="hl">
-      <img class="hlogo" src="sokrat-owl.png" alt="Сократ — ИИ-авитолог">
+      <img class="hlogo" src="https://planb-prodvizhenie.ru/sokrat-owl.png" alt="Сократ — ИИ-авитолог">
       <div>
         <h1>Сократ</h1>
         <div class="role">ИИ-авитолог</div>
@@ -270,24 +270,12 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="chat" id="chat"></div>
       <div class="chip" id="cChip" hidden></div>
       <form class="composer" id="form" autocomplete="off">
-        <textarea id="input" rows="1" placeholder="Спросите про Авито…"></textarea>
+        <textarea id="input" rows="1" placeholder="Спросите Сократа про Авито — или пришлите скриншот экрана 📎"></textarea>
         <button type="button" class="attach" id="cAttach" title="Прикрепить скриншот">📎</button>
         <input type="file" id="cFile" hidden accept="image/*">
         <button class="send" id="send" type="submit" aria-label="Отправить">▶</button>
       </form>
       <div class="foot">Сократ — бесплатный ИИ-авитолог Plan B. Не раздаёт гарантий и не выдумывает цифры · <a href="#" data-tab-go="designer">платные инструменты ↑</a></div>
-    </div>
-  </section>
-
-  <!-- ПОДДЕРЖКА — бесплатная: ИИ помогает по сервису и принимает баги (сам не чинит) -->
-  <section class="panel" data-panel="support">
-    <div class="card">
-      <div class="chat" id="sup-chat"></div>
-      <form class="composer" id="sup-form" autocomplete="off">
-        <textarea id="sup-input" rows="1" placeholder="Опишите вопрос или проблему…"></textarea>
-        <button class="send" id="sup-send" type="submit" aria-label="Отправить">▶</button>
-      </form>
-      <div class="foot">Поддержка Сократа · вопросы по сервису и сообщения об ошибках</div>
     </div>
   </section>
 
@@ -367,7 +355,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-tarify.html" target="_blank" rel="noopener">📄 Тарифы</a>
       <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-oferta.html" target="_blank" rel="noopener">📃 Пользовательское соглашение</a>
       <a class="fbtn" href="https://planb-prodvizhenie.ru/sokrat-privacy.html" target="_blank" rel="noopener">🔒 Политика конфиденциальности</a>
-      <button class="fbtn support" type="button" data-tab-go="support">🛟 Поддержка</button>
+      <a class="fbtn support" href="https://t.me/kislovkosta" target="_blank" rel="noopener">💬 Поддержка</a>
     </div>
     <div class="fc">Сервис «Сократ» — ИИ-авитолог</div>
   </footer>
@@ -464,7 +452,7 @@ function showTab(name){
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('on', p.dataset.panel===name); });
 }
 document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click', function(){ showTab(t.dataset.tab); }); });
-document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); showTab(a.dataset.tabGo); window.scrollTo({top:0,behavior:'smooth'}); }); });
+document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); showTab(a.dataset.tabGo); }); });
 
 /* чат Сократа → /c/sokrat/api */
 (function(){
@@ -476,10 +464,10 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   try{sess=localStorage.getItem('sok_sess')||'';}catch(e){}
   if(!sess){sess='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);try{localStorage.setItem('sok_sess',sess);}catch(e){}}
   try{hist=JSON.parse(localStorage.getItem('sok_hist')||'[]');}catch(e){hist=[];}
-  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function linkify(s){
     s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$1</a>');
-    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}return pre+'<a href="'+url+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+url+'</a>'+t;});
+    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}var h=url.replace(/"/g,'%22').replace(/'/g,'%27');var v=url.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});return pre+'<a href="'+h+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+v+'</a>'+t;});
     return s;
   }
   function bubble(role,text,image){
@@ -519,46 +507,12 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
 })();
 
-/* чат Поддержки → /c/sokrat/support (консультация по сервису + приём багов) */
-(function(){
-  const API=SOK_API_BASE+'/c/sokrat/support';
-  const chat=document.getElementById('sup-chat'), form=document.getElementById('sup-form'),
-        input=document.getElementById('sup-input'), send=document.getElementById('sup-send');
-  if(!chat||!form) return;
-  const WELCOME='Здравствуйте! Это поддержка Сократа 🛟\n\nПомогу разобраться с сервисом (вкладки, вход, оплата) и приму сообщение об ошибке, если что-то работает не так. Опишите вопрос или проблему — если это баг, коротко уточню детали и передам в техподдержку.';
-  let sess='',hist=[];
-  try{sess=localStorage.getItem('sup_sess')||'';}catch(e){}
-  if(!sess){sess='u'+Date.now().toString(36)+Math.random().toString(36).slice(2,9);try{localStorage.setItem('sup_sess',sess);}catch(e){}}
-  try{hist=JSON.parse(localStorage.getItem('sup_hist')||'[]');}catch(e){hist=[];}
-  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-  function fmt(s){s=esc(s).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)/g,'$1<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$2</a>');return s;}
-  function bubble(role,text){const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'🛟')+'</div><div class="bub">'+fmt(text)+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;}
-  function save(){try{localStorage.setItem('sup_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
-  if(hist.length){hist.forEach(m=>bubble(m.role,m.content));}else{bubble('assistant',WELCOME);}
-  input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
-  let busy=false;
-  async function ask(text){
-    if(busy)return;busy=true;send.disabled=true;
-    bubble('user',text);hist.push({role:'user',content:text});save();
-    const t=document.createElement('div');t.className='msg s';t.innerHTML='<div class="av">🛟</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
-    try{
-      const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sess:sess,message:text})});
-      const d=await r.json();t.remove();
-      const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
-      bubble('assistant',reply);hist.push({role:'assistant',content:reply});save();
-    }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
-    busy=false;send.disabled=false;input.focus();
-  }
-  form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v)return;input.value='';input.style.height='auto';ask(v);});
-  input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
-})();
-
 /* ── авторизация + гейт платных вкладок ── */
 (function(){
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
   let token='', state={auth:false,subscribed:false,until:null,email:''}, mode='login';
   try{token=localStorage.getItem('sok_auth')||'';}catch(e){}
-  function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+  function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function fmtDate(iso){try{return new Date(iso).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
   function setToken(t){token=t||'';try{t?localStorage.setItem('sok_auth',t):localStorage.removeItem('sok_auth');}catch(e){}}
 
@@ -711,11 +665,11 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
   });
 
   var _toolInit={};
-  function te(s){return (s||'').replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function te(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function mdbold(s){return s.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');}
   function linkify(s){
     s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$1</a>');
-    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}return pre+'<a href="'+url+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+url+'</a>'+t;});
+    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}var h=url.replace(/"/g,'%22').replace(/'/g,'%27');var v=url.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});return pre+'<a href="'+h+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+v+'</a>'+t;});
     return s;
   }
   function fmt(s){return mdbold(linkify(te(s)));}
@@ -763,7 +717,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
           var d=await r.json();t.remove();var imgs=d.images||[];
           if(d.warning){say('assistant',d.warning);}
           if(imgs.length){
-            imgs.forEach(function(im,idx){add('assistant','<a class="dlfile" download="'+fnameFor(idx)+'" href="'+im.url+'">📥 Скачать без сжатия · '+te(im.label)+'</a><img src="'+im.url+'" alt="'+te(im.label)+'" style="margin-top:9px">','dz-msg');});
+            imgs.forEach(function(im,idx){var u=String(im.url||'');if(!/^(https?:|data:image\/|\/)/.test(u)){return;}var uh=u.replace(/"/g,'%22');add('assistant','<a class="dlfile" download="'+fnameFor(idx)+'" href="'+uh+'">📥 Скачать без сжатия · '+te(im.label)+'</a><img src="'+uh+'" alt="'+te(im.label)+'" style="margin-top:9px">','dz-msg');});
             var ctl=add('assistant','<div style="font-size:13.5px;margin-bottom:3px"><b>Промпт:</b> '+te(promptText)+'</div><div style="color:var(--muted);font-size:13px;margin:6px 0 11px">Напишите в чат, если нужно изменить что-то ещё.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🔄 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
             ctl.querySelector('.r-repeat').addEventListener('click',function(){gen(promptText,fl);});
             ctl.querySelector('.r-restart').addEventListener('click',function(){chat.innerHTML='';att.clear();say('assistant',DZWELCOME);});

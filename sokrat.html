@@ -447,12 +447,26 @@ try{sokTrack('visit');}catch(e){}
 })();
 
 /* вкладки */
+// Доскролл в КОНЕЦ диалога: работает и когда скроллится сам чат (десктоп, overflow), и когда
+// скроллится вся СТРАНИЦА (мобилка — чат тянется во всю высоту). Поэтому и scrollTop, и scrollIntoView.
+// Доскролл в КОНЕЦ: и внутренний чат (десктоп, overflow), и страницу (мобилка — чат во всю высоту, скроллится body).
+// Повторяем сразу + на следующем кадре + через 120мс — ловим поздний layout (смена вкладки, загрузка картинки).
+function _scrEnd(el){ if(el)el.scrollTop=el.scrollHeight; var se=document.scrollingElement||document.documentElement; if(se)se.scrollTop=se.scrollHeight; }
+function scrollToEnd(el){
+  _scrEnd(el); requestAnimationFrame(function(){ _scrEnd(el); });
+  [30,120,300,600].forEach(function(ms){ setTimeout(function(){ _scrEnd(el); }, ms); });   // ловим поздний layout
+  if(el){ el.querySelectorAll('img').forEach(function(im){ if(!im.complete) im.addEventListener('load', function(){ _scrEnd(el); }, {once:true}); }); }  // картинки истории догружаются лениво → доскроллить когда догрузятся
+}
 function showTab(name){
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('on', t.dataset.tab===name); });
   document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('on', p.dataset.panel===name); });
+  try{ localStorage.setItem('sok_tab', name); }catch(e){}                 // запомнить вкладку — пережить рефреш
+  var cid={sokrat:'chat',designer:'dz-chat',copywriter:'cw-chat',autoload:'al-chat'}[name];   // показать КОНЕЦ диалога, не начало
+  if(cid) scrollToEnd(document.getElementById(cid));
 }
 document.querySelectorAll('.tab').forEach(function(t){ t.addEventListener('click', function(){ showTab(t.dataset.tab); }); });
 document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); showTab(a.dataset.tabGo); }); });
+try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.querySelector('.tab[data-tab="'+_savedTab+'"]')) showTab(_savedTab); }catch(e){}   // после рефреша остаться на своей вкладке
 
 /* чат Сократа → /c/sokrat/api */
 (function(){
@@ -710,7 +724,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
       function fnameFor(idx){return mode==='banner'?('avito_banner_'+(idx===0?'pc_1202x436':'mobile_1242x936')+'.jpg'):'avito_1280x960.jpg';}
       function dzUrl(u){u=String(u||'');if(/^(https?:|data:image\/)/.test(u))return u;if(u.charAt(0)==='/')return SOK_API_BASE+u;return '';}
       async function dzDownload(url,fname){try{var r=await fetch(url);var bl=await r.blob();var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},5000);}catch(e){toast('Не удалось скачать');}}
-      function dzShow(im,idx){var u=dzUrl(im.url);if(!u)return;var m=add('assistant','<a class="dlfile" href="#">📥 Скачать без сжатия · '+te(im.label||'')+'</a><img src="'+u.replace(/"/g,'%22')+'" alt="'+te(im.label||'')+'" style="margin-top:9px">','dz-msg');var a=m.querySelector('.dlfile');if(a)a.addEventListener('click',function(ev){ev.preventDefault();dzDownload(u,fnameFor(idx));});}
+      function dzShow(im,idx){var u=dzUrl(im.url);if(!u)return;var m=add('assistant','<a class="dlfile" href="#">📥 Скачать без сжатия · '+te(im.label||'')+'</a><img src="'+u.replace(/"/g,'%22')+'" alt="'+te(im.label||'')+'" style="margin-top:9px">','dz-msg');var _img=m.querySelector('img');if(_img)_img.addEventListener('load',function(){scrollToEnd(chat);});var a=m.querySelector('.dlfile');if(a)a.addEventListener('click',function(ev){ev.preventDefault();dzDownload(u,fnameFor(idx));});}
       (async function(){try{var r=await api('/c/sokrat/tool/designer/history',{});var hs=(r.d&&r.d.images)||[];if(hs.length){add('assistant','<span style="color:var(--muted);font-size:12.5px">Ваши недавние картинки (сохранены на сервере):</span>');hs.forEach(function(im,i){dzShow(im,i);});}}catch(e){}})();
       async function asRefFile(im){var r=await fetch(dzUrl(im.url));var b=await r.blob();return new File([b],'base.png',{type:'image/png'});}
       async function gen(promptText,fl){
@@ -731,6 +745,7 @@ document.querySelectorAll('[data-tab-go]').forEach(function(a){ a.addEventListen
             var ctl=add('assistant','<div style="color:var(--muted);font-size:13px;margin:2px 0 11px">Что ещё изменить в этой картинке? Напишите — уберу, добавлю, поменяю цвет или надпись. Довольны — скачайте её кнопкой над картинкой. Для новой картинки — «Начать заново».</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🆕 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
             ctl.querySelector('.r-repeat').addEventListener('click',function(){curImg=baseImg;gen(promptText,fl);});
             ctl.querySelector('.r-restart').addEventListener('click',function(){curImg=null;att.clear();mode='listing';ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-mode')==='listing');});say('assistant',DZNEWTASK);var ta=form.querySelector('textarea');if(ta){ta.value='';ta.focus();}});
+            scrollToEnd(chat);                        // сразу к кнопкам/картинке (img.onload доскроллит точнее)
           } else { say('assistant',d.error||'Не удалось сгенерировать'); }
         }catch(e){t.remove();say('assistant','Ошибка генерации');}
       }

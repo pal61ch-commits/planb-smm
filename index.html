@@ -140,25 +140,39 @@ a{color:inherit;text-decoration:none}
 .step h4{font-size:17px;margin-bottom:6px;font-weight:700}
 .step p{color:var(--muted);font-size:13.5px}
 
-/* cases — свайп-карусель */
+/* cases — свайп-карусель обложек + лайтбокс со скринами статистики */
 .cases-wrap{position:relative}
-.cases{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px 2px}
+.cases{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px 2px}
 .cases::-webkit-scrollbar{display:none}
-.cases .ccard{flex:0 0 clamp(282px,84vw,344px);scroll-snap-align:start}
+.cases .ccard{flex:0 0 clamp(238px,74vw,286px);scroll-snap-align:start}
 .cases-nav{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:22px}
 .cnav{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--glass2);border:1px solid var(--gb);color:var(--text);font-family:'Manrope';font-weight:700;font-size:23px;line-height:1;padding-bottom:3px;transition:.22s var(--ease)}
 .cnav:hover:not(:disabled){border-color:var(--yellow);color:var(--yellow);transform:translateY(-2px)}
 .cnav:disabled{opacity:.3;cursor:default}
 .cases-hint{color:var(--muted);font-size:12.5px;font-weight:600}
-.ccard{border-radius:20px;overflow:hidden;transition:.3s}
+.ccard{border-radius:20px;overflow:hidden;transition:transform .3s var(--ease),border-color .3s;cursor:pointer;display:flex;flex-direction:column}
 .ccard:hover{transform:translateY(-5px);border-color:var(--gb2)}
-.ccard .h{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--yellow);font-family:'Manrope';font-weight:700;font-size:14px;border-bottom:1px solid var(--gb);background:rgba(245,196,0,.06)}
-.ccard .h .t{color:var(--muted);font-size:11px;font-weight:500}
-.ccard .b{padding:22px}
-.ccard .res{display:flex;gap:22px;margin-bottom:12px}
-.ccard .res b{display:block;font-family:'Manrope';font-weight:800;font-size:26px;color:var(--yellow);line-height:1}
-.ccard .res span{font-size:11px;color:var(--muted)}
-.ccard p{color:var(--muted);font-size:13.5px}
+.ccard:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+.ccover{position:relative;overflow:hidden;line-height:0}
+.ccover img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;transition:transform .5s var(--ease)}
+.ccard:hover .ccover img{transform:scale(1.04)}
+.cstat-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 16px;font-family:'Manrope';font-weight:700;font-size:13.5px;color:var(--yellow);background:rgba(245,196,0,.08);border-top:1px solid var(--gb)}
+.cstat-bar .arr{transition:transform .25s var(--ease)}
+.ccard:hover .cstat-bar .arr{transform:translateX(4px)}
+/* лайтбокс */
+.lbox{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px}
+.lbox[hidden]{display:none}
+.lbox-bg{position:absolute;inset:0;background:rgba(6,6,8,.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lbox-fig{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:min(94vw,560px)}
+.lbox-img{max-width:100%;max-height:80vh;border-radius:14px;box-shadow:0 30px 80px -20px rgba(0,0,0,.85);object-fit:contain}
+.lbox-cap{color:#dcdcd6;font-size:14px;text-align:center;font-weight:600;max-width:520px}
+.lbox-count{color:var(--muted);font-size:13px;font-family:'Manrope';font-weight:700}
+.lbox-x{position:absolute;top:16px;right:18px;z-index:3;width:46px;height:46px;border-radius:50%;border:1px solid var(--gb);background:var(--glass2);color:var(--text);font-size:19px;cursor:pointer;transition:.2s;backdrop-filter:blur(10px)}
+.lbox-x:hover{border-color:var(--yellow);color:var(--yellow)}
+.lbox-prev,.lbox-next{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:52px;height:52px;border-radius:50%;border:1px solid var(--gb);background:var(--glass2);color:#fff;font-family:'Manrope';font-weight:700;font-size:26px;line-height:1;padding-bottom:4px;cursor:pointer;transition:.2s;backdrop-filter:blur(10px)}
+.lbox-prev{left:16px}.lbox-next{right:16px}
+.lbox-prev:hover,.lbox-next:hover{border-color:var(--yellow);color:var(--yellow)}
+@media(max-width:640px){.lbox{padding:12px}.lbox-prev,.lbox-next{width:44px;height:44px;font-size:22px}.lbox-prev{left:6px}.lbox-next{right:6px}}
 
 /* reviews */
 .revs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -402,22 +416,22 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 <!-- CASES -->
 <section class="section" id="cases">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="kick">Кейсы</span><h2>Результаты клиентов</h2><p>Реальные проекты на ведении. Цифры до и после работы команды Plan B — листайте карточки.</p></div>
+    <div class="sec-head reveal"><span class="kick">Кейсы</span><h2>Результаты клиентов</h2><p>Реальные проекты на ведении. Тапните кейс — покажем <b style="color:var(--yellow)">настоящие скриншоты статистики</b> из кабинета Авито: было → стало.</p></div>
     <div class="cases-wrap reveal">
       <div class="cases" id="casesTrack">
-        <div class="ccard glass"><div class="h">Автостёкла MasterProfi<span class="t">Ведение + Пифагор</span></div><div class="b"><div class="res"><div><b>×73</b><span>заявок</span></div><div><b>51 ₽</b><span>за контакт</span></div></div><p>Полгода вёл сам: 68 контактов по 593 ₽. Собрали 17 продающих объявлений — стало 5 010 заявок по 51 ₽. Дешевле в 11,7 раза.</p></div></div>
-        <div class="ccard glass"><div class="h">ТНВД-насосы, вся Россия<span class="t">Ведение с декабря 2025</span></div><div class="b"><div class="res"><div><b>×8,5</b><span>доход в кабинете</span></div><div><b>×3,3</b><span>контактов</span></div></div><p>Доход в кабинете Авито вырос с 67 275 ₽ до 574 275 ₽/мес. Просмотры ×4,4, контакты 68 → 222. И это только видимое — часть продаж идёт напрямую.</p></div></div>
-        <div class="ccard glass"><div class="h">Врач-косметолог, Н. Новгород<span class="t">Запуск с нуля</span></div><div class="b"><div class="res"><div><b>110</b><span>обращений</span></div><div><b>131 ₽</b><span>за контакт</span></div></div><p>Аккаунт с нуля, ноль объявлений. За 3 недели — 3 120 просмотров и 110 обращений по 131 ₽. Клиент подтвердил: заявки живые.</p></div></div>
-        <div class="ccard glass"><div class="h">Стройуслуги, Андрей<span class="t">Год к году</span></div><div class="b"><div class="res"><div><b>×6</b><span>заявок</span></div><div><b>−50%</b><span>цена лида</span></div></div><p>Нарастили базу с 81 до 854 объявлений. За год: контакты 78 → 480 (+515%), цена лида 1 039 ₽ → 524 ₽. Та же ниша — другая система ведения.</p></div></div>
-        <div class="ccard glass"><div class="h">Дома под ключ<span class="t">Ведение</span></div><div class="b"><div class="res"><div><b>325</b><span>заявок/мес</span></div><div><b>~210 ₽</b><span>за лид</span></div></div><p>Одна из самых конкурентных ниш. 67 новых объявлений — 23 109 просмотров, 325 заявок и 1 650 сохранений за месяц. Для домов 210 ₽ за лид — отличный результат.</p></div></div>
-        <div class="ccard glass"><div class="h">Строй Гарант<span class="t">Запуск с нуля</span></div><div class="b"><div class="res"><div><b>154</b><span>заявки/мес</span></div><div><b>381 ₽</b><span>за контакт</span></div></div><p>Новый аккаунт, 149 объявлений с нуля. За первый же месяц — 154 обращения при 1 025 просмотрах.</p></div></div>
-        <div class="ccard glass"><div class="h">WoodCoat, Химки<span class="t">Настройка + ведение</span></div><div class="b"><div class="res"><div><b>−48%</b><span>цена заявки</span></div><div><b>+315%</b><span>контактов</span></div></div><p>Было 13 контактов по 1 136 ₽. Разместили 1 700+ объявлений — просмотры 1 776 (+285%), контактов 54, цена обращения 595 ₽ — вдвое дешевле.</p></div></div>
-        <div class="ccard glass"><div class="h">Строитель, 7 регионов<span class="t">Мультирегион</span></div><div class="b"><div class="res"><div><b>266</b><span>заявок / 2 недели</span></div><div><b>433 ₽</b><span>за контакт</span></div></div><p>Услуги сразу по 7 областям. Подняли базу до 732 объявлений: просмотры +206%, контакты 266 (+156%), избранное +262%. Из «висит без толку» — в поток заявок.</p></div></div>
-        <div class="ccard glass"><div class="h">Строительство<span class="t">Рекорд месяца</span></div><div class="b"><div class="res"><div><b>47</b><span>заявок за день</span></div><div><b>510</b><span>просмотров</span></div></div><p>47 обращений с одного кабинета Авито за ОДИН день. Почти каждый десятый, кто открыл объявление, написал или позвонил. Без накруток — только ежедневное ведение.</p></div></div>
+        <figure class="ccard glass" data-case="autosteklo" role="button" tabindex="0" aria-label="Кейс: автостёкла MasterProfi — смотреть статистику"><div class="ccover"><img src="cases/autosteklo-0.jpg" alt="Кейс Авито: автостёкла MasterProfi — рост заявок в 73 раза" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
+        <figure class="ccard glass" data-case="tnvd" role="button" tabindex="0" aria-label="Кейс: ТНВД-насосы — смотреть статистику"><div class="ccover"><img src="cases/tnvd-0.jpg" alt="Кейс Авито: ТНВД-насосы — доход вырос в 8,5 раза" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
+        <figure class="ccard glass" data-case="kosmetolog" role="button" tabindex="0" aria-label="Кейс: врач-косметолог — смотреть статистику"><div class="ccover"><img src="cases/kosmetolog-0.jpg" alt="Кейс Авито: врач-косметолог, Нижний Новгород — 110 обращений с нуля" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
+        <figure class="ccard glass" data-case="andrey" role="button" tabindex="0" aria-label="Кейс: стройуслуги Андрей — смотреть статистику"><div class="ccover"><img src="cases/andrey-0.jpg" alt="Кейс Авито: строительные услуги — заявок в 6 раз больше год к году" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
+        <figure class="ccard glass" data-case="doma" role="button" tabindex="0" aria-label="Кейс: дома под ключ — смотреть статистику"><div class="ccover"><img src="cases/doma-0.jpg" alt="Кейс Авито: строительство домов под ключ — 325 заявок за месяц" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
+        <figure class="ccard glass" data-case="stroygarant" role="button" tabindex="0" aria-label="Кейс: Строй Гарант — смотреть статистику"><div class="ccover"><img src="cases/stroygarant-0.jpg" alt="Кейс Авито: Строй Гарант — 154 заявки за первый месяц" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
+        <figure class="ccard glass" data-case="woodcoat" role="button" tabindex="0" aria-label="Кейс: WoodCoat Химки — смотреть статистику"><div class="ccover"><img src="cases/woodcoat-0.jpg" alt="Кейс Авито: WoodCoat, Химки — цена заявки вдвое ниже" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
+        <figure class="ccard glass" data-case="reg7" role="button" tabindex="0" aria-label="Кейс: строитель 7 регионов — смотреть статистику"><div class="ccover"><img src="cases/reg7-0.jpg" alt="Кейс Авито: строитель по 7 регионам — 266 заявок за 2 недели" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
+        <figure class="ccard glass" data-case="rekord" role="button" tabindex="0" aria-label="Кейс: рекорд 47 заявок за день — смотреть статистику"><div class="ccover"><img src="cases/rekord-0.jpg" alt="Кейс Авито: рекорд — 47 обращений за один день" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
       </div>
       <div class="cases-nav">
         <button class="cnav" id="casesPrev" type="button" aria-label="Предыдущий кейс">‹</button>
-        <span class="cases-hint">Листайте кейсы →</span>
+        <span class="cases-hint">Листайте · тап = статистика</span>
         <button class="cnav" id="casesNext" type="button" aria-label="Следующий кейс">›</button>
       </div>
     </div>
@@ -467,6 +481,19 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
     </div>
   </div>
 </section>
+
+<!-- LIGHTBOX кейсов -->
+<div id="lbox" class="lbox" hidden role="dialog" aria-modal="true" aria-label="Статистика кейса">
+  <div class="lbox-bg" data-close></div>
+  <button class="lbox-x" type="button" data-close aria-label="Закрыть">✕</button>
+  <button class="lbox-prev" type="button" aria-label="Предыдущий скриншот">‹</button>
+  <figure class="lbox-fig">
+    <img class="lbox-img" src="" alt="Скриншот статистики Авито">
+    <figcaption class="lbox-cap"></figcaption>
+    <div class="lbox-count"></div>
+  </figure>
+  <button class="lbox-next" type="button" aria-label="Следующий скриншот">›</button>
+</div>
 
 <!-- FAB -->
 <div class="fab">
@@ -537,6 +564,35 @@ if(!RM){
   prev.addEventListener('click',()=>track.scrollBy({left:-step(),behavior:'smooth'}));
   next.addEventListener('click',()=>track.scrollBy({left:step(),behavior:'smooth'}));
   track.addEventListener('scroll',upd,{passive:true}); addEventListener('resize',upd); upd();
+})();
+/* cases — лайтбокс: тап по кейсу → реальные скрины статистики (было→стало) */
+(function(){
+  const CASES={
+    autosteklo:{cap:'Автостёкла MasterProfi — рост заявок в 73 раза',shots:['autosteklo-1.jpg','autosteklo-2.jpg','autosteklo-3.jpg']},
+    tnvd:{cap:'ТНВД-насосы, вся Россия — доход в кабинете ×8,5',shots:['tnvd-1.jpg','tnvd-2.jpg','tnvd-3.jpg']},
+    kosmetolog:{cap:'Врач-косметолог, Нижний Новгород — 110 обращений с нуля',shots:['kosmetolog-1.jpg','kosmetolog-2.jpg']},
+    andrey:{cap:'Стройуслуги (Андрей) — заявок ×6 год к году',shots:['andrey-1.jpg','andrey-2.jpg','andrey-3.jpg']},
+    doma:{cap:'Строительство домов под ключ — 325 заявок за месяц',shots:['doma-1.jpg','doma-2.jpg']},
+    stroygarant:{cap:'Строй Гарант — 154 заявки за первый месяц с нуля',shots:['stroygarant-1.jpg','stroygarant-2.jpg']},
+    woodcoat:{cap:'WoodCoat, Химки — цена заявки вдвое ниже',shots:['woodcoat-1.jpg','woodcoat-2.jpg','woodcoat-3.jpg']},
+    reg7:{cap:'Строитель, 7 регионов — 266 заявок за 2 недели',shots:['reg7-1.jpg','reg7-2.jpg']},
+    rekord:{cap:'Строительство — рекорд: 47 обращений за один день',shots:['rekord-1.jpg']}
+  };
+  const lb=document.getElementById('lbox'); const track=document.getElementById('casesTrack'); if(!lb||!track) return;
+  const img=lb.querySelector('.lbox-img'),cap=lb.querySelector('.lbox-cap'),cnt=lb.querySelector('.lbox-count'),bprev=lb.querySelector('.lbox-prev'),bnext=lb.querySelector('.lbox-next');
+  let cur=null,i=0;
+  function render(){const s=cur.shots;img.src='cases/'+s[i];img.alt=cur.cap+' — скриншот '+(i+1);cap.textContent=cur.cap;const multi=s.length>1;cnt.textContent=multi?(i+1)+' / '+s.length:'';bprev.style.display=bnext.style.display=multi?'':'none';}
+  function open(k){cur=CASES[k];if(!cur)return;i=0;render();lb.hidden=false;document.body.style.overflow='hidden';}
+  function close(){lb.hidden=true;img.removeAttribute('src');document.body.style.overflow='';}
+  function go(d){const n=cur.shots.length;i=(i+d+n)%n;render();}
+  track.addEventListener('click',e=>{const c=e.target.closest('.ccard[data-case]');if(c)open(c.dataset.case);});
+  track.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const c=e.target.closest('.ccard[data-case]');if(c){e.preventDefault();open(c.dataset.case);}}});
+  bprev.addEventListener('click',()=>go(-1));bnext.addEventListener('click',()=>go(1));
+  lb.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',close));
+  addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape')close();else if(e.key==='ArrowLeft')go(-1);else if(e.key==='ArrowRight')go(1);});
+  let sx=null;
+  img.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+  img.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(cur.shots.length>1&&Math.abs(dx)>40)go(dx<0?1:-1);sx=null;},{passive:true});
 })();
 </script>
 </body>

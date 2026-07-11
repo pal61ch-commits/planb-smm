@@ -48,7 +48,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 
 /* auth box (header right) */
 #authbox{display:flex;align-items:center;gap:10px;flex:none}
-.tgtab{font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:14px;border:1px solid rgba(42,171,238,.45);background:linear-gradient(135deg,#2AABEE,#229ED9);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-left:auto;transition:.2s;box-shadow:0 2px 10px rgba(42,171,238,.25)}
+.tgtab{font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:14px;border:1px solid rgba(42,171,238,.45);background:linear-gradient(135deg,#2AABEE,#229ED9);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:.2s;box-shadow:0 2px 10px rgba(42,171,238,.25)}
 .tgtab:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(42,171,238,.4)}
 .tgtab svg{width:16px;height:16px;flex:none}
 .authbtn{font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:11px;border:1px solid transparent;background:var(--yellow);color:#15140c;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
@@ -192,7 +192,8 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .dz-msg img{max-width:100%;border-radius:12px;border:1px solid var(--gb);display:block}
 .howbtn{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px;font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:14px;border:1px solid var(--gb2);background:linear-gradient(120deg,rgba(245,196,0,.18),var(--glass2));color:var(--text);cursor:pointer;transition:.2s var(--ease)}
 .howbtn:hover{border-color:var(--yellow);transform:translateY(-1px)}
-.hrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+.hrow{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+.hrow>*{flex:1;justify-content:center}
 .hrow .howbtn{margin:0}
 .hmcard{width:100%;max-width:560px;max-height:86vh;overflow-y:auto;background:rgba(16,17,24,.98);border:1px solid var(--gb2);border-radius:22px;padding:26px 24px;box-shadow:var(--shadow);position:relative}
 .hmcard h3{font-size:22px;margin-bottom:4px}
@@ -224,8 +225,9 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   .tabs::-webkit-scrollbar{display:none}
   .tab{flex:none;padding:9px 13px;font-size:13px}
   .hrow{flex:none;flex-direction:column;align-items:stretch;gap:7px;margin-bottom:10px}
+  .hrow>*{flex:none}
   .hrow .howbtn{justify-content:center}
-  .tgtab{justify-content:center;margin-left:0;padding:10px 13px}
+  .tgtab{justify-content:center;padding:10px 13px}
   .panel.on{flex:1;min-height:0;display:flex;flex-direction:column}
   .card{flex:1;min-height:0}
   .chat,.toolchat{height:auto;flex:1;min-height:0;padding:15px;overscroll-behavior:contain}

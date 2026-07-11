@@ -140,9 +140,16 @@ a{color:inherit;text-decoration:none}
 .step h4{font-size:17px;margin-bottom:6px;font-weight:700}
 .step p{color:var(--muted);font-size:13.5px}
 
-/* cases */
-.cases{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-@media(max-width:900px){.cases{grid-template-columns:1fr;max-width:480px;margin:0 auto}}
+/* cases — свайп-карусель */
+.cases-wrap{position:relative}
+.cases{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px 2px}
+.cases::-webkit-scrollbar{display:none}
+.cases .ccard{flex:0 0 clamp(282px,84vw,344px);scroll-snap-align:start}
+.cases-nav{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:22px}
+.cnav{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--glass2);border:1px solid var(--gb);color:var(--text);font-family:'Manrope';font-weight:700;font-size:23px;line-height:1;padding-bottom:3px;transition:.22s var(--ease)}
+.cnav:hover:not(:disabled){border-color:var(--yellow);color:var(--yellow);transform:translateY(-2px)}
+.cnav:disabled{opacity:.3;cursor:default}
+.cases-hint{color:var(--muted);font-size:12.5px;font-weight:600}
 .ccard{border-radius:20px;overflow:hidden;transition:.3s}
 .ccard:hover{transform:translateY(-5px);border-color:var(--gb2)}
 .ccard .h{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--yellow);font-family:'Manrope';font-weight:700;font-size:14px;border-bottom:1px solid var(--gb);background:rgba(245,196,0,.06)}
@@ -395,11 +402,21 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 <!-- CASES -->
 <section class="section" id="cases">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="kick">Кейсы</span><h2>Результаты клиентов</h2><p>Реальные проекты на ведении. Цифры до и после работы команды Plan B.</p></div>
-    <div class="cases">
-      <div class="ccard glass reveal"><div class="h">Автостёкла<span class="t">Ведение + продвижение</span></div><div class="b"><div class="res"><div><b>×73</b><span>заявок</span></div><div><b>51 ₽</b><span>за контакт</span></div></div><p>Было 68 обращений по 593 ₽ — стало 5 010 заявок по 51 ₽. Цена контакта упала почти в 12 раз.</p></div></div>
-      <div class="ccard glass reveal d1"><div class="h">Строй Гарант<span class="t">Ведение с нуля</span></div><div class="b"><div class="res"><div><b>154</b><span>заявки/мес</span></div><div><b>381 ₽</b><span>за контакт</span></div></div><p>Запустили профиль с нуля. За первый же месяц — 154 обращения при 1 025 просмотрах.</p></div></div>
-      <div class="ccard glass reveal d2"><div class="h">WoodCoat, Химки<span class="t">Настройка + ведение</span></div><div class="b"><div class="res"><div><b>+285%</b><span>просмотры</span></div><div><b>−48%</b><span>цена заявки</span></div></div><p>Просмотры выросли до 1 776, заявок стало в 4 раза больше, а цена обращения упала с 1 136 ₽ до 595 ₽.</p></div></div>
+    <div class="sec-head reveal"><span class="kick">Кейсы</span><h2>Результаты клиентов</h2><p>Реальные проекты на ведении. Цифры до и после работы команды Plan B — листайте карточки.</p></div>
+    <div class="cases-wrap reveal">
+      <div class="cases" id="casesTrack">
+        <div class="ccard glass"><div class="h">Автостёкла MasterProfi<span class="t">Ведение + Пифагор</span></div><div class="b"><div class="res"><div><b>×73</b><span>заявок</span></div><div><b>51 ₽</b><span>за контакт</span></div></div><p>Полгода вёл сам: 68 контактов по 593 ₽. Собрали 17 продающих объявлений — стало 5 010 заявок по 51 ₽. Дешевле в 11,7 раза.</p></div></div>
+        <div class="ccard glass"><div class="h">Стройуслуги, Андрей<span class="t">Год к году</span></div><div class="b"><div class="res"><div><b>×6</b><span>заявок</span></div><div><b>−50%</b><span>цена лида</span></div></div><p>Нарастили базу с 81 до 854 объявлений. За год: контакты 78 → 480 (+515%), цена лида 1 039 ₽ → 524 ₽. Та же ниша — другая система ведения.</p></div></div>
+        <div class="ccard glass"><div class="h">Строй Гарант<span class="t">Запуск с нуля</span></div><div class="b"><div class="res"><div><b>154</b><span>заявки/мес</span></div><div><b>381 ₽</b><span>за контакт</span></div></div><p>Новый аккаунт, 149 объявлений с нуля. За первый же месяц — 154 обращения при 1 025 просмотрах.</p></div></div>
+        <div class="ccard glass"><div class="h">WoodCoat, Химки<span class="t">Настройка + ведение</span></div><div class="b"><div class="res"><div><b>−48%</b><span>цена заявки</span></div><div><b>+315%</b><span>контактов</span></div></div><p>Было 13 контактов по 1 136 ₽. Разместили 1 700+ объявлений — просмотры 1 776 (+285%), контактов 54, цена обращения 595 ₽ — вдвое дешевле.</p></div></div>
+        <div class="ccard glass"><div class="h">Строительство<span class="t">Рекорд месяца</span></div><div class="b"><div class="res"><div><b>47</b><span>заявок за день</span></div><div><b>510</b><span>просмотров</span></div></div><p>47 обращений с одного кабинета Авито за ОДИН день. Почти каждый десятый, кто открыл объявление, написал или позвонил. Без накруток — только ежедневное ведение.</p></div></div>
+        <div class="ccard glass"><div class="h">Строительные услуги<span class="t">Ведение аккаунта</span></div><div class="b"><div class="res"><div><b>25</b><span>заявок/сутки</span></div><div><b>296 ₽</b><span>за контакт</span></div></div><p>514 активных объявлений, 131 просмотр и 25 обращений за сутки. «Продвиженец» обещал клиенту 6–9 лидов в день — грамотное ведение дало 25.</p></div></div>
+      </div>
+      <div class="cases-nav">
+        <button class="cnav" id="casesPrev" type="button" aria-label="Предыдущий кейс">‹</button>
+        <span class="cases-hint">Листайте кейсы →</span>
+        <button class="cnav" id="casesNext" type="button" aria-label="Следующий кейс">›</button>
+      </div>
     </div>
   </div>
 </section>
@@ -507,6 +524,16 @@ if(!RM){
   if(RM){chips.forEach((c,i)=>place(c,phase(i)));return;}
   const t0=performance.now();
   (function loop(now){const t=(now-t0)/1000;chips.forEach((c,i)=>place(c,phase(i)+t*sp));requestAnimationFrame(loop);})(t0);
+})();
+/* cases — карусель: стрелки + активность кнопок по краям */
+(function(){
+  const track=document.getElementById('casesTrack'); if(!track) return;
+  const prev=document.getElementById('casesPrev'), next=document.getElementById('casesNext');
+  const step=()=>{const c=track.querySelector('.ccard');return c?c.getBoundingClientRect().width+18:340;};
+  function upd(){const max=track.scrollWidth-track.clientWidth-2;prev.disabled=track.scrollLeft<=2;next.disabled=track.scrollLeft>=max;}
+  prev.addEventListener('click',()=>track.scrollBy({left:-step(),behavior:'smooth'}));
+  next.addEventListener('click',()=>track.scrollBy({left:step(),behavior:'smooth'}));
+  track.addEventListener('scroll',upd,{passive:true}); addEventListener('resize',upd); upd();
 })();
 </script>
 </body>

@@ -48,10 +48,9 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 
 /* auth box (header right) */
 #authbox{display:flex;align-items:center;gap:10px;flex:none}
-.tgbtn{font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:9px 14px;border-radius:11px;border:1px solid rgba(42,171,238,.45);background:linear-gradient(135deg,#2AABEE,#229ED9);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:7px;flex:none;transition:.2s;box-shadow:0 2px 10px rgba(42,171,238,.25)}
-.tgbtn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(42,171,238,.4)}
-.tgbtn svg{width:16px;height:16px;flex:none}
-@media (max-width:640px){.tgbtn .tgtxt{display:none}.tgbtn{padding:9px 11px}}
+.tgtab{font-family:'Golos Text';font-size:14px;font-weight:700;padding:11px 17px;border-radius:14px;border:1px solid rgba(42,171,238,.45);background:linear-gradient(135deg,#2AABEE,#229ED9);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-left:auto;transition:.2s;box-shadow:0 2px 10px rgba(42,171,238,.25)}
+.tgtab:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(42,171,238,.4)}
+.tgtab svg{width:16px;height:16px;flex:none}
 .authbtn{font-family:'Golos Text';font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:11px;border:1px solid transparent;background:var(--yellow);color:#15140c;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
 .authbtn:hover{background:var(--yellow2);transform:translateY(-1px)}
 .authbtn.ghost{background:var(--glass2);color:var(--text);border-color:var(--gb)}
@@ -222,6 +221,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   .tabs{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
   .tabs::-webkit-scrollbar{display:none}
   .tab{flex:none;padding:9px 13px;font-size:13px}
+  .tgtab{grid-column:1/-1;justify-content:center;margin-left:0;padding:10px 13px;font-size:13.5px}
   .howbtn{flex:none;margin-bottom:10px}
   .panel.on{flex:1;min-height:0;display:flex;flex-direction:column}
   .card{flex:1;min-height:0}
@@ -256,7 +256,6 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
         <div class="sub"><b></b> На связи 24/7 · консультация бесплатно</div>
       </div>
     </div>
-    <a class="tgbtn" href="https://t.me/sokrat_avitologbot" target="_blank" rel="noopener" onclick="try{sokTrack('visit','/tg-button-head')}catch(e){}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span class="tgtxt">Сократ в Telegram</span></a>
     <div id="authbox"></div>
   </header>
 
@@ -265,6 +264,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <button class="tab" data-tab="designer">🎨 Дизайнер <span class="lk">🔒</span></button>
     <button class="tab" data-tab="copywriter">✍️ Копирайтер <span class="lk">🔒</span></button>
     <button class="tab" data-tab="autoload">📦 Автозагрузка <span class="lk">🔒</span></button>
+    <a class="tgtab" href="https://t.me/sokrat_avitologbot" target="_blank" rel="noopener" onclick="try{sokTrack('visit','/tg-button-tabs')}catch(e){}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>Сократ в Telegram</a>
   </nav>
 
   <button class="howbtn" id="howBtn">❓ Как пользоваться Сократом</button>

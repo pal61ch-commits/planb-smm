@@ -280,6 +280,7 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
       <p class="lead">Ведём ваши кабинеты и продвигаем объявления — больше просмотров и заявок без вашей рутины. Проконсультируем <b style="color:var(--yellow)">бесплатно</b>: точно скажем, что подойдёт, сколько стоит и какие нужны вложения.</p>
       <div class="hero-btns">
         <a href="#contact" class="btn btn-y" data-magnet>Бесплатная консультация</a>
+        <a href="#cases" class="btn btn-g" data-magnet>Кейсы</a>
         <a href="#services" class="btn btn-g" data-magnet>Наши услуги</a>
       </div>
       <div class="trust">
@@ -568,14 +569,14 @@ if(!RM){
 /* cases — лайтбокс: тап по кейсу → реальные скрины статистики (было→стало) */
 (function(){
   const CASES={
-    autosteklo:{cap:'Автостёкла MasterProfi — рост заявок в 73 раза',shots:['autosteklo-1.jpg','autosteklo-2.jpg','autosteklo-3.jpg']},
-    tnvd:{cap:'ТНВД-насосы, вся Россия — доход в кабинете ×8,5',shots:['tnvd-1.jpg','tnvd-2.jpg','tnvd-3.jpg']},
-    kosmetolog:{cap:'Врач-косметолог, Нижний Новгород — 110 обращений с нуля',shots:['kosmetolog-1.jpg','kosmetolog-2.jpg']},
-    andrey:{cap:'Стройуслуги (Андрей) — заявок ×6 год к году',shots:['andrey-1.jpg','andrey-2.jpg','andrey-3.jpg']},
-    doma:{cap:'Строительство домов под ключ — 325 заявок за месяц',shots:['doma-1.jpg','doma-2.jpg']},
-    stroygarant:{cap:'Строй Гарант — 154 заявки за первый месяц с нуля',shots:['stroygarant-1.jpg','stroygarant-2.jpg']},
-    woodcoat:{cap:'WoodCoat, Химки — цена заявки вдвое ниже',shots:['woodcoat-1.jpg','woodcoat-2.jpg','woodcoat-3.jpg']},
-    reg7:{cap:'Строитель, 7 регионов — 266 заявок за 2 недели',shots:['reg7-1.jpg','reg7-2.jpg']},
+    autosteklo:{cap:'Автостёкла MasterProfi — рост заявок в 73 раза (было → стало)',shots:['autosteklo-1.jpg','autosteklo-2.jpg']},
+    tnvd:{cap:'ТНВД-насосы, вся Россия — доход в кабинете ×8,5',shots:['tnvd-1.jpg','tnvd-2.jpg']},
+    kosmetolog:{cap:'Врач-косметолог, Нижний Новгород — 110 обращений с нуля',shots:['kosmetolog-1.jpg']},
+    andrey:{cap:'Стройуслуги (Андрей) — заявок ×6 год к году (было → стало)',shots:['andrey-1.jpg','andrey-2.jpg']},
+    doma:{cap:'Строительство домов под ключ — 325 заявок за месяц',shots:['doma-1.jpg']},
+    stroygarant:{cap:'Строй Гарант — 154 заявки за первый месяц с нуля',shots:['stroygarant-1.jpg']},
+    woodcoat:{cap:'WoodCoat, Химки — цена заявки вдвое ниже (было → стало)',shots:['woodcoat-1.jpg','woodcoat-2.jpg']},
+    reg7:{cap:'Строитель, 7 регионов — 266 заявок за 2 недели',shots:['reg7-1.jpg']},
     rekord:{cap:'Строительство — рекорд: 47 обращений за один день',shots:['rekord-1.jpg']}
   };
   const lb=document.getElementById('lbox'); const track=document.getElementById('casesTrack'); if(!lb||!track) return;

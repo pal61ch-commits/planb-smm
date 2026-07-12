@@ -8,17 +8,6 @@
 <link rel="icon" type="image/png" sizes="32x32" href="https://planb-prodvizhenie.ru/favicon-sokrat-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://planb-prodvizhenie.ru/favicon-sokrat-16.png">
 <link rel="apple-touch-icon" href="https://planb-prodvizhenie.ru/apple-touch-icon-sokrat.png">
-<!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108505608', 'ym');
-    ym(108505608,'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/108505608" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -172,6 +161,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 
 .toolui .card{margin-top:0}
 .toolhead{font-family:'Manrope';font-weight:700;font-size:15.5px;padding:15px 20px;border-bottom:1px solid var(--gb);color:var(--text)}
+.trialbadge{font-size:13px;color:#f5c400;padding:9px 20px;border-bottom:1px solid var(--gb);background:rgba(245,196,0,.06)}
 .toolchat{height:clamp(300px,44vh,460px)}
 .dlfile{display:inline-flex;align-items:center;gap:7px;color:var(--yellow);font-weight:600;text-decoration:none;padding:9px 13px;border:1px solid var(--gb2);border-radius:11px;background:var(--glass2);cursor:pointer}
 .dlfile:hover{border-color:var(--yellow);background:rgba(245,196,0,.1)}
@@ -548,7 +538,18 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
 /* ── авторизация + гейт платных вкладок ── */
 (function(){
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-  let token='', state={auth:false,subscribed:false,until:null,email:''}, mode='login';
+  let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5}, mode='login';
+  function toolAccess(tool){return state.subscribed||(state.trial&&(state.trial[tool]||0)>0);}
+  function setTrialLeft(tool,left){if(typeof left!=='number')return;state.trial=state.trial||{};state.trial[tool]=left;updateTrialBadge(tool);}
+  function updateTrialBadge(tool){
+    var ui=document.querySelector('.toolui[data-tool="'+tool+'"]'); if(!ui)return;
+    var b=ui.querySelector('.trialbadge');
+    if(state.subscribed){if(b)b.remove();return;}
+    var head=ui.querySelector('.toolhead'); if(!head)return;
+    if(!b){b=document.createElement('div');b.className='trialbadge';head.insertAdjacentElement('afterend',b);}
+    var left=(state.trial&&state.trial[tool])||0;
+    b.textContent='🎁 Бесплатно: осталось '+left+' из '+(state.freeGens||5)+' генераций'+(left===0?' — дальше по подписке':'');
+  }
   try{token=localStorage.getItem('sok_auth')||'';}catch(e){}
   function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function fmtDate(iso){try{return new Date(iso).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
@@ -575,32 +576,38 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   }
 
   function renderGates(){
-    let html,fn;
-    if(!state.auth){
-      html='<button class="gbtn">Войти / зарегистрироваться</button><p class="ghint">Регистрация по почте — минута. Консультация у Сократа бесплатна и без входа.</p>';
-      fn=function(){openModal('register');};
-    }else if(state.subscribed){
-      html='<div class="subactive">✅ Подписка активна до '+fmtDate(state.until)+'</div><p class="ghint">Инструмент подключается — совсем скоро. Спасибо, что с нами!</p>';
-      fn=function(){};
-    }else{
-      html='<button class="gbtn pay">Оплатить 3000 ₽ / месяц</button><p class="ghint">Картой или СБП. Доступ ко всем инструментам сразу после оплаты.</p>';
-      fn=doSubscribe;
-    }
-    $$('.gate').forEach(function(g){g.innerHTML=html;});
-    $$('.gate .gbtn').forEach(function(b){b.onclick=fn;});
+    var FG=state.freeGens||5;
+    $$('.gate').forEach(function(g){
+      var html,fn;
+      if(!state.auth){
+        html='<button class="gbtn">🎁 Попробовать бесплатно</button><p class="ghint">Первые '+FG+' генераций каждого инструмента — бесплатно после регистрации (почта — минута). Дальше — подписка 3000 ₽/мес.</p>';
+        fn=function(){openModal('register');};
+      }else if(state.subscribed){
+        html='<div class="subactive">✅ Подписка активна до '+fmtDate(state.until)+'</div><p class="ghint">Инструмент подключается — совсем скоро. Спасибо, что с нами!</p>';
+        fn=function(){};
+      }else{
+        html='<button class="gbtn pay">Оплатить 3000 ₽ / месяц</button><p class="ghint">🎁 Ваши '+FG+' бесплатных генераций использованы — понравилось? Подписка = безлимит на все инструменты, картой или СБП.</p>';
+        fn=doSubscribe;
+      }
+      g.innerHTML=html; var b=g.querySelector('.gbtn'); if(b)b.onclick=fn;
+    });
     document.querySelectorAll('.toolui').forEach(function(ui){
+      var tool=ui.getAttribute('data-tool');
       var panel=ui.closest('.panel'), lock=panel?panel.querySelector('.lockwrap'):null;
-      if(state.subscribed){ if(lock)lock.style.display='none'; ui.hidden=false; initTool(ui.getAttribute('data-tool')); }
+      if(state.auth&&toolAccess(tool)){ if(lock)lock.style.display='none'; ui.hidden=false; initTool(tool); updateTrialBadge(tool); }
       else { if(lock)lock.style.display=''; ui.hidden=true; }
     });
-    // замочки 🔒 на вкладках — снимаем при активной подписке
-    document.querySelectorAll('.tab .lk').forEach(function(el){ el.style.display = state.subscribed ? 'none' : ''; });
+    // замочки 🔒 на вкладках — снимаем там, где есть доступ (подписка или остаток триала)
+    document.querySelectorAll('.tab').forEach(function(t){
+      var lk=t.querySelector('.lk'); if(!lk)return;
+      lk.style.display=(state.auth&&toolAccess(t.getAttribute('data-tab')))?'none':'';
+    });
   }
 
   async function refresh(){
     if(!token){state={auth:false};renderAuthbox();renderGates();return;}
     const {d}=await api('/c/sokrat/me',{});
-    if(d&&d.auth){state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until};}
+    if(d&&d.auth){state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,trial:d.trial||null,freeGens:d.free_gens||5};}
     else{const had=token;setToken('');state={auth:false};if(had)toast('Вы вошли с другого устройства — сессия здесь завершена.');}
     renderAuthbox();renderGates();
   }
@@ -623,7 +630,8 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       var dl=acctDays();
       el.innerHTML='✅ Подписка активна <b>до '+fmtDate(state.until)+'</b>'+(dl!=null?' · осталось <span class="days">'+dl+' дн.</span>':'')+'<button class="renew" id="aRenew">Продлить на месяц · 3000 ₽</button>';
     }else{
-      el.innerHTML='Подписка не активна. Оформите доступ ко всем инструментам.<button class="renew" id="aRenew">Оформить · 3000 ₽ / мес</button>';
+      var t=state.trial||{},fg=state.freeGens||5;
+      el.innerHTML='Подписки нет. 🎁 Бесплатные генерации: ✍️ '+(t.copywriter||0)+'/'+fg+' · 🎨 '+(t.designer||0)+'/'+fg+' · 📦 '+(t.autoload||0)+'/'+fg+'.<button class="renew" id="aRenew">Оформить безлимит · 3000 ₽ / мес</button>';
     }
     var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); doSubscribe(); };
   }
@@ -655,7 +663,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     const btn=$('#mSubmit');btn.disabled=true;
     const {st,d}=await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
     btn.disabled=false;
-    if(d&&d.token){setToken(d.token);state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until};closeModal();renderAuthbox();renderGates();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉');}
+    if(d&&d.token){setToken(d.token);state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,trial:d.trial||null,freeGens:d.free_gens||5};closeModal();renderAuthbox();renderGates();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');}
     else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
   }
 
@@ -727,7 +735,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
       var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});};
       say('assistant','Опишите товар или услугу — выдам готовый заголовок и текст объявления, каждый со своей кнопкой «Копировать». Готово к вставке в Авито.');
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var d=r.d||{};if(d.error){say('assistant',d.error);}else{if(d.title)copyBubble('Заголовок',d.title);if(d.body)copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});}btn.disabled=false;ta.focus();});
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var d=r.d||{};if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{if(d.title)copyBubble('Заголовок',d.title);if(d.body)copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});}btn.disabled=false;ta.focus();});
     } else if(name==='autoload'){
       var chat=document.getElementById('al-chat'), att=wireAttach(form);
       var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
@@ -735,8 +743,8 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       say('assistant','Загрузите файл автозагрузки (xlsx) кнопкой 📎 и скажите, что сделать: «размножь по городам Владимирской области», «поставь цену 700», «перепиши заголовки». Готовый файл заберёте ссылкой в чате.\n\nВставите ваши ключи Avito API — проверю отчёты автозагрузки и поставлю цену за просмотр (CPV).');
       async function alDownload(){var h={};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h});if(!r.ok){say('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){say('assistant','Ошибка скачивания');}}
       function dlBubble(){var m=document.createElement('div');m.className='msg s';m.innerHTML='<div class="av">📦</div><div class="bub" style="background:none;border:none;padding:0"><a class="dlfile" href="#">📄 avito_feed.xlsx — скачать</a></div>';m.querySelector('.dlfile').addEventListener('click',function(ev){ev.preventDefault();alDownload();});chat.appendChild(m);chat.scrollTop=chat.scrollHeight;}
-      async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','Загрузил: '+d.summary+' Что сделать?');}else{say('assistant',d.error||'Не смог прочитать файл');}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.ready)dlBubble();}btn.disabled=false;ta.focus();});
+      async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','📦 Загрузил фид: '+d.summary+'\nЧто сделать? Напр.: «размножь по топ-30 городам», «перепиши заголовки», «поставь цену 500».');}else{say('assistant',d.error||'Не смог прочитать файл');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}setTrialLeft('autoload',d.trial_left);if(d.ready)dlBubble();}btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
       var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form), curImg=null;
       ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
@@ -763,6 +771,8 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
           var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});
           var d=await r.json();t.remove();var imgs=d.images||[];
           if(d.warning){say('assistant',d.warning);}
+          if(d.subscribe){say('assistant',d.error||'Бесплатные генерации закончились — дальше по подписке.');setTrialLeft('designer',0);renderGates();}
+          setTrialLeft('designer',d.trial_left);
           if(imgs.length){
             imgs.forEach(function(im,idx){dzShow(im,idx);});
             curImg=imgs[0];                          // дальнейшие правки идут по этой свежей картинке
@@ -779,21 +789,21 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   var HOW=[
     {ic:'🦉',name:'Сократ-консультант',free:true,steps:{any:'Просто напишите свой вопрос по Авито в чате слева — отвечу бесплатно, 24/7. Регистрация и оплата не нужны.'}},
     {ic:'🎨',name:'Дизайнер — картинки и баннеры',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху (почта + пароль).','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Дизайнер».','Выберите режим: «Картинка для объявления» (1280×960, формат Авито 4:3) или «Баннер профиля» (ПК + моб).','Опишите картинку — получите готовое изображение точно под размеры Авито.'],
-      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Дизайнер» → выберите режим → опишите картинку → готовое изображение.'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху (почта + пароль). 🎁 Первые 5 генераций — бесплатно.','Откройте вкладку «Дизайнер».','Выберите режим: «Картинка для объявления» (1280×960, формат Авито 4:3) или «Баннер профиля» (ПК + моб).','Опишите картинку — получите готовое изображение точно под размеры Авито.','Дальше — подписка 3000 ₽/мес (безлимит).'],
+      nosub:['🎁 Первые 5 генераций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Дизайнер» → выберите режим → опишите картинку → готовое изображение.','Дальше — подписка 3000 ₽/мес (безлимит).'],
       sub:['Откройте вкладку «Дизайнер» → выберите режим (объявление / баннер профиля) → опишите картинку → получите готовое изображение под размеры Авито.']}},
     {ic:'✍️',name:'Копирайтер — тексты объявлений',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху.','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Копирайтер».','Напишите, что продаёте — получите готовый продающий текст: заголовок + структура + ключи под поиск Авито.'],
-      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Копирайтер» → напишите что продаёте → готовый текст объявления.'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 текстов — бесплатно.','Откройте вкладку «Копирайтер».','Напишите, что продаёте — получите готовый продающий текст: заголовок + структура + ключи под поиск Авито.','Дальше — подписка 3000 ₽/мес (безлимит).'],
+      nosub:['🎁 Первые 5 текстов — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Копирайтер» → напишите что продаёте → готовый текст объявления.','Дальше — подписка 3000 ₽/мес (безлимит).'],
       sub:['Откройте вкладку «Копирайтер» → напишите что продаёте → получите готовый текст объявления под Авито.']}},
     {ic:'📦',name:'Автозагрузка — работа с фидом',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху.','Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Автозагрузка».','Загрузите свой xlsx-фид (или создайте объявление с нуля командой).','Командами: «размножь по городам», «поставь цену», «перепиши заголовки по правилам» → скачайте готовый файл.','Добавите свои ключи Avito API — проверю отчёты автозагрузки с ошибками и поставлю цену за просмотр (CPV) на объявления.'],
-      nosub:['Оплатите подписку 3000 ₽/мес.','Откройте вкладку «Автозагрузка» → загрузите фид → командами правьте/масштабируйте → скачайте готовый файл.'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 операций — бесплатно.','Откройте вкладку «Автозагрузка».','Загрузите свой xlsx-фид (или создайте объявление с нуля командой).','Командами: «размножь по городам», «поставь цену», «перепиши заголовки по правилам» → скачайте готовый файл.','Добавите свои ключи Avito API — проверю отчёты автозагрузки с ошибками и поставлю цену за просмотр (CPV) на объявления.','Дальше — подписка 3000 ₽/мес (безлимит).'],
+      nosub:['🎁 Первые 5 операций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Автозагрузка» → загрузите фид → командами правьте/масштабируйте → скачайте готовый файл.','Дальше — подписка 3000 ₽/мес (безлимит).'],
       sub:['Откройте вкладку «Автозагрузка» → загрузите xlsx или создайте с нуля → командами масштабируйте по городам / меняйте цены / правьте тексты → скачайте. С ключами Avito API — отчёты + цена за просмотр.']}}
   ];
   function renderHow(){
     var st=state.subscribed?'sub':(state.auth?'nosub':'noauth');
-    document.getElementById('hmSub').textContent = state.subscribed?'Подписка активна — все инструменты открыты. Жмите на функцию для инструкции.':(state.auth?'Вы вошли. Осталось оплатить подписку, чтобы открыть инструменты.':'Консультация бесплатна и без входа. Инструменты — по подписке после регистрации.');
+    document.getElementById('hmSub').textContent = state.subscribed?'Подписка активна — все инструменты открыты. Жмите на функцию для инструкции.':(state.auth?'Вы вошли — вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента. Дальше — подписка.':'Консультация бесплатна и без входа. Инструменты: первые '+ (state.freeGens||5) +' генераций каждого — бесплатно после регистрации.');
     var list=document.getElementById('hmList');
     list.innerHTML=HOW.map(function(fe){
       var body = fe.steps.any ? '<p>'+te(fe.steps.any)+'</p>' : '<ol>'+(fe.steps[st]||[]).map(function(x){return '<li>'+te(x)+'</li>';}).join('')+'</ol>';

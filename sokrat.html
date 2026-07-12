@@ -607,11 +607,21 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   async function refresh(){
     if(!token){state={auth:false};renderAuthbox();renderGates();return;}
     const {d}=await api('/c/sokrat/me',{});
-    if(d&&d.auth){state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,trial:d.trial||null,freeGens:d.free_gens||5};}
+    if(d&&d.auth){state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,trial:d.trial||null,freeGens:d.free_gens||5,notice:d.notice||null};}
     else{const had=token;setToken('');state={auth:false};if(had)toast('Вы вошли с другого устройства — сессия здесь завершена.');}
-    renderAuthbox();renderGates();
+    renderAuthbox();renderGates();showNotice();
   }
 
+  var _noticeShown=false;
+  async function showNotice(){
+    // объявление Сократа «в диалог при заходе» (запуск триала и т.п.): пузырь в чат консультанта,
+    // сохраняем в историю и гасим флаг на сервере (один показ). Работает для залогиненных.
+    if(_noticeShown||!state.auth||!state.notice)return; _noticeShown=true;
+    var text=state.notice;
+    bubble('assistant',text); hist.push({role:'assistant',content:text}); save();
+    try{await api('/c/sokrat/notice/ack',{sess:sess});}catch(e){}
+    state.notice=null;
+  }
   async function doSubscribe(){
     if(!state.auth){openModal('login');return;}
     const btn=document.querySelector('.gate .gbtn.pay'); if(btn){btn.disabled=true;btn.textContent='Создаём оплату…';}

@@ -548,7 +548,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     var head=ui.querySelector('.toolhead'); if(!head)return;
     if(!b){b=document.createElement('div');b.className='trialbadge';head.insertAdjacentElement('afterend',b);}
     var left=(state.trial&&state.trial[tool])||0;
-    b.textContent='🎁 Бесплатно: осталось '+left+' из '+(state.freeGens||5)+' генераций'+(left===0?' — дальше по подписке':'');
+    b.textContent='🎁 Бесплатно: осталось '+left+' из '+Math.max(state.freeGens||5,left)+' генераций'+(left===0?' — дальше по подписке':'');
   }
   try{token=localStorage.getItem('sok_auth')||'';}catch(e){}
   function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}

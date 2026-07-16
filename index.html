@@ -228,6 +228,26 @@ a{color:inherit;text-decoration:none}
 .ch:hover{border-color:var(--yellow);transform:translateY(-3px)}
 .ch .e{font-size:19px}
 
+/* форма заявки */
+.or{display:flex;align-items:center;gap:14px;max-width:620px;margin:30px auto 20px;color:var(--muted);font-size:13.5px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--gb)}
+.lead{max-width:620px;margin:0 auto;text-align:left}
+.lead-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.lead-row{grid-template-columns:1fr}}
+.fld{width:100%;margin-bottom:12px;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--gb);color:var(--text);font-family:inherit;font-size:15px;transition:border-color .2s,background .2s}
+.fld::placeholder{color:#6f6f78}
+.fld:focus{outline:none;border-color:var(--yellow);background:rgba(255,255,255,.07)}
+.fld.err{border-color:#ff6b5b;background:rgba(255,107,91,.06)}
+.agree{display:flex;align-items:flex-start;gap:10px;margin:4px 0 16px;cursor:pointer;font-size:12.5px;color:var(--muted);line-height:1.5}
+.agree input{margin-top:2px;width:16px;height:16px;accent-color:var(--yellow);flex:none;cursor:pointer}
+.agree a{color:var(--yellow);text-decoration:underline}
+.agree.err span{color:#ff6b5b}
+.lead-btn{width:100%;justify-content:center}
+.lead-btn:disabled{opacity:.6;cursor:default;transform:none}
+.lead-msg{margin-top:12px;font-size:14px;text-align:center;min-height:20px}
+.lead-msg.ok{color:var(--green,#3ad07a)}
+.lead-msg.bad{color:#ff6b5b}
+
 /* ai cta (главная) + слот ассистента (стр. Сократа) */
 .ai-sec{padding:34px 0 6px}
 .ai-cta{display:flex;align-items:center;gap:34px;border-radius:26px;padding:40px 46px;border:1px solid var(--gb2)!important;background:linear-gradient(120deg,rgba(245,196,0,.13),var(--glass));transition:transform .3s var(--ease),border-color .3s;position:relative;overflow:hidden}
@@ -514,6 +534,22 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
         <a href="https://t.me/kislovkosta" target="_blank" rel="noopener" class="ch" data-magnet><span class="e">✈️</span> Telegram</a>
         <a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener" class="ch" data-magnet><span class="e">🅥</span> ВКонтакте</a>
       </div>
+
+      <div class="or"><span>или оставьте заявку — перезвоним</span></div>
+
+      <form class="lead" id="leadForm" novalidate>
+        <div class="lead-row">
+          <input class="fld" type="text" name="name" placeholder="Как вас зовут" autocomplete="name" required>
+          <input class="fld" type="tel" name="phone" placeholder="Телефон" autocomplete="tel" required>
+        </div>
+        <input class="fld" type="text" name="niche" placeholder="Что продаёте на Авито (необязательно)" autocomplete="off">
+        <label class="agree">
+          <input type="checkbox" name="agree" required>
+          <span>Согласен на обработку персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+        </label>
+        <button class="btn btn-y lead-btn" type="submit">Оставить заявку</button>
+        <div class="lead-msg" id="leadMsg" role="status" aria-live="polite"></div>
+      </form>
     </div>
   </div>
 </section>
@@ -606,6 +642,36 @@ if(!RM){
   prev.addEventListener('click',()=>track.scrollBy({left:-step(),behavior:'smooth'}));
   next.addEventListener('click',()=>track.scrollBy({left:step(),behavior:'smooth'}));
   track.addEventListener('scroll',upd,{passive:true}); addEventListener('resize',upd); upd();
+})();
+/* форма заявки → YC-функция (РФ) + цель в Метрику */
+(function(){
+  const LEAD_ENDPOINT='https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg';
+  const f=document.getElementById('leadForm'); if(!f) return;
+  const msg=document.getElementById('leadMsg'), btn=f.querySelector('.lead-btn');
+  const digits=s=>(s||'').replace(/\D/g,'');
+  function bad(el,on){el.classList.toggle('err',on)}
+  f.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=f.name.value.trim(), phone=f.phone.value.trim(), niche=f.niche.value.trim(), agree=f.agree.checked;
+    const pd=digits(phone);
+    let ok=true;
+    bad(f.name,!name); if(!name) ok=false;
+    const phoneOk=pd.length>=10 && pd.length<=11; bad(f.phone,!phoneOk); if(!phoneOk) ok=false;
+    f.querySelector('.agree').classList.toggle('err',!agree); if(!agree) ok=false;
+    if(!ok){msg.className='lead-msg bad';msg.textContent='Заполните имя, телефон и отметьте согласие';return;}
+    btn.disabled=true; msg.className='lead-msg'; msg.textContent='Отправляю…';
+    try{
+      const r=await fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name,phone,niche,page:location.href,ref:document.referrer||'',ts:new Date().toISOString()})});
+      if(!r.ok) throw new Error('http '+r.status);
+      f.reset();
+      msg.className='lead-msg ok'; msg.textContent='Заявка отправлена! Перезвоним в ближайшее время.';
+      if(window.ym) ym(108505608,'reachGoal','LEAD_FORM');
+    }catch(err){
+      msg.className='lead-msg bad';
+      msg.innerHTML='Не отправилось. Позвоните: <a href="tel:+79281446617" style="color:var(--yellow)">+7 928 144-66-17</a> или <a href="https://wa.me/79281446617" style="color:var(--yellow)">напишите в WhatsApp</a>';
+    }finally{btn.disabled=false}
+  });
 })();
 /* cases — лайтбокс: тап по кейсу → реальные скрины статистики (было→стало) */
 (function(){

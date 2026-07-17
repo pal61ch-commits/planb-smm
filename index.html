@@ -739,6 +739,8 @@ function initMcta(){
   if(contact&&'IntersectionObserver'in window){
     new IntersectionObserver(es=>{es.forEach(e=>{nearForm=e.isIntersecting;upd();})},{rootMargin:'0px 0px -15% 0px'}).observe(contact);
   }
+  bar.querySelector('.mcta-lead').addEventListener('click',e=>{e.preventDefault();(contact||document.body).scrollIntoView({behavior:'smooth'});
+    const ph=document.querySelector('#leadForm [name=phone]');if(ph)setTimeout(()=>ph.focus({preventScroll:true}),700);});
   document.addEventListener('scroll',upd,{passive:true,capture:true});upd();
 }
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',initMcta):initMcta();

@@ -247,6 +247,13 @@ a{color:inherit;text-decoration:none}
 .lead-msg{margin-top:12px;font-size:14px;text-align:center;min-height:20px}
 .lead-msg.ok{color:var(--green,#3ad07a)}
 .lead-msg.bad{color:#ff6b5b}
+/* мобильная липкая CTA-панель: 56% уходят с первых экранов, звонок проще формы */
+.mcta{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(10,12,16,.94);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.08);transform:translateY(110%);visibility:hidden;transition:transform .25s ease,visibility 0s linear .25s}
+.mcta.on{transform:none;visibility:visible;transition:transform .25s ease}
+.mcta a{flex:1;text-align:center;padding:13px 8px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none}
+.mcta-call{background:rgba(255,255,255,.09);color:#fff}
+.mcta-lead{background:var(--yellow);color:#101216}
+@media(max-width:768px){.mcta{display:flex}}
 
 /* ai cta (главная) + слот ассистента (стр. Сократа) */
 .ai-sec{padding:34px 0 6px}
@@ -542,7 +549,7 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 
       <form class="lead" id="leadForm" novalidate>
         <div class="lead-row">
-          <input class="fld" type="text" name="name" placeholder="Как вас зовут" autocomplete="name" required>
+          <input class="fld" type="text" name="name" placeholder="Имя (необязательно)" autocomplete="name">
           <input class="fld" type="tel" name="phone" placeholder="Телефон" autocomplete="tel" required>
         </div>
         <input class="fld" type="text" name="niche" placeholder="Что продаёте на Авито (необязательно)" autocomplete="off">
@@ -603,7 +610,7 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 </div>
 <script>
 try{if(!localStorage.getItem('cookieOk')){var _c=document.getElementById('cookie');_c.style.display='flex';}}catch(e){}
-function cookieOk(){try{localStorage.setItem('cookieOk','1');}catch(e){}document.getElementById('cookie').style.display='none';}
+function cookieOk(){try{localStorage.setItem('cookieOk','1');}catch(e){}document.getElementById('cookie').style.display='none';document.dispatchEvent(new Event('scroll'));}
 </script>
 <script>
 if(window.ym)ym(108505608,'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});
@@ -655,13 +662,19 @@ if(!RM){
   function bad(el,on){el.classList.toggle('err',on)}
   f.addEventListener('submit',async e=>{
     e.preventDefault();
-    const name=f.name.value.trim(), phone=f.phone.value.trim(), niche=f.niche.value.trim(), agree=f.agree.checked;
+    const name=f.name.value.trim()||'не представился', phone=f.phone.value.trim(), niche=f.niche.value.trim(), agree=f.agree.checked;
     const pd=digits(phone);
-    let ok=true;
-    bad(f.name,!name); if(!name) ok=false;
-    const phoneOk=pd.length>=10 && pd.length<=11; bad(f.phone,!phoneOk); if(!phoneOk) ok=false;
-    f.querySelector('.agree').classList.toggle('err',!agree); if(!agree) ok=false;
-    if(!ok){msg.className='lead-msg bad';msg.textContent='Заполните имя, телефон и отметьте согласие';return;}
+    let ok=true, firstErr=null;
+    const phoneOk=pd.length>=10 && pd.length<=11; bad(f.phone,!phoneOk); if(!phoneOk){ok=false;firstErr=f.phone;}
+    f.querySelector('.agree').classList.toggle('err',!agree); if(!agree){ok=false;firstErr=firstErr||f.agree;}
+    if(!ok){
+      msg.className='lead-msg bad';
+      msg.textContent=!phoneOk?'Укажите телефон — мы перезвоним':'Поставьте галочку согласия — без неё не можем принять заявку';
+      firstErr.scrollIntoView({block:'center',behavior:'smooth'});
+      try{firstErr.focus({preventScroll:true})}catch(_){}
+      if(window.umami)umami.track('form_error',{missing:!phoneOk?'phone':'agree'});
+      return;
+    }
     btn.disabled=true; msg.className='lead-msg'; msg.textContent='Отправляю…';
     try{
       const r=await fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
@@ -670,6 +683,7 @@ if(!RM){
       f.reset();
       msg.className='lead-msg ok'; msg.textContent='Заявка отправлена! Перезвоним в ближайшее время.';
       if(window.ym) ym(108505608,'reachGoal','LEAD_FORM');
+      if(window.umami) umami.track('lead_submit');
     }catch(err){
       msg.className='lead-msg bad';
       msg.innerHTML='Не отправилось. Позвоните: <a href="tel:+79281446617" style="color:var(--yellow)">+7 928 144-66-17</a> или <a href="https://wa.me/79281446617" style="color:var(--yellow)">напишите в WhatsApp</a>';
@@ -710,6 +724,28 @@ if(!RM){
   img.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
   img.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(cur.shots.length>1&&Math.abs(dx)>40)go(dx<0?1:-1);sx=null;},{passive:true});
 })();
+/* мобильная липкая CTA: показать после первого экрана, спрятать у формы */
+function initMcta(){
+  const bar=document.getElementById('mcta'); if(!bar) return;
+  const contact=document.getElementById('contact');
+  let nearForm=false;
+  /* страница скроллится через body (overflow:auto), window.scrollY всегда 0 */
+  const yPos=()=>Math.max(document.body.scrollTop,document.documentElement.scrollTop,window.scrollY);
+  function upd(){
+    const on=yPos()>500&&!nearForm;bar.classList.toggle('on',on);bar.setAttribute('aria-hidden',String(!on));
+    const ck=document.getElementById('cookie');   /* не прятаться под cookie-баннером (z-index 999) */
+    bar.style.bottom=(ck&&ck.style.display==='flex')?ck.offsetHeight+26+'px':'';
+  }
+  if(contact&&'IntersectionObserver'in window){
+    new IntersectionObserver(es=>{es.forEach(e=>{nearForm=e.isIntersecting;upd();})},{rootMargin:'0px 0px -15% 0px'}).observe(contact);
+  }
+  document.addEventListener('scroll',upd,{passive:true,capture:true});upd();
+}
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',initMcta):initMcta();
 </script>
+<div class="mcta" id="mcta" aria-hidden="true">
+  <a class="mcta-call" href="tel:+79281446617" data-umami-event="mcta_call">📞 Позвонить</a>
+  <a class="mcta-lead" href="#contact" data-umami-event="mcta_lead">Оставить заявку</a>
+</div>
 </body>
 </html>

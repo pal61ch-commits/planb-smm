@@ -88,6 +88,25 @@ a{color:inherit;text-decoration:none}
 .hero h1 span{position:relative;white-space:nowrap}
 .hero .lead{max-width:520px;color:var(--muted);font-size:clamp(16px,1.9vw,18px);margin-bottom:30px}
 .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+/* быстрая заявка в первом экране */
+.quick{margin-top:18px;max-width:520px;animation:qin .35s var(--ease)}
+@keyframes qin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.quick-row{display:flex;gap:10px}
+.quick-row .fld{flex:1;min-width:0}
+.quick-row .btn{white-space:nowrap;padding-inline:22px}
+.quick .btn[disabled]{opacity:.45;cursor:default;transform:none;box-shadow:none}
+.agree-sm{font-size:12.5px;margin-top:10px}
+@media(max-width:880px){
+  .quick{margin-inline:auto;text-align:left}
+  .quick-row{flex-direction:column}
+  .quick-row .btn{width:100%}
+  /* поджимаем первый экран, чтобы галочка согласия не уезжала под cookie-баннер */
+  .hero{padding:26px 0 40px}
+  .hero h1{font-size:clamp(30px,7.4vw,44px);margin-bottom:12px}
+  .hero .lead{margin-bottom:18px;font-size:15.5px}
+  .hero-btns{gap:10px}
+  .quick{margin-top:14px}
+}
 .btn{display:inline-flex;align-items:center;gap:9px;padding:15px 28px;border-radius:13px;font-weight:700;font-size:15px;font-family:'Manrope';cursor:pointer;transition:.22s var(--ease);border:1px solid transparent;will-change:transform}
 .btn-y{background:var(--yellow);color:#15140c;box-shadow:0 10px 30px -8px rgba(245,196,0,.5)}
 .btn-y:hover{background:var(--yellow2);transform:translateY(-2px)}
@@ -288,6 +307,9 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 
 /* fab */
 .fab{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:12px}
+/* на мобильных прячем совсем: они ложились на поле телефона и на кнопку отправки,
+   а связь там и так есть — липкая панель «Позвонить / Оставить заявку» снизу */
+@media(max-width:880px){.fab{display:none}}
 .fab a{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 26px rgba(0,0,0,.45);transition:transform .22s var(--ease);position:relative}
 .fab a:hover{transform:scale(1.12)}
 .fab svg{width:27px;height:27px}
@@ -336,10 +358,22 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
       <h1>Поднимаем объявления в <span class="yel">ТОП</span> Авито</h1>
       <p class="lead">Ведём ваши кабинеты и продвигаем объявления — больше просмотров и заявок без вашей рутины. Проконсультируем <b style="color:var(--yellow)">бесплатно</b>: точно скажем, что подойдёт, сколько стоит и какие нужны вложения.</p>
       <div class="hero-btns">
-        <a href="#contact" class="btn btn-y" data-magnet>Бесплатная консультация</a>
         <a href="#cases" class="btn btn-g" data-magnet>Кейсы</a>
         <a href="#services" class="btn btn-g" data-magnet>Наши услуги</a>
       </div>
+
+      <!-- быстрая заявка прямо в первом экране: сюда доходят все, до нижней формы — 11% -->
+      <form class="quick" id="quickForm" novalidate>
+        <div class="quick-row">
+          <input class="fld" type="tel" name="phone" inputmode="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel" aria-label="Телефон">
+          <button class="btn btn-y" type="submit" id="quickBtn">Жду звонка</button>
+        </div>
+        <label class="agree agree-sm">
+          <input type="checkbox" name="agree">
+          <span>Согласен на обработку персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+        </label>
+        <div class="lead-msg" id="quickMsg" role="status" aria-live="polite"></div>
+      </form>
       <div class="trust">
         <span>🤝 <b>Партнёр Авито</b></span>
         <span>👥 <b>Своя команда</b></span>
@@ -604,10 +638,21 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 </footer>
 
 <!-- cookie consent -->
-<div id="cookie" style="position:fixed;left:18px;bottom:18px;z-index:999;max-width:380px;display:none;flex-direction:column;gap:10px;padding:15px 18px;border-radius:14px;background:rgba(18,18,20,.94);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);font-size:12.5px;color:#bdbdc2;box-shadow:0 14px 44px rgba(0,0,0,.55)">
-  <span>🍪 Мы используем cookie и Яндекс.Метрику для аналитики. Продолжая пользоваться сайтом, вы соглашаетесь с <a href="privacy.html" style="color:#F5C400">Политикой конфиденциальности</a>.</span>
-  <button onclick="cookieOk()" style="align-self:flex-start;padding:9px 20px;border-radius:9px;border:none;background:#F5C400;color:#15140c;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px">Принять</button>
+<div id="cookie">
+  <span>🍪 Мы используем cookie и Яндекс.Метрику для аналитики. Подробнее — в <a href="privacy.html">Политике конфиденциальности</a>.</span>
+  <button onclick="cookieOk()" type="button">Принять</button>
 </div>
+<style>
+/* тонкая полоса, а не блок на четверть экрана: на 423px старый вариант закрывал форму */
+/* справа: слева он ложился под форму заявки в первом экране */
+#cookie{position:fixed;right:18px;bottom:18px;z-index:999;max-width:380px;display:none;align-items:center;gap:12px;
+  padding:11px 14px;border-radius:12px;background:rgba(18,18,20,.94);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.12);font-size:12px;line-height:1.35;color:#bdbdc2;box-shadow:0 14px 44px rgba(0,0,0,.55)}
+#cookie a{color:#F5C400}
+#cookie button{flex:none;padding:8px 16px;border-radius:9px;border:none;background:#F5C400;color:#15140c;
+  font-weight:700;cursor:pointer;font-family:inherit;font-size:12.5px}
+@media(max-width:880px){#cookie{left:10px;right:10px;bottom:10px;max-width:none;padding:9px 12px;font-size:11.5px}}
+</style>
 <script>
 try{if(!localStorage.getItem('cookieOk')){var _c=document.getElementById('cookie');_c.style.display='flex';}}catch(e){}
 function cookieOk(){try{localStorage.setItem('cookieOk','1');}catch(e){}document.getElementById('cookie').style.display='none';document.dispatchEvent(new Event('scroll'));}
@@ -653,6 +698,67 @@ if(!RM){
   next.addEventListener('click',()=>track.scrollBy({left:step(),behavior:'smooth'}));
   track.addEventListener('scroll',upd,{passive:true}); addEventListener('resize',upd); upd();
 })();
+/* быстрая заявка в первом экране — телефон и всё */
+(function(){
+  const LEAD_ENDPOINT='https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg';
+  const f=document.getElementById('quickForm');
+  if(!f) return;
+  const msg=document.getElementById('quickMsg'), btn=document.getElementById('quickBtn');
+  const digits=s=>(s||'').replace(/\D/g,'');
+  const valid=()=>{const d=digits(f.phone.value); return d.length>=10&&d.length<=11;};
+
+  /* верхние кнопки «консультация» больше не телепортируют в конец страницы,
+     а ставят курсор в поле здесь же. focus() внутри обработчика клика —
+     иначе мобильная клавиатура не открывается */
+  document.querySelectorAll('a[href="#contact"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      if(window.innerWidth>880) return;      /* на десктопе привычный переход к большой форме */
+      e.preventDefault();
+      f.scrollIntoView({block:'center',behavior:'instant'});
+      f.phone.focus();
+      if(window.umami)umami.track('quick_focus');
+    });
+  });
+
+  /* подсказка живёт рядом с полем и обновляется по мере ввода — человек видит, чего не хватает */
+  f.phone.addEventListener('input',()=>{
+    f.phone.classList.remove('err');
+    msg.className='lead-msg';
+    msg.textContent = f.phone.value && !valid() ? 'Похоже, номер неполный' : '';
+  });
+
+  f.addEventListener('submit',async e=>{
+    e.preventDefault();
+    if(!valid()){
+      f.phone.classList.add('err');
+      msg.className='lead-msg bad'; msg.textContent='Введите номер телефона — перезвоним';
+      f.phone.focus();                     /* без smooth-скролла: он асинхронный и сбивает фокус */
+      if(window.umami)umami.track('form_error',{missing:'phone',where:'quick'});
+      return;
+    }
+    if(!f.agree.checked){
+      f.querySelector('.agree').classList.add('err');
+      msg.className='lead-msg bad'; msg.textContent='Отметьте согласие — без него не можем принять заявку';
+      if(window.umami)umami.track('form_error',{missing:'agree',where:'quick'});
+      return;
+    }
+    btn.disabled=true; msg.className='lead-msg'; msg.textContent='Отправляю…';
+    try{
+      const r=await fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name:'не представился',phone:f.phone.value.trim(),niche:'быстрая заявка (первый экран)',
+          page:location.href,ref:document.referrer||'',ts:new Date().toISOString()})});
+      if(!r.ok) throw new Error('http '+r.status);
+      f.reset(); f.querySelector('.agree').classList.remove('err');
+      msg.className='lead-msg ok'; msg.textContent='Заявка принята! Перезвоним в ближайшее время.';
+      if(window.ym) ym(110884885,'reachGoal','LEAD_FORM');
+      if(window.umami) umami.track('lead_submit',{where:'quick'});
+    }catch(err){
+      msg.className='lead-msg bad';
+      msg.innerHTML='Не отправилось. Позвоните: <a href="tel:+79281446617" style="color:var(--yellow)">+7 928 144-66-17</a>';
+    }finally{btn.disabled=false}
+  });
+})();
+
 /* форма заявки → YC-функция (РФ) + цель в Метрику */
 (function(){
   const LEAD_ENDPOINT='https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg';
@@ -670,8 +776,9 @@ if(!RM){
     if(!ok){
       msg.className='lead-msg bad';
       msg.textContent=!phoneOk?'Укажите телефон — мы перезвоним':'Поставьте галочку согласия — без неё не можем принять заявку';
-      firstErr.scrollIntoView({block:'center',behavior:'smooth'});
+      /* сначала фокус (открывает клавиатуру), потом мгновенный доскролл — smooth сбивал фокус */
       try{firstErr.focus({preventScroll:true})}catch(_){}
+      firstErr.scrollIntoView({block:'center',behavior:'instant'});
       if(window.umami)umami.track('form_error',{missing:!phoneOk?'phone':'agree'});
       return;
     }

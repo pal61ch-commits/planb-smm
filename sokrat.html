@@ -273,10 +273,10 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
         m[i].l=1*new Date();
         for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108505608', 'ym');
-    ym(108505608,'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=110884885', 'ym');
+    ym(110884885,'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});
 </script>
-<noscript><div><img src="https://mc.yandex.ru/watch/108505608" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<noscript><div><img src="https://mc.yandex.ru/watch/110884885" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- Umami analytics (self-hosted, РФ) — трекер + визор -->
 <script defer src="https://158-160-63-165.sslip.io/script.js" data-website-id="a01eef21-a164-429b-8dc4-60d8e7e556f5"></script>
 <script defer src="https://158-160-63-165.sslip.io/recorder.js" data-website-id="a01eef21-a164-429b-8dc4-60d8e7e556f5"></script>
@@ -766,7 +766,9 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     s=s.replace(/(^|[\s(])(https?:\/\/[^\s<]+)(?![^<]*>)/g,function(_m,pre,url){var t='';var mm=url.match(/[.,;:!?»)\]"']+$/);if(mm){t=mm[0];url=url.slice(0,-t.length);}var h=url.replace(/"/g,'%22').replace(/'/g,'%27');var v=url.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});return pre+'<a href="'+h+'" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">'+v+'</a>'+t;});
     return s;
   }
-  function fmt(s){return mdbold(linkify(te(s)));}
+  // модель отдаёт и markdown **жирный**, и HTML <b>…</b> — после экранирования возвращаем
+  // безопасные теги, иначе клиент видел «<b>Сводка</b>» текстом (проверка 19.07.2026)
+  function fmt(s){return mdbold(linkify(te(s))).replace(/&lt;(\/?)(b|strong|i|em|code)&gt;/gi,'<$1$2>');}
   function copyText(t,btn){navigator.clipboard.writeText(t).then(function(){toast('Скопировано ✓');if(btn){var o=btn.innerHTML;btn.innerHTML='✓ Скопировано';setTimeout(function(){btn.innerHTML=o;},1600);}}).catch(function(){toast('Не удалось скопировать');});}
   function wireAttach(form){
     var fileInp=form.querySelector('[data-file]'),attachBtn=form.querySelector('[data-attach]'),chip=form.parentNode.querySelector('[data-chip]'),st={file:null};

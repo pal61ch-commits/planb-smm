@@ -52,7 +52,9 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+/* clip вместо hidden: hidden делает body контейнером прокрутки и ломает position:sticky
+   на мобильных — шапка уезжала вверх. clip обрезает так же, но sticky продолжает работать */
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.55;overflow-x:clip;-webkit-font-smoothing:antialiased}
 h1,h2,h3,h4,.dis{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.06;font-weight:800}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1180px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
@@ -78,6 +80,15 @@ a{color:inherit;text-decoration:none}
 .nav-cta{padding:10px 20px;border-radius:11px;background:var(--yellow);color:#15140c!important;font-weight:700;font-size:14px;transition:.25s;box-shadow:0 6px 20px rgba(245,196,0,.32)}
 .nav-cta:hover{background:var(--yellow2);transform:translateY(-1px)}
 @media(max-width:780px){.nav-links a:not(.nav-cta){display:none}}
+/* вторая строка меню — на мобильных вместо спрятанных ссылок первой строки.
+   Липнет под основной шапкой, прокручивается пальцем вбок, если не влезает */
+.nav2{position:sticky;top:88px;z-index:49;margin-top:8px;display:none}
+.nav2 .wrap{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0}
+.nav2 .wrap::-webkit-scrollbar{display:none}
+.nav2 a{flex:none;padding:7px 13px;border-radius:10px;background:var(--glass2);border:1px solid var(--gb);
+  color:var(--text);font-size:13px;font-weight:600;white-space:nowrap}
+.nav2 a:active{background:rgba(245,196,0,.16);border-color:var(--yellow)}
+@media(max-width:780px){.nav2{display:block}}
 
 /* hero */
 .hero{padding:60px 0 70px;position:relative}
@@ -111,12 +122,18 @@ a{color:inherit;text-decoration:none}
 .quick-alt a{display:inline-flex;align-items:center;padding:9px 16px;border-radius:10px;background:var(--glass2);border:1px solid var(--gb);color:var(--text);font-weight:600;font-size:13.5px}
 @media(max-width:880px){
   .quick{margin-inline:auto;text-align:left}
-  /* поджимаем первый экран, чтобы галочка согласия не уезжала под cookie-баннер */
-  .hero{padding:26px 0 40px}
-  .hero h1{font-size:clamp(30px,7.4vw,44px);margin-bottom:12px}
-  .hero .lead{margin-bottom:18px;font-size:15.5px}
+  /* поджимаем первый экран: вторая строка меню съедает ~50px, а форма обязана влезть целиком */
+  .hero{padding:14px 0 32px}
+  .hero h1{font-size:clamp(27px,6.8vw,40px);margin-bottom:10px;line-height:1.15}
+  .hero .lead{margin-bottom:14px;font-size:14.5px;line-height:1.45}
+  .partner{margin-bottom:10px;font-size:12px;padding:6px 12px}
   .hero-btns{gap:10px}
-  .quick{margin-top:14px}
+  .quick{margin-top:12px}
+  .quick .fld{padding:14px;font-size:16px}
+  .quick #quickBtn{margin-top:8px;padding-block:13px}
+  .quick .agree{margin-top:10px}
+  .quick-note{margin-top:8px}
+  .quick-alt{margin-top:10px}
 }
 .btn{display:inline-flex;align-items:center;gap:9px;padding:15px 28px;border-radius:13px;font-weight:700;font-size:15px;font-family:'Manrope';cursor:pointer;transition:.22s var(--ease);border:1px solid transparent;will-change:transform}
 .btn-y{background:var(--yellow);color:#15140c;box-shadow:0 10px 30px -8px rgba(245,196,0,.5)}
@@ -318,9 +335,17 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 
 /* fab */
 .fab{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:12px}
-/* на мобильных прячем совсем: они ложились на поле телефона и на кнопку отправки,
-   а связь там и так есть — липкая панель «Позвонить / Оставить заявку» снизу */
-@media(max-width:880px){.fab{display:none}}
+/* На мобильных по центру они ложились прямо на поле телефона и кнопку отправки.
+   Поэтому уводим вниз-вправо и показываем ТОЛЬКО после первого экрана — там форма,
+   и перекрывать её нельзя. Класс .on вешает тот же наблюдатель, что и нижнюю панель. */
+@media(max-width:880px){
+  .fab{top:auto;bottom:86px;transform:translateY(12px);right:12px;gap:10px;
+       opacity:0;visibility:hidden;pointer-events:none;
+       transition:opacity .25s var(--ease),transform .25s var(--ease),visibility 0s linear .25s}
+  .fab.on{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition:opacity .25s var(--ease),transform .25s var(--ease)}
+  .fab a{width:46px;height:46px}
+  .fab svg{width:23px;height:23px}
+}
 .fab a{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 26px rgba(0,0,0,.45);transition:transform .22s var(--ease);position:relative}
 .fab a:hover{transform:scale(1.12)}
 .fab svg{width:27px;height:27px}
@@ -358,6 +383,18 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
       <a href="#reviews">Отзывы</a>
       <a href="#contact" class="nav-cta">Консультация бесплатно</a>
     </div>
+  </div>
+</nav>
+
+<!-- вторая строка: на мобильных ссылки из первой строки скрыты, а они нужны -->
+<nav class="nav2" aria-label="Разделы сайта">
+  <div class="wrap">
+    <a href="#cases">📁 Кейсы</a>
+    <a href="#reviews">💬 Отзывы</a>
+    <a href="#services">🛠 Услуги</a>
+    <a href="/blog/">📖 Блог</a>
+    <a href="#how">📋 Как работаем</a>
+    <a href="/sokrat">🦉 ИИ-авитолог</a>
   </div>
 </nav>
 
@@ -870,10 +907,19 @@ function initMcta(){
   let nearForm=false;
   /* страница скроллится через body (overflow:auto), window.scrollY всегда 0 */
   const yPos=()=>Math.max(document.body.scrollTop,document.documentElement.scrollTop,window.scrollY);
+  const fab=document.querySelector('.fab');
   function upd(){
-    const on=yPos()>500&&!nearForm;bar.classList.toggle('on',on);bar.setAttribute('aria-hidden',String(!on));
+    const past=yPos()>500;
+    const on=past&&!nearForm;bar.classList.toggle('on',on);bar.setAttribute('aria-hidden',String(!on));
     const ck=document.getElementById('cookie');   /* не прятаться под cookie-баннером (z-index 999) */
-    bar.style.bottom=(ck&&ck.style.display==='flex')?ck.offsetHeight+26+'px':'';
+    const ckH=(ck&&ck.style.display==='flex')?ck.offsetHeight+26:0;
+    bar.style.bottom=ckH?ckH+'px':'';
+    /* кружочки мессенджеров: на мобильных выезжают вместе с панелью, но не на первом
+       экране — там форма. На десктопе висят всегда, класс им не мешает. */
+    if(fab){
+      fab.classList.toggle('on',past);
+      fab.style.bottom = window.innerWidth<=880 ? (on?86:20)+ckH+'px' : '';
+    }
   }
   if(contact&&'IntersectionObserver'in window){
     new IntersectionObserver(es=>{es.forEach(e=>{nearForm=e.isIntersecting;upd();})},{rootMargin:'0px 0px -15% 0px'}).observe(contact);

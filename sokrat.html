@@ -539,7 +539,14 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   function bubble(role,text,image){
     const m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');
     const img=image?'<img src="'+image+'" alt="скриншот" style="max-width:100%;border-radius:10px;display:block;'+(text?'margin-bottom:6px':'')+'">':'';
-    const body=text?linkify(esc(text)).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>'):'';
+    // Промпт учит модель размечать жирный HTML-тегами (<b>Копирайтер</b>), а esc() их экранировал —
+    // клиент видел сырые «<b>…</b>» в чате (50 сообщений в 25 сессиях, разбор 21.07.2026).
+    // Возвращаем ТОЛЬКО безопасный набор тегов уже ПОСЛЕ экранирования: остальная разметка,
+    // ссылки и любой пользовательский ввод остаются обезвреженными.
+    const body=text?linkify(esc(text))
+      .replace(/&lt;(\/?)(b|strong|i|em|u)&gt;/g,'<$1$2>')
+      .replace(/&lt;br\s*\/?&gt;/g,'<br>')
+      .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>'):'';
     m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+img+body+'</div>';
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
   }

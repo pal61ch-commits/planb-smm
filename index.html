@@ -91,9 +91,12 @@ a{color:inherit;text-decoration:none}
 /* быстрая заявка в первом экране */
 .quick{margin-top:18px;max-width:520px;animation:qin .35s var(--ease)}
 @keyframes qin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-.quick-row{display:flex;gap:10px}
-.quick-row .fld{flex:1;min-width:0}
-.quick-row .btn{white-space:nowrap;padding-inline:22px}
+.quick #quickBtn{width:100%;justify-content:center;margin-top:10px}
+.quick .agree{margin:12px 0 0}
+/* галочка не должна теряться: крупнее и контрастнее, ошибка видна сразу */
+.quick .agree input{width:22px;height:22px}
+.quick .agree.err{color:#ffb4ab}
+.quick .agree.err input{outline:2px solid #ff6b5b;outline-offset:2px;border-radius:4px}
 .quick .btn[disabled]{opacity:.45;cursor:default;transform:none;box-shadow:none}
 .agree-sm{font-size:12.5px;margin-top:10px}
 /* Инверсия веса: палец идёт на самое яркое. Пока номер не введён — яркое это ПОЛЕ,
@@ -108,8 +111,6 @@ a{color:inherit;text-decoration:none}
 .quick-alt a{display:inline-flex;align-items:center;padding:9px 16px;border-radius:10px;background:var(--glass2);border:1px solid var(--gb);color:var(--text);font-weight:600;font-size:13.5px}
 @media(max-width:880px){
   .quick{margin-inline:auto;text-align:left}
-  .quick-row{flex-direction:column}
-  .quick-row .btn{width:100%}
   /* поджимаем первый экран, чтобы галочка согласия не уезжала под cookie-баннер */
   .hero{padding:26px 0 40px}
   .hero h1{font-size:clamp(30px,7.4vw,44px);margin-bottom:12px}
@@ -370,21 +371,21 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 
       <!-- быстрая заявка прямо в первом экране: сюда доходят все, до нижней формы — 11% -->
       <form class="quick" id="quickForm" novalidate>
-        <div class="quick-row">
-          <input class="fld" type="tel" name="phone" inputmode="tel" placeholder="+7 ваш номер" autocomplete="tel" aria-label="Телефон">
-          <button class="btn btn-y" type="submit" id="quickBtn">Получить разбор</button>
-        </div>
+        <input class="fld" type="tel" name="phone" inputmode="tel" placeholder="+7 ваш номер" autocomplete="tel" aria-label="Телефон">
+        <!-- согласие ДО кнопки: когда оно стояло под кнопкой и ниже мессенджеров,
+             человек 4 раза упёрся в «отметьте согласие» и ушёл в мессенджеры (21.07, визор) -->
+        <label class="agree agree-sm">
+          <input type="checkbox" name="agree">
+          <span>Согласен на обработку персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
+        </label>
+        <button class="btn btn-y" type="submit" id="quickBtn">Получить разбор</button>
+        <div class="lead-msg" id="quickMsg" role="status" aria-live="polite"></div>
         <p class="quick-note">Доступ к кабинету не просим · перезвоним в рабочее время</p>
         <div class="quick-alt">
           <span>Не хотите звонка?</span>
           <a href="https://wa.me/79281446617" target="_blank" rel="noopener" data-alt="wa">WhatsApp</a>
           <a href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-alt="tg">Telegram</a>
         </div>
-        <label class="agree agree-sm">
-          <input type="checkbox" name="agree">
-          <span>Согласен на обработку персональных данных в соответствии с <a href="privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a></span>
-        </label>
-        <div class="lead-msg" id="quickMsg" role="status" aria-live="polite"></div>
       </form>
       <div class="trust">
         <span>🤝 <b>Партнёр Авито</b></span>
@@ -768,7 +769,8 @@ if(!RM){
     }
     if(!f.agree.checked){
       f.querySelector('.agree').classList.add('err');
-      msg.className='lead-msg bad'; msg.textContent='Отметьте согласие — без него не можем принять заявку';
+      msg.className='lead-msg bad'; msg.textContent='Отметьте галочку согласия — она прямо над кнопкой';
+      f.agree.focus({preventScroll:true});   /* ведём к галочке, а не просто ругаемся */
       if(window.umami)umami.track('form_error',{missing:'agree',where:'quick'});
       return;
     }

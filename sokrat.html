@@ -543,10 +543,15 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     // клиент видел сырые «<b>…</b>» в чате (50 сообщений в 25 сессиях, разбор 21.07.2026).
     // Возвращаем ТОЛЬКО безопасный набор тегов уже ПОСЛЕ экранирования: остальная разметка,
     // ссылки и любой пользовательский ввод остаются обезвреженными.
-    const body=text?linkify(esc(text))
+    // Форматный аудит 551 ответа из БД (22.07.2026): md-ссылки [текст](url) показывались сырыми
+    // (14 сообщений), заголовки ### — решётками (3). Конвертим их ДО linkify: авто-линковка
+    // иначе съедает URL внутри скобок и ломает разметку.
+    const body=text?linkify(esc(text)
+      .replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:underline">$1</a>')
+      .replace(/^#{1,4}\s+(.+)$/gm,'<strong>$1</strong>')
       .replace(/&lt;(\/?)(b|strong|i|em|u)&gt;/g,'<$1$2>')
       .replace(/&lt;br\s*\/?&gt;/g,'<br>')
-      .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>'):'';
+      .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')):'';
     m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+img+body+'</div>';
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
   }

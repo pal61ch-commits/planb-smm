@@ -168,6 +168,9 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .acctsec{margin-top:16px;padding-top:15px;border-top:1px solid var(--gb)}
 .acctsec .accth{font-family:'Manrope';font-weight:700;font-size:14.5px;margin-bottom:11px}
 .acctsec input{margin-bottom:9px}
+.dangerbtn{width:100%;margin-top:8px;padding:11px;border-radius:11px;background:rgba(255,75,75,.12);color:#ff9c9c;border:1px solid rgba(255,100,100,.38);font-weight:700;cursor:pointer}
+.dangerbtn:hover{background:rgba(255,75,75,.2)}
+.privacyhint{font-size:12px;line-height:1.45;color:var(--muted);margin:8px 0}
 .msubmit.slim{margin-top:4px;padding:11px;font-size:14px}
 .merr.ok{color:#3ad07a}
 .msubmit:disabled{opacity:.6;cursor:wait}
@@ -468,6 +471,17 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <button class="msubmit slim" id="aEmailBtn" type="button">Сменить почту</button>
       <div class="merr" id="aEmailErr"></div>
     </div>
+    <div class="acctsec">
+      <div class="accth">🗂 Ваши данные</div>
+      <button class="msubmit slim" id="aExportBtn" type="button">Скачать архив данных</button>
+      <div class="privacyhint">В архиве нет пароля, токенов и секретов Avito.</div>
+      <div class="accth" style="margin-top:15px;color:#ff9c9c">Удалить аккаунт</div>
+      <div class="privacyhint">Личные данные и файлы будут удалены. Обезличенные финансовые записи сохранятся для учёта.</div>
+      <input id="aDeletePw" type="password" maxlength="256" autocomplete="current-password" placeholder="текущий пароль">
+      <input id="aDeleteConfirm" type="text" autocomplete="off" placeholder="напишите УДАЛИТЬ">
+      <button class="dangerbtn" id="aDeleteBtn" type="button">Удалить аккаунт и данные</button>
+      <div class="merr" id="aPrivacyErr"></div>
+    </div>
     <button class="authbtn ghost" id="aLogout" style="width:100%;margin-top:18px">Выйти из аккаунта</button>
   </div>
 </div>
@@ -581,6 +595,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
     try{
       const payload=Object.assign({sess:sess,message:text,visitor:SOK_VIS},SOK_UTM); if(image)payload.image=image;
+      try{payload.token=localStorage.getItem('sok_auth')||'';}catch(e){}
       const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();t.remove();
       const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
@@ -723,8 +738,8 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     $('#aEmailLine').textContent=state.email||'';
     renderAcctSub();
     renderAcctIdentity();
-    ['aPwErr','aEmailErr','aIdentityErr'].forEach(function(id){var e=$('#'+id);if(e){e.className='merr';e.textContent='';}});
-    ['aOldPw','aNewPw','aNewEmail','aEmailPw'].forEach(function(id){var e=$('#'+id);if(e)e.value='';});
+    ['aPwErr','aEmailErr','aIdentityErr','aPrivacyErr'].forEach(function(id){var e=$('#'+id);if(e){e.className='merr';e.textContent='';}});
+    ['aOldPw','aNewPw','aNewEmail','aEmailPw','aDeletePw','aDeleteConfirm'].forEach(function(id){var e=$('#'+id);if(e)e.value='';});
     $('#acctModal').classList.add('on');
   }
   function closeAcct(){ $('#acctModal').classList.remove('on'); }
@@ -835,6 +850,33 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     var res=await api('/c/sokrat/account/email/verify/request',{});var d=res.d;this.disabled=false;
     if(d&&d.ok){er.className='merr ok';er.textContent='Письмо отправлено. Проверьте входящие и спам.';}
     else{er.textContent=(d&&d.error)||'Не удалось отправить письмо';}
+  });
+  $('#aExportBtn').addEventListener('click',async function(){
+    var er=$('#aPrivacyErr');er.className='merr';er.textContent='';this.disabled=true;
+    try{
+      var h={'Content-Type':'application/json','X-Auth-Token':token};
+      var r=await fetch(SOK_API_BASE+'/c/sokrat/account/export',{method:'POST',headers:h,body:JSON.stringify({visitor:SOK_VIS})});
+      if(!r.ok){var d={};try{d=await r.json();}catch(e){}throw new Error(d.error||'Не удалось собрать архив');}
+      var blob=await r.blob(),u=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=u;a.download='sokrat-my-data.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},1000);
+      er.className='merr ok';er.textContent='Архив скачан.';
+    }catch(e){er.textContent=e.message||'Не удалось скачать архив';}
+    this.disabled=false;
+  });
+  $('#aDeleteBtn').addEventListener('click',async function(){
+    var er=$('#aPrivacyErr');er.className='merr';er.textContent='';
+    var pw=$('#aDeletePw').value,confirmText=$('#aDeleteConfirm').value.trim();
+    if(!pw||confirmText!=='УДАЛИТЬ'){er.textContent='Введите текущий пароль и слово УДАЛИТЬ';return;}
+    if(!window.confirm('Удалить аккаунт, личные данные и файлы без возможности восстановления?'))return;
+    this.disabled=true;
+    var deleteSess='';try{deleteSess=localStorage.getItem('sok_sess')||'';}catch(e){}
+    var res=await api('/c/sokrat/account/delete',{password:pw,confirmation:confirmText,sess:deleteSess});var d=res.d;
+    this.disabled=false;
+    if(d&&d.ok){
+      setToken('');try{['sok_hist','sok_sess','sok_vis','sok_utm'].forEach(function(k){localStorage.removeItem(k);});}catch(e){}
+      window.alert('Аккаунт и личные данные удалены.');location.reload();return;
+    }
+    er.textContent=(d&&d.error)||'Не удалось удалить аккаунт';
   });
 
   var _toolInit={};

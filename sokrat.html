@@ -430,10 +430,10 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <h3 id="mTitle">Вход</h3>
     <div class="msub">Доступ к платным инструментам Plan B. Консультация у Сократа — всегда бесплатна и без входа.</div>
     <form id="mForm" autocomplete="on">
-      <label>Email</label>
+      <label id="mEmailLabel">Email</label>
       <input id="mEmail" type="email" autocomplete="email" placeholder="you@mail.ru" required>
-      <label>Пароль</label>
-      <input id="mPass" type="password" autocomplete="current-password" placeholder="минимум 6 символов" required>
+      <label id="mPassLabel">Пароль</label>
+      <input id="mPass" type="password" minlength="1" maxlength="256" autocomplete="current-password" placeholder="Пароль" required>
       <button class="msubmit" id="mSubmit" type="submit">Войти</button>
       <div class="merr" id="mErr"></div>
     </form>
@@ -448,9 +448,16 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <div class="msub" id="aEmailLine"></div>
     <div class="acctsub" id="aSub"></div>
     <div class="acctsec">
+      <div class="accth">🔗 Единый аккаунт</div>
+      <div class="msub" id="aIdentityStatus"></div>
+      <button class="msubmit slim" id="aTgBtn" type="button">Связать Telegram</button>
+      <button class="msubmit slim" id="aVerifyBtn" type="button">Подтвердить почту</button>
+      <div class="merr" id="aIdentityErr"></div>
+    </div>
+    <div class="acctsec">
       <div class="accth">🔑 Сменить пароль</div>
-      <input id="aOldPw" type="password" autocomplete="current-password" placeholder="текущий пароль">
-      <input id="aNewPw" type="password" autocomplete="new-password" placeholder="новый пароль (мин. 6)">
+      <input id="aOldPw" type="password" maxlength="256" autocomplete="current-password" placeholder="текущий пароль">
+      <input id="aNewPw" type="password" minlength="8" maxlength="256" autocomplete="new-password" placeholder="новый пароль (8–256)">
       <button class="msubmit slim" id="aPwBtn" type="button">Сменить пароль</button>
       <div class="merr" id="aPwErr"></div>
     </div>
@@ -588,7 +595,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
 /* ── авторизация + гейт платных вкладок ── */
 (function(){
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-  let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5}, mode='login';
+  let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5}, mode='login', resetCode='';
   function toolAccess(tool){return state.subscribed||(state.trial&&(state.trial[tool]||0)>0);}
   function setTrialLeft(tool,left){if(typeof left!=='number')return;state.trial=state.trial||{};state.trial[tool]=left;updateTrialBadge(tool);}
   function updateTrialBadge(tool){
@@ -604,6 +611,13 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function fmtDate(iso){try{return new Date(iso).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
   function setToken(t){token=t||'';try{t?localStorage.setItem('sok_auth',t):localStorage.removeItem('sok_auth');}catch(e){}}
+  function accountState(d){
+    return {auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,
+      trial:d.trial||null,freeGens:d.free_gens||5,notice:d.notice||null,
+      telegramLinked:!!d.telegram_linked,emailVerified:!!d.email_verified,
+      emailVerificationAvailable:!!d.email_verification_available,
+      renewalDue:!!d.renewal_due,renewalDays:d.renewal_days};
+  }
 
   async function api(path,body){
     const h={'Content-Type':'application/json'}; if(token)h['X-Auth-Token']=token;
@@ -657,7 +671,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   async function refresh(){
     if(!token){state={auth:false};renderAuthbox();renderGates();return;}
     const {d}=await api('/c/sokrat/me',{});
-    if(d&&d.auth){state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,trial:d.trial||null,freeGens:d.free_gens||5,notice:d.notice||null};}
+    if(d&&d.auth){state=accountState(d);if(d.renewal_notice)toast('Подписка заканчивается через '+(d.renewal_days||1)+' дн. Продлите заранее — дни не сгорят.');}
     else{const had=token;setToken('');state={auth:false};if(had)toast('Вы вошли с другого устройства — сессия здесь завершена.');}
     renderAuthbox();renderGates();showNotice();
   }
@@ -695,35 +709,62 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     }
     var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); doSubscribe(); };
   }
+  function renderAcctIdentity(){
+    var status=$('#aIdentityStatus'),tg=$('#aTgBtn'),verify=$('#aVerifyBtn');
+    var parts=[];
+    parts.push(state.telegramLinked?'✅ Telegram связан':'Telegram пока не связан');
+    if(state.emailVerificationAvailable)parts.push(state.emailVerified?'✅ почта подтверждена':'Почта не подтверждена');
+    status.textContent=parts.join(' · ');
+    tg.style.display=state.telegramLinked?'none':'block';
+    verify.style.display=(state.emailVerificationAvailable&&!state.emailVerified)?'block':'none';
+  }
   function openAcct(){
     if(!state.auth){ openModal('login'); return; }
     $('#aEmailLine').textContent=state.email||'';
     renderAcctSub();
-    ['aPwErr','aEmailErr'].forEach(function(id){var e=$('#'+id);if(e){e.className='merr';e.textContent='';}});
+    renderAcctIdentity();
+    ['aPwErr','aEmailErr','aIdentityErr'].forEach(function(id){var e=$('#'+id);if(e){e.className='merr';e.textContent='';}});
     ['aOldPw','aNewPw','aNewEmail','aEmailPw'].forEach(function(id){var e=$('#'+id);if(e)e.value='';});
     $('#acctModal').classList.add('on');
   }
   function closeAcct(){ $('#acctModal').classList.remove('on'); }
 
   /* модалка */
-  function openModal(m){mode=m;renderModal();$('#authModal').classList.add('on');setTimeout(function(){$('#mEmail').focus();},50);}
+  function openModal(m){mode=m;if(m==='register')sokTrack('signup_started','/signup');renderModal();$('#authModal').classList.add('on');setTimeout(function(){(m==='reset'?$('#mPass'):$('#mEmail')).focus();},50);}
   function closeModal(){$('#authModal').classList.remove('on');$('#mErr').textContent='';}
   function renderModal(){
-    $('#mTitle').textContent=mode==='login'?'Вход':'Регистрация';
-    $('#mSubmit').textContent=mode==='login'?'Войти':'Зарегистрироваться';
+    var reset=mode==='reset';
+    $('#mTitle').textContent=reset?'Новый пароль':(mode==='login'?'Вход':'Регистрация');
+    $('#mSubmit').textContent=reset?'Сохранить пароль':(mode==='login'?'Войти':'Зарегистрироваться');
+    $('#mEmailLabel').style.display=reset?'none':'block';$('#mEmail').style.display=reset?'none':'block';$('#mEmail').required=!reset;
+    $('#mPassLabel').textContent=reset?'Новый пароль':'Пароль';
     $('#mPass').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');
-    $('#mToggle').innerHTML=mode==='login'?'Нет аккаунта? <a id="mSwap">Зарегистрироваться</a>':'Уже есть аккаунт? <a id="mSwap">Войти</a>';
-    $('#mSwap').onclick=function(){mode=(mode==='login'?'register':'login');renderModal();};
+    $('#mPass').minLength=mode==='login'?1:8;
+    $('#mPass').placeholder=mode==='login'?'Пароль':'8–256 символов';
+    $('#mToggle').innerHTML=reset?'':(mode==='login'?'Нет аккаунта? <a id="mSwap">Зарегистрироваться</a> · <a id="mForgot">Забыли пароль?</a>':'Уже есть аккаунт? <a id="mSwap">Войти</a>');
+    var swap=$('#mSwap');if(swap)swap.onclick=function(){mode=(mode==='login'?'register':'login');renderModal();};
+    var forgot=$('#mForgot');if(forgot)forgot.onclick=requestPasswordReset;
     $('#mErr').textContent='';
+  }
+  async function requestPasswordReset(){
+    var email=$('#mEmail').value.trim();
+    if(!email){$('#mErr').textContent='Сначала введите почту';return;}
+    sokTrack('password_reset_started','/password-reset');
+    var res=await api('/c/sokrat/password/reset/request',{email:email});
+    $('#mErr').className='merr ok';$('#mErr').textContent=(res.d&&res.d.message)||'Если аккаунт существует, ссылка отправлена.';
   }
   async function submitModal(e){
     if(e)e.preventDefault();
     const email=$('#mEmail').value.trim(), pw=$('#mPass').value;
-    if(!email||!pw){$('#mErr').textContent='Заполните почту и пароль';return;}
+    if((mode!=='reset'&&!email)||!pw){$('#mErr').textContent=mode==='reset'?'Введите новый пароль':'Заполните почту и пароль';return;}
     const btn=$('#mSubmit');btn.disabled=true;
-    const {st,d}=await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
+    const {st,d}=mode==='reset'
+      ?await api('/c/sokrat/password/reset/confirm',{code:resetCode,password:pw})
+      :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
     btn.disabled=false;
-    if(d&&d.token){setToken(d.token);state={auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,trial:d.trial||null,freeGens:d.free_gens||5};closeModal();renderAuthbox();renderGates();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');}
+    if(mode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast('Пароль изменён. Войдите заново.');}
+    else if(d&&d.token){setToken(d.token);state=accountState(d);closeModal();renderAuthbox();renderGates();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');}
+    else if(d&&d.registered){$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
     else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
   }
 
@@ -732,13 +773,26 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('on');},5000);}
 
   /* возврат с оплаты */
-  function handleReturn(){
+  async function handleReturn(){
     const q=new URLSearchParams(location.search);
     if(q.get('paid')==='ok'){
       toast('Оплата получена — активируем подписку…');
+      await api('/c/sokrat/payment/reconcile',{});
       let n=0;const iv=setInterval(async function(){n++;await refresh();if(state.subscribed||n>=8){clearInterval(iv);if(state.subscribed)toast('Подписка активна! 🎉');}},2000);
       history.replaceState({},'',location.pathname);
     }else if(q.get('paid')==='fail'){toast('Оплата не прошла. Попробуйте ещё раз.');history.replaceState({},'',location.pathname);}
+  }
+  async function handleAuthLinks(){
+    const q=new URLSearchParams((location.hash||'').replace(/^#/,'')||location.search);
+    var verify=q.get('verify');
+    if(verify){
+      var res=await api('/c/sokrat/account/email/verify',{code:verify});
+      history.replaceState({},'',location.pathname);
+      toast(res.d&&res.d.ok?'Почта подтверждена ✓':((res.d&&res.d.error)||'Ссылка подтверждения устарела'));
+      if(token)await refresh();
+    }
+    resetCode=q.get('reset')||'';
+    if(resetCode)openModal('reset');
   }
 
   $('#mForm').addEventListener('submit',submitModal);
@@ -756,7 +810,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     this.disabled=true;
     var res=await api('/c/sokrat/account/password',{old:old,new:nw});var d=res.d;
     this.disabled=false;
-    if(d&&d.ok){er.className='merr ok';er.textContent='Пароль изменён ✓';$('#aOldPw').value='';$('#aNewPw').value='';}
+    if(d&&d.ok){setToken('');state={auth:false};closeAcct();renderAuthbox();renderGates();openModal('login');toast('Пароль изменён. Все web-сессии завершены — войдите заново.');}
     else{er.textContent=(d&&d.error)||'Не удалось сменить пароль';}
   });
   $('#aEmailBtn').addEventListener('click',async function(){
@@ -766,8 +820,21 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     this.disabled=true;
     var res=await api('/c/sokrat/account/email',{email:em,password:pw});var d=res.d;
     this.disabled=false;
-    if(d&&d.ok){er.className='merr ok';er.textContent='Почта изменена ✓';state.email=d.email||em;renderAuthbox();$('#aEmailLine').textContent=state.email;$('#aNewEmail').value='';$('#aEmailPw').value='';}
+    if(d&&d.ok){setToken('');state={auth:false};closeAcct();renderAuthbox();renderGates();openModal('login');$('#mEmail').value=d.email||em;toast('Почта изменена. Войдите заново'+(d.verification_sent?' и подтвердите её по письму.':'.'));}
     else{er.textContent=(d&&d.error)||'Не удалось сменить почту';}
+  });
+  $('#aTgBtn').addEventListener('click',async function(){
+    var er=$('#aIdentityErr');er.className='merr';er.textContent='';this.disabled=true;
+    var res=await api('/c/sokrat/account/telegram-link',{});var d=res.d;this.disabled=false;
+    if(d&&d.linked){state.telegramLinked=true;renderAcctIdentity();return;}
+    if(d&&d.url){window.open(d.url,'_blank','noopener');er.className='merr ok';er.textContent='Открыл Telegram. Подтвердите запуск бота — ссылка действует 10 минут.';}
+    else{er.textContent=(d&&d.error)||'Не удалось создать ссылку';}
+  });
+  $('#aVerifyBtn').addEventListener('click',async function(){
+    var er=$('#aIdentityErr');er.className='merr';er.textContent='';this.disabled=true;
+    var res=await api('/c/sokrat/account/email/verify/request',{});var d=res.d;this.disabled=false;
+    if(d&&d.ok){er.className='merr ok';er.textContent='Письмо отправлено. Проверьте входящие и спам.';}
+    else{er.textContent=(d&&d.error)||'Не удалось отправить письмо';}
   });
 
   var _toolInit={};
@@ -876,7 +943,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   $('#howBtn').addEventListener('click',function(){renderHow();$('#howModal').classList.add('on');});
   $('#hmClose').addEventListener('click',function(){$('#howModal').classList.remove('on');});
   $('#howModal').addEventListener('click',function(e){if(e.target.id==='howModal')$('#howModal').classList.remove('on');});
-  renderModal();renderAuthbox();renderGates();refresh();handleReturn();
+  renderModal();renderAuthbox();renderGates();refresh();handleAuthLinks();handleReturn();
 })();
 </script>
 </body>

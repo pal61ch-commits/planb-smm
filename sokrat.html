@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://mc.yandex.ru https://158-160-63-165.sslip.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://planb-prodvizhenie.ru https://93-77-191-3.sslip.io https://mc.yandex.ru; connect-src 'self' https://93-77-191-3.sslip.io https://mc.yandex.ru https://158-160-63-165.sslip.io; media-src 'self' data: blob:; worker-src 'none'; upgrade-insecure-requests">
 <title>Сократ — ИИ-авитолог Plan B · Бесплатная консультация по Авито</title>
 <meta name="description" content="Сократ — бесплатный ИИ-авитолог Plan B. Консультация по Авито 24/7: выдача, тексты, фото, продвижение. Платные инструменты: дизайнер, копирайтер, автозагрузка.">
 <link rel="canonical" href="https://planb-prodvizhenie.ru/sokrat">
@@ -34,7 +35,7 @@
 <link rel="apple-touch-icon" href="https://planb-prodvizhenie.ru/apple-touch-icon-sokrat.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b0b0d;--yellow:#F5C400;--yellow2:#ffd84a;
@@ -91,6 +92,16 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .tab .free{font-size:11px;font-weight:700;background:rgba(58,208,122,.16);color:#3ad07a;padding:2px 7px;border-radius:100px}
 .tab.on .free{background:rgba(21,20,12,.18);color:#15140c}
 .tab .lk{font-size:12px;opacity:.8}
+.projectbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-5px 0 14px;padding:10px 12px;
+  border:1px solid var(--gb);border-radius:14px;background:rgba(10,11,17,.68)}
+.projectbar[hidden]{display:none}
+.projectlabel{font-size:12px;color:var(--muted);font-weight:700}
+.projectbar select{min-width:190px;max-width:310px;flex:1;background:var(--glass2);color:var(--text);
+  border:1px solid var(--gb2);border-radius:10px;padding:9px 11px;font:600 13px 'Golos Text'}
+.projectbtn{border:1px solid var(--gb);background:var(--glass2);color:var(--text);border-radius:9px;
+  min-width:36px;padding:8px 10px;cursor:pointer;font-weight:700}
+.projectbtn:hover{border-color:var(--yellow);color:var(--yellow)}
+.projectsummary{width:100%;font-size:11.5px;color:var(--muted)}
 
 /* panels */
 .panel{display:none;animation:fade .35s var(--ease)}
@@ -171,6 +182,8 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .dangerbtn{width:100%;margin-top:8px;padding:11px;border-radius:11px;background:rgba(255,75,75,.12);color:#ff9c9c;border:1px solid rgba(255,100,100,.38);font-weight:700;cursor:pointer}
 .dangerbtn:hover{background:rgba(255,75,75,.2)}
 .privacyhint{font-size:12px;line-height:1.45;color:var(--muted);margin:8px 0}
+.legalhint{font-size:11.5px;line-height:1.45;color:var(--muted);margin:12px 2px 0}
+.legalhint a{color:var(--yellow)}
 .msubmit.slim{margin-top:4px;padding:11px;font-size:14px}
 .merr.ok{color:#3ad07a}
 .msubmit:disabled{opacity:.6;cursor:wait}
@@ -214,6 +227,12 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .copyrow{display:flex;justify-content:flex-end;margin-top:10px}
 .copybtn,.regen{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:7px 13px;border-radius:9px;border:1px solid var(--gb2);background:var(--glass2);color:var(--yellow);cursor:pointer;transition:.15s}
 .copybtn:hover,.regen:hover{border-color:var(--yellow);background:rgba(245,196,0,.1)}
+.handoff{margin-top:12px;padding:12px;border:1px solid var(--gb2);border-radius:12px;
+  background:rgba(245,196,0,.07);white-space:normal}
+.handofflabel{font-size:11px;color:var(--muted);margin-bottom:6px}
+.handoffprompt{font-size:12px;line-height:1.45;color:var(--text);margin-bottom:9px}
+.handoffbtn{border:none;border-radius:10px;background:var(--yellow);color:#15140c;
+  padding:9px 12px;font-weight:800;cursor:pointer}
 .regen{color:var(--text)}
 .dz-msg{padding:8px!important}
 .dz-msg figcaption{font-size:12px;color:var(--muted);margin:2px 0 7px 2px}
@@ -279,12 +298,12 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=110884885', 'ym');
     ym(110884885,'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});
 </script>
-<noscript><div><img src="https://mc.yandex.ru/watch/110884885" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- Umami analytics (self-hosted, РФ) — трекер + визор -->
 <script defer src="https://158-160-63-165.sslip.io/script.js" data-website-id="a01eef21-a164-429b-8dc4-60d8e7e556f5"></script>
 <script defer src="https://158-160-63-165.sslip.io/recorder.js" data-website-id="a01eef21-a164-429b-8dc4-60d8e7e556f5"></script>
 </head>
 <body>
+<noscript><div><img src="https://mc.yandex.ru/watch/110884885" style="position:absolute;left:-9999px" alt=""></div></noscript>
 <div class="bgimg"></div>
 <canvas id="sky"></canvas>
 <script>
@@ -312,6 +331,14 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <button class="tab" data-tab="copywriter">✍️ Копирайтер <span class="lk">🔒</span></button>
     <button class="tab" data-tab="autoload">📦 Автозагрузка <span class="lk">🔒</span></button>
   </nav>
+  <div class="projectbar" id="projectbar" hidden>
+    <span class="projectlabel">Проект / объявление</span>
+    <select id="projectSelect" aria-label="Активный проект"></select>
+    <button class="projectbtn" id="projectNew" type="button" title="Новый проект">＋</button>
+    <button class="projectbtn" id="projectRename" type="button" title="Переименовать">✎</button>
+    <button class="projectbtn" id="projectArchive" type="button" title="В архив">⌫</button>
+    <span class="projectsummary" id="projectSummary"></span>
+  </div>
 
   <div class="hrow">
     <button class="howbtn" id="howBtn">❓ Как пользоваться Сократом</button>
@@ -439,6 +466,11 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <input id="mPass" type="password" minlength="1" maxlength="256" autocomplete="current-password" placeholder="Пароль" required>
       <button class="msubmit" id="mSubmit" type="submit">Войти</button>
       <div class="merr" id="mErr"></div>
+      <div class="legalhint" id="mLegal" hidden>Регистрируясь, вы принимаете
+        <a href="https://planb-prodvizhenie.ru/sokrat-oferta.html" target="_blank" rel="noopener">Пользовательское соглашение</a>
+        и подтверждаете ознакомление с
+        <a href="https://planb-prodvizhenie.ru/sokrat-privacy.html" target="_blank" rel="noopener">Политикой конфиденциальности</a>.
+      </div>
     </form>
     <div class="mtoggle" id="mToggle"></div>
   </div>
@@ -489,6 +521,26 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 <script>
 /* Базовый адрес API. На кабинете/локалхосте — относительный; на сайте (GitHub Pages) — абсолютный до бэкенда-кабинета. Один файл работает в обоих местах. */
 var SOK_API_BASE=(location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname.indexOf('sslip.io')>=0)?'':'https://93-77-191-3.sslip.io';
+
+/* Auth-токен живёт только до закрытия вкладки. Старый persistent-токен переносим один раз
+   и сразу удаляем из localStorage, чтобы действующие пользователи не потеряли сессию при релизе. */
+function sokAuthGet(){
+  try{
+    var token=sessionStorage.getItem('sok_auth')||'';
+    if(!token){
+      token=localStorage.getItem('sok_auth')||'';
+      if(token)sessionStorage.setItem('sok_auth',token);
+      localStorage.removeItem('sok_auth');
+    }
+    return token;
+  }catch(e){return '';}
+}
+function sokAuthSet(token){
+  try{
+    localStorage.removeItem('sok_auth');
+    token?sessionStorage.setItem('sok_auth',token):sessionStorage.removeItem('sok_auth');
+  }catch(e){}
+}
 
 /* ── Аналитика: сквозной id посетителя + первичный источник (UTM) + маяк визита ── */
 var SOK_VIS=(function(){try{var v=localStorage.getItem('sok_vis');if(!v){v='v'+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem('sok_vis',v);}return v;}catch(e){return 'v'+Math.random().toString(36).slice(2,10);}})();
@@ -576,6 +628,18 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     m.innerHTML='<div class="av">'+(role==='user'?'Вы':'Σ')+'</div><div class="bub">'+img+body+'</div>';
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;
   }
+  function handoffCard(message,handoff){
+    if(!message||!handoff||!handoff.tool||!handoff.prompt)return;
+    var titles={copywriter:'✍️ Копирайтер',designer:'🎨 Дизайнер',autoload:'📦 Автозагрузка'};
+    var card=document.createElement('div');card.className='handoff';
+    var label=document.createElement('div');label.className='handofflabel';
+    label.textContent='Следующий шаг · готовый запрос';
+    var prompt=document.createElement('div');prompt.className='handoffprompt';prompt.textContent=handoff.prompt;
+    var button=document.createElement('button');button.type='button';button.className='handoffbtn';
+    button.textContent='Открыть '+(titles[handoff.tool]||'инструмент');
+    button.addEventListener('click',function(){if(window.sokOpenHandoff)window.sokOpenHandoff(handoff);});
+    card.append(label,prompt,button);message.querySelector('.bub').appendChild(card);
+  }
   function save(){try{localStorage.setItem('sok_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
   if(hist.length){hist.forEach(m=>bubble(m.role,m.content));}else{bubble('assistant',WELCOME);}
   input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
@@ -595,11 +659,12 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     chat.appendChild(t);chat.scrollTop=chat.scrollHeight;
     try{
       const payload=Object.assign({sess:sess,message:text,visitor:SOK_VIS},SOK_UTM); if(image)payload.image=image;
-      try{payload.token=localStorage.getItem('sok_auth')||'';}catch(e){}
+      payload.token=sokAuthGet();
       const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();t.remove();
       const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
-      bubble('assistant',reply);hist.push({role:'assistant',content:reply});save();
+      var answer=bubble('assistant',reply);handoffCard(answer,d.handoff);
+      hist.push({role:'assistant',content:reply});save();
     }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
     busy=false;send.disabled=false;input.focus();
   }
@@ -610,7 +675,9 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
 /* ── авторизация + гейт платных вкладок ── */
 (function(){
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-  let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5}, mode='login', resetCode='';
+  let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5,
+    projectsEnabled:false,projects:[],activeProjectId:null}, mode='login', resetCode='';
+  let pendingHandoff=(function(){try{return JSON.parse(sessionStorage.getItem('sok_handoff')||'null');}catch(e){return null;}})();
   function toolAccess(tool){return state.subscribed||(state.trial&&(state.trial[tool]||0)>0);}
   function setTrialLeft(tool,left){if(typeof left!=='number')return;state.trial=state.trial||{};state.trial[tool]=left;updateTrialBadge(tool);}
   function updateTrialBadge(tool){
@@ -622,23 +689,72 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     var left=(state.trial&&state.trial[tool])||0;
     b.textContent='🎁 Бесплатно: осталось '+left+' из '+Math.max(state.freeGens||5,left)+' генераций'+(left===0?' — дальше по подписке':'');
   }
-  try{token=localStorage.getItem('sok_auth')||'';}catch(e){}
+  token=sokAuthGet();
   function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function fmtDate(iso){try{return new Date(iso).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
-  function setToken(t){token=t||'';try{t?localStorage.setItem('sok_auth',t):localStorage.removeItem('sok_auth');}catch(e){}}
+  function setToken(t){token=t||'';sokAuthSet(token);}
   function accountState(d){
     return {auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,
       trial:d.trial||null,freeGens:d.free_gens||5,notice:d.notice||null,
       telegramLinked:!!d.telegram_linked,emailVerified:!!d.email_verified,
       emailVerificationAvailable:!!d.email_verification_available,
+      projectsEnabled:!!d.projects_enabled,projects:[],activeProjectId:null,
       renewalDue:!!d.renewal_due,renewalDays:d.renewal_days};
   }
+  function activeProjectId(){return state.projectsEnabled?state.activeProjectId:null;}
 
   async function api(path,body){
     const h={'Content-Type':'application/json'}; if(token)h['X-Auth-Token']=token;
     let st=0,d={};
     try{const r=await fetch(SOK_API_BASE+path,{method:'POST',headers:h,body:JSON.stringify(Object.assign({visitor:SOK_VIS},SOK_UTM,body||{}))});st=r.status;try{d=await r.json();}catch(e){}}catch(e){}
     return {st,d};
+  }
+  function savePendingHandoff(handoff){
+    pendingHandoff=handoff||null;
+    try{pendingHandoff?sessionStorage.setItem('sok_handoff',JSON.stringify(pendingHandoff)):sessionStorage.removeItem('sok_handoff');}catch(e){}
+  }
+  function handoffId(tool){
+    return pendingHandoff&&pendingHandoff.tool===tool?pendingHandoff.id:null;
+  }
+  function completeHandoff(tool){
+    if(pendingHandoff&&pendingHandoff.tool===tool)savePendingHandoff(null);
+  }
+  function activatePendingHandoff(){
+    if(!pendingHandoff)return;
+    if(!state.auth){openModal('register');return;}
+    showTab(pendingHandoff.tool);
+    if(!toolAccess(pendingHandoff.tool)){
+      toast('Готовый запрос сохранён. После бесплатного лимита инструмент откроется по подписке.');
+      return;
+    }
+    var form=document.querySelector('[data-toolform="'+pendingHandoff.tool+'"]');
+    var field=form&&form.querySelector('textarea');
+    if(field){field.value=pendingHandoff.prompt||'';field.dispatchEvent(new Event('input'));field.focus();toast('Готовый запрос вставлен — проверьте и нажмите отправить.');}
+  }
+  window.sokOpenHandoff=function(handoff){
+    if(!handoff||!['copywriter','designer','autoload'].includes(handoff.tool))return;
+    savePendingHandoff(handoff);sokTrack('handoff_opened','/handoff/'+handoff.tool);activatePendingHandoff();
+  };
+
+  function renderProjects(){
+    var bar=$('#projectbar'),select=$('#projectSelect'),summary=$('#projectSummary');
+    if(!bar||!state.auth||!state.projectsEnabled){if(bar)bar.hidden=true;return;}
+    bar.hidden=false;select.innerHTML='';
+    (state.projects||[]).forEach(function(project){
+      var option=document.createElement('option');option.value=String(project.id);
+      option.textContent=project.name;option.selected=project.id===state.activeProjectId;
+      select.appendChild(option);
+    });
+    var current=(state.projects||[]).find(function(p){return p.id===state.activeProjectId;});
+    summary.textContent=current
+      ?'Связано: '+(current.current_title?'текст ✓':'текст —')+' · картинки '+(current.image_count||0)+' · строк в фиде '+(current.autoload_rows||0)
+      :'';
+  }
+  async function refreshProjects(){
+    if(!state.auth||!state.projectsEnabled){state.projects=[];state.activeProjectId=null;renderProjects();return;}
+    var res=await api('/c/sokrat/projects',{}),d=res.d||{};
+    if(d.projects){state.projects=d.projects;state.activeProjectId=d.active_project_id;}
+    renderProjects();
   }
 
   function renderAuthbox(){
@@ -684,11 +800,11 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   }
 
   async function refresh(){
-    if(!token){state={auth:false};renderAuthbox();renderGates();return;}
+    if(!token){state={auth:false};renderAuthbox();renderGates();renderProjects();return;}
     const {d}=await api('/c/sokrat/me',{});
-    if(d&&d.auth){state=accountState(d);if(d.renewal_notice)toast('Подписка заканчивается через '+(d.renewal_days||1)+' дн. Продлите заранее — дни не сгорят.');}
+    if(d&&d.auth){state=accountState(d);await refreshProjects();if(d.renewal_notice)toast('Подписка заканчивается через '+(d.renewal_days||1)+' дн. Продлите заранее — дни не сгорят.');}
     else{const had=token;setToken('');state={auth:false};if(had)toast('Вы вошли с другого устройства — сессия здесь завершена.');}
-    renderAuthbox();renderGates();showNotice();
+    renderAuthbox();renderGates();renderProjects();showNotice();activatePendingHandoff();
   }
 
   var _noticeShown=false;
@@ -709,7 +825,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     toast((d&&d.error)||'Не удалось создать оплату, попробуйте позже.');
     renderGates();
   }
-  async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();toast('Вы вышли.');}
+  async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();renderProjects();toast('Вы вышли.');}
 
   /* Личный кабинет: подписка (дней осталось + продление) + смена пароля/почты */
   function acctDays(){ if(!state.until) return null; return Math.max(0, Math.ceil((new Date(state.until)-new Date())/86400000)); }
@@ -755,6 +871,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     $('#mPassLabel').textContent=reset?'Новый пароль':'Пароль';
     $('#mPass').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');
     $('#mPass').minLength=mode==='login'?1:8;
+    $('#mLegal').hidden=mode!=='register';
     $('#mPass').placeholder=mode==='login'?'Пароль':'8–256 символов';
     $('#mToggle').innerHTML=reset?'':(mode==='login'?'Нет аккаунта? <a id="mSwap">Зарегистрироваться</a> · <a id="mForgot">Забыли пароль?</a>':'Уже есть аккаунт? <a id="mSwap">Войти</a>');
     var swap=$('#mSwap');if(swap)swap.onclick=function(){mode=(mode==='login'?'register':'login');renderModal();};
@@ -778,7 +895,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
     btn.disabled=false;
     if(mode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast('Пароль изменён. Войдите заново.');}
-    else if(d&&d.token){setToken(d.token);state=accountState(d);closeModal();renderAuthbox();renderGates();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');}
+    else if(d&&d.token){setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');}
     else if(d&&d.registered){$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
     else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
   }
@@ -879,6 +996,31 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     er.textContent=(d&&d.error)||'Не удалось удалить аккаунт';
   });
 
+  $('#projectSelect').addEventListener('change',async function(){
+    var res=await api('/c/sokrat/projects/select',{project_id:Number(this.value)});
+    if(res.d&&res.d.ok){location.reload();}else{toast((res.d&&res.d.error)||'Не удалось переключить проект');}
+  });
+  $('#projectNew').addEventListener('click',async function(){
+    var name=window.prompt('Название нового проекта / объявления:','Новое объявление');
+    if(!name)return;
+    var res=await api('/c/sokrat/projects/create',{name:name});
+    if(res.d&&res.d.ok){location.reload();}else{toast((res.d&&res.d.error)||'Не удалось создать проект');}
+  });
+  $('#projectRename').addEventListener('click',async function(){
+    var current=(state.projects||[]).find(function(p){return p.id===state.activeProjectId;});
+    if(!current)return;
+    var name=window.prompt('Новое название проекта:',current.name);
+    if(!name||name===current.name)return;
+    var res=await api('/c/sokrat/projects/rename',{project_id:current.id,name:name});
+    if(res.d&&res.d.ok){await refreshProjects();}else{toast((res.d&&res.d.error)||'Не удалось переименовать проект');}
+  });
+  $('#projectArchive').addEventListener('click',async function(){
+    var current=(state.projects||[]).find(function(p){return p.id===state.activeProjectId;});
+    if(!current||!window.confirm('Убрать проект «'+current.name+'» в архив? Файлы аккаунта не удалятся.'))return;
+    var res=await api('/c/sokrat/projects/archive',{project_id:current.id});
+    if(res.d&&res.d.ok){location.reload();}else{toast((res.d&&res.d.error)||'Не удалось архивировать проект');}
+  });
+
   var _toolInit={};
   function te(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function mdbold(s){return s.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');}
@@ -906,16 +1048,16 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
       var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});};
       say('assistant','Опишите товар или услугу — выдам готовый заголовок и текст объявления, каждый со своей кнопкой «Копировать». Готово к вставке в Авито.');
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist});t.remove();var d=r.d||{};if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{if(d.title)copyBubble('Заголовок',d.title);if(d.body)copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});}btn.disabled=false;ta.focus();});
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist,project_id:activeProjectId(),handoff_id:handoffId('copywriter')});t.remove();var d=r.d||{};if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{if(d.title)copyBubble('Заголовок',d.title);if(d.body)copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});completeHandoff('copywriter');refreshProjects();}btn.disabled=false;ta.focus();});
     } else if(name==='autoload'){
       var chat=document.getElementById('al-chat'), att=wireAttach(form);
       var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
       say('assistant','Загрузите файл автозагрузки (xlsx) кнопкой 📎 и скажите, что сделать: «размножь по городам Владимирской области», «поставь цену 700», «перепиши заголовки». Готовый файл заберёте ссылкой в чате.\n\nВставите ваши ключи Avito API — проверю отчёты автозагрузки и поставлю цену за просмотр (CPV).');
-      async function alDownload(){var h={};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h});if(!r.ok){say('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){say('assistant','Ошибка скачивания');}}
+      async function alDownload(){var h={'Content-Type':'application/json'};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h,body:JSON.stringify({project_id:activeProjectId()})});if(!r.ok){say('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){say('assistant','Ошибка скачивания');}}
       function dlBubble(){var m=document.createElement('div');m.className='msg s';m.innerHTML='<div class="av">📦</div><div class="bub" style="background:none;border:none;padding:0"><a class="dlfile" href="#">📄 avito_feed.xlsx — скачать</a></div>';m.querySelector('.dlfile').addEventListener('click',function(ev){ev.preventDefault();alDownload();});chat.appendChild(m);chat.scrollTop=chat.scrollHeight;}
-      async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','📦 Загрузил фид: '+d.summary+'\nЧто сделать? Напр.: «размножь по топ-30 городам», «перепиши заголовки», «поставь цену 500».');}else{say('assistant',d.error||'Не смог прочитать файл');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}setTrialLeft('autoload',d.trial_left);if(d.ready)dlBubble();}btn.disabled=false;ta.focus();});
+      async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);if(activeProjectId()!=null)fd.append('project_id',String(activeProjectId()));var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','📦 Загрузил фид: '+d.summary+'\nЧто сделать? Напр.: «размножь по топ-30 городам», «перепиши заголовки», «поставь цену 500».');refreshProjects();}else{say('assistant',d.error||'Не смог прочитать файл');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v,project_id:activeProjectId(),handoff_id:handoffId('autoload')});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}else if(d.reply){completeHandoff('autoload');}setTrialLeft('autoload',d.trial_left);if(d.ready){dlBubble();refreshProjects();}}btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
       var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form), curImg=null;
       ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
@@ -928,7 +1070,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       function dzUrl(u){u=String(u||'');if(/^(https?:|data:image\/)/.test(u))return u;if(u.charAt(0)==='/')return SOK_API_BASE+u;return '';}
       async function dzDownload(url,fname){try{var r=await fetch(url);var bl=await r.blob();var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},5000);}catch(e){toast('Не удалось скачать');}}
       function dzShow(im,idx){var u=dzUrl(im.url);if(!u)return;var m=add('assistant','<a class="dlfile" href="#">📥 Скачать без сжатия · '+te(im.label||'')+'</a><img src="'+u.replace(/"/g,'%22')+'" alt="'+te(im.label||'')+'" style="margin-top:9px">','dz-msg');var _img=m.querySelector('img');if(_img)_img.addEventListener('load',function(){scrollToEnd(chat);});var a=m.querySelector('.dlfile');if(a)a.addEventListener('click',function(ev){ev.preventDefault();dzDownload(u,fnameFor(idx));});}
-      (async function(){try{var r=await api('/c/sokrat/tool/designer/history',{});var hs=(r.d&&r.d.images)||[];if(hs.length){add('assistant','<span style="color:var(--muted);font-size:12.5px">Ваши недавние картинки (сохранены на сервере):</span>');hs.forEach(function(im,i){dzShow(im,i);});}}catch(e){}})();
+      (async function(){try{var r=await api('/c/sokrat/tool/designer/history',{project_id:activeProjectId()});var hs=(r.d&&r.d.images)||[];if(hs.length){add('assistant','<span style="color:var(--muted);font-size:12.5px">Ваши недавние картинки (сохранены на сервере):</span>');hs.forEach(function(im,i){dzShow(im,i);});}}catch(e){}})();
       async function asRefFile(im){var r=await fetch(dzUrl(im.url));var b=await r.blob();return new File([b],'base.png',{type:'image/png'});}
       async function gen(promptText,fl){
         var baseImg=curImg;                          // картинка-основа ДО этого шага (её и правим); null = новая генерация
@@ -936,7 +1078,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
         var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');
         var refFile=fl;                              // приоритет — фото, прикреплённое клиентом
         if(!refFile&&baseImg){try{refFile=await asRefFile(baseImg);}catch(e){refFile=null;}}   // иначе правим ТЕКУЩУЮ картинку
-        var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);if(refFile)fd.append('file',refFile);
+        var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);if(activeProjectId()!=null)fd.append('project_id',String(activeProjectId()));if(handoffId('designer'))fd.append('handoff_id',handoffId('designer'));if(refFile)fd.append('file',refFile);
         var h={};if(token)h['X-Auth-Token']=token;
         try{
           var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});
@@ -946,6 +1088,8 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
           setTrialLeft('designer',d.trial_left);
           if(imgs.length){
             imgs.forEach(function(im,idx){dzShow(im,idx);});
+            completeHandoff('designer');
+            refreshProjects();
             curImg=imgs[0];                          // дальнейшие правки идут по этой свежей картинке
             var ctl=add('assistant','<div style="color:var(--muted);font-size:13px;margin:2px 0 11px">Что ещё изменить в этой картинке? Напишите — уберу, добавлю, поменяю цвет или надпись. Довольны — скачайте её кнопкой над картинкой. Для новой картинки — «Начать заново».</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🆕 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
             ctl.querySelector('.r-repeat').addEventListener('click',function(){curImg=baseImg;gen(promptText,fl);});

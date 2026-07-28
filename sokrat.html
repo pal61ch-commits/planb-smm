@@ -721,11 +721,11 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   let pendingHandoff=(function(){try{return JSON.parse(sessionStorage.getItem('sok_handoff')||'null');}catch(e){return null;}})();
   function toolAccess(tool){return state.subscribed||(state.trial&&(state.trial[tool]||0)>0);}
   function setTrialLeft(tool,left){if(typeof left!=='number')return;state.trial=state.trial||{};state.trial[tool]=left;updateTrialBadge(tool);}
-  function trialFinishedCta(chat,icon){
+  function trialFinishedCta(chat,icon,tool){
     if(!chat||state.subscribed||chat.querySelector('.trial-finished-cta'))return;
     var m=document.createElement('div');m.className='msg s trial-finished-cta';
     m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Пять бесплатных генераций закончились.</strong><br>Последний результат уже ваш. Подписка 3000 ₽/месяц открывает безлимит сразу на Копирайтер, Дизайнер и Автозагрузку.<div style="margin-top:13px"><button class="gbtn pay" type="button">Оформить подписку · 3000 ₽/мес</button></div></div>';
-    m.querySelector('button').onclick=doSubscribe;chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
+    m.querySelector('button').onclick=function(){doSubscribe(tool);};chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
   }
   function updateTrialBadge(tool){
     var ui=document.querySelector('.toolui[data-tool="'+tool+'"]'); if(!ui)return;
@@ -739,7 +739,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   token=sokAuthGet();
   function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function fmtDate(iso){try{return new Date(iso).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
-  function setToken(t){token=t||'';sokAuthSet(token);}
+  function setToken(t){token=t||'';_paywallSeen={};sokAuthSet(token);}
   function accountState(d){
     return {auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,
       trial:d.trial||null,freeGens:d.free_gens||5,notice:d.notice||null,
@@ -817,6 +817,12 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     }
   }
 
+  var _paywallSeen={};
+  function trackPaywall(tool){
+    if(!tool||_paywallSeen[tool])return;
+    _paywallSeen[tool]=true;
+    api('/c/sokrat/tool/paywall-view',{tool:tool});
+  }
   function renderGates(){
     var FG=state.freeGens||5;
     $$('.gate').forEach(function(g){
@@ -829,7 +835,9 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
         fn=function(){};
       }else{
         html='<button class="gbtn pay">Оплатить 3000 ₽ / месяц</button><p class="ghint">🎁 Ваши '+FG+' бесплатных генераций использованы — понравилось? Подписка = безлимит на все инструменты, картой или СБП.</p>';
-        fn=doSubscribe;
+        var gateUi=g.closest('.panel')&&g.closest('.panel').querySelector('.toolui');
+        var gateTool=gateUi?gateUi.getAttribute('data-tool'):null;
+        fn=function(){doSubscribe(gateTool);};
       }
       g.innerHTML=html; var b=g.querySelector('.gbtn'); if(b)b.onclick=fn;
     });
@@ -844,6 +852,11 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       var lk=t.querySelector('.lk'); if(!lk)return;
       lk.style.display=(state.auth&&toolAccess(t.getAttribute('data-tab')))?'none':'';
     });
+    if(state.auth&&!state.subscribed&&state.trial){
+      ['copywriter','designer','autoload'].forEach(function(tool){
+        if((state.trial[tool]||0)===0)trackPaywall(tool);
+      });
+    }
   }
 
   async function refresh(){
@@ -864,10 +877,10 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     try{await api('/c/sokrat/notice/ack',{sess:sess});}catch(e){}
     state.notice=null;
   }
-  async function doSubscribe(){
+  async function doSubscribe(triggerTool){
     if(!state.auth){pendingSubscribe=true;openModal('login');return;}
     const btn=document.querySelector('.gate .gbtn.pay'); if(btn){btn.disabled=true;btn.textContent='Создаём оплату…';}
-    const {st,d}=await api('/c/sokrat/subscribe',{});
+    const {st,d}=await api('/c/sokrat/subscribe',{trigger_tool:triggerTool||null});
     if(d&&d.redirect){window.location.href=d.redirect;return;}
     toast((d&&d.error)||'Не удалось создать оплату, попробуйте позже.');
     renderGates();
@@ -875,7 +888,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   window.sokOpenSubscribe=function(){
     if(!state.auth){pendingSubscribe=true;openModal('register');return;}
     if(state.subscribed){toast('Подписка уже активна.');return;}
-    doSubscribe();
+    doSubscribe('consult');
   };
   async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();renderProjects();toast('Вы вышли.');}
 
@@ -890,7 +903,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       var t=state.trial||{},fg=state.freeGens||5;
       el.innerHTML='Подписки нет. 🎁 Бесплатные генерации: ✍️ '+(t.copywriter||0)+'/'+fg+' · 🎨 '+(t.designer||0)+'/'+fg+' · 📦 '+(t.autoload||0)+'/'+fg+'.<button class="renew" id="aRenew">Оформить безлимит · 3000 ₽ / мес</button>';
     }
-    var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); doSubscribe(); };
+    var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); doSubscribe('account'); };
   }
   function renderAcctIdentity(){
     var status=$('#aIdentityStatus'),tg=$('#aTgBtn'),verify=$('#aVerifyBtn');
@@ -947,7 +960,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
     btn.disabled=false;
     if(mode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast('Пароль изменён. Войдите заново.');}
-    else if(d&&d.token){var goPay=pendingSubscribe;pendingSubscribe=false;setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');if(goPay&&!state.subscribed)await doSubscribe();}
+    else if(d&&d.token){var goPay=pendingSubscribe;pendingSubscribe=false;setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');if(goPay&&!state.subscribed)await doSubscribe('consult');}
     else if(d&&d.registered){$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
     else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
   }
@@ -1086,6 +1099,28 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   // безопасные теги, иначе клиент видел «<b>Сводка</b>» текстом (проверка 19.07.2026)
   function fmt(s){return mdbold(linkify(te(s))).replace(/&lt;(\/?)(b|strong|i|em|code)&gt;/gi,'<$1$2>');}
   function copyText(t,btn){navigator.clipboard.writeText(t).then(function(){toast('Скопировано ✓');if(btn){var o=btn.innerHTML;btn.innerHTML='✓ Скопировано';setTimeout(function(){btn.innerHTML=o;},1600);}}).catch(function(){toast('Не удалось скопировать');});}
+  function toolFeedbackCard(message,tool,resultId){
+    if(!message||!resultId)return;
+    var card=document.createElement('div');card.className='feedback';
+    var label=document.createElement('span');label.textContent='Результат помог?';
+    var up=document.createElement('button'),down=document.createElement('button');
+    up.type=down.type='button';up.textContent='👍 Да';down.textContent='👎 Нет';
+    async function vote(rating){
+      up.disabled=down.disabled=true;
+      var res=await api('/c/sokrat/tool/feedback',{
+        tool:tool,result_id:resultId,rating:rating
+      });
+      if(res.d&&res.d.ok){
+        label.textContent=rating==='up'?'Спасибо — результат отмечен полезным':'Спасибо — учтём эту оценку';
+      }else{
+        up.disabled=down.disabled=false;
+        label.textContent='Не удалось сохранить оценку';
+      }
+    }
+    up.addEventListener('click',function(){vote('up');});
+    down.addEventListener('click',function(){vote('down');});
+    card.append(label,up,down);message.querySelector('.bub').appendChild(card);
+  }
   function wireAttach(form){
     var fileInp=form.querySelector('[data-file]'),attachBtn=form.querySelector('[data-attach]'),chip=form.parentNode.querySelector('[data-chip]'),st={file:null};
     if(attachBtn)attachBtn.addEventListener('click',function(){if(fileInp)fileInp.click();});
@@ -1099,9 +1134,9 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       var chat=document.getElementById('cw-chat'), hist=[];
       var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'✍️')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
-      var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});};
+      var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});return m;};
       say('assistant','Опишите товар или услугу — выдам готовый заголовок и текст объявления, каждый со своей кнопкой «Копировать». Готово к вставке в Авито.');
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist,project_id:activeProjectId(),handoff_id:handoffId('copywriter')});t.remove();var d=r.d||{};if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{if(d.title)copyBubble('Заголовок',d.title);if(d.body)copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});completeHandoff('copywriter');refreshProjects();if(d.trial_left===0)trialFinishedCta(chat,'✍️');}btn.disabled=false;ta.focus();});
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist,project_id:activeProjectId(),handoff_id:handoffId('copywriter')});t.remove();var d=r.d||{};if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{var resultMessage=null;if(d.title)resultMessage=copyBubble('Заголовок',d.title);if(d.body)resultMessage=copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);toolFeedbackCard(resultMessage,'copywriter',d.result_id);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});completeHandoff('copywriter');refreshProjects();if(d.trial_left===0)trialFinishedCta(chat,'✍️','copywriter');}btn.disabled=false;ta.focus();});
     } else if(name==='autoload'){
       var chat=document.getElementById('al-chat'), att=wireAttach(form);
       var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
@@ -1110,7 +1145,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       async function alDownload(){var h={'Content-Type':'application/json'};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h,body:JSON.stringify({project_id:activeProjectId()})});if(!r.ok){say('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){say('assistant','Ошибка скачивания');}}
       function dlBubble(){var m=document.createElement('div');m.className='msg s';m.innerHTML='<div class="av">📦</div><div class="bub" style="background:none;border:none;padding:0"><a class="dlfile" href="#">📄 avito_feed.xlsx — скачать</a></div>';m.querySelector('.dlfile').addEventListener('click',function(ev){ev.preventDefault();alDownload();});chat.appendChild(m);chat.scrollTop=chat.scrollHeight;}
       async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);if(activeProjectId()!=null)fd.append('project_id',String(activeProjectId()));var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','📦 Загрузил фид: '+d.summary+'\nЧто сделать? Напр.: «размножь по топ-30 городам», «перепиши заголовки», «поставь цену 500».');refreshProjects();}else{say('assistant',d.error||'Не смог прочитать файл');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v,project_id:activeProjectId(),handoff_id:handoffId('autoload')});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}else if(d.reply){completeHandoff('autoload');}setTrialLeft('autoload',d.trial_left);if(d.ready){dlBubble();refreshProjects();}if(d.reply&&d.trial_left===0)trialFinishedCta(chat,'📦');}btn.disabled=false;ta.focus();});
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v,project_id:activeProjectId(),handoff_id:handoffId('autoload')});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}else if(d.reply){completeHandoff('autoload');}setTrialLeft('autoload',d.trial_left);if(d.ready){dlBubble();refreshProjects();}if(d.reply&&d.trial_left===0)trialFinishedCta(chat,'📦','autoload');}btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
       var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form), curImg=null;
       ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
@@ -1146,9 +1181,10 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
             refreshProjects();
             curImg=imgs[0];                          // дальнейшие правки идут по этой свежей картинке
             var ctl=add('assistant','<div style="color:var(--muted);font-size:13px;margin:2px 0 11px">Что ещё изменить в этой картинке? Напишите — уберу, добавлю, поменяю цвет или надпись. Довольны — скачайте её кнопкой над картинкой. Для новой картинки — «Начать заново».</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="regen r-restart">🆕 Начать заново</button><button class="regen r-repeat">↻ Повторить</button></div>');
+            toolFeedbackCard(ctl,'designer',d.result_id);
             ctl.querySelector('.r-repeat').addEventListener('click',function(){curImg=baseImg;gen(promptText,fl);});
             ctl.querySelector('.r-restart').addEventListener('click',function(){curImg=null;att.clear();mode='listing';ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-mode')==='listing');});say('assistant',DZNEWTASK);var ta=form.querySelector('textarea');if(ta){ta.value='';ta.focus();}});
-            if(d.trial_left===0)trialFinishedCta(chat,'🎨');
+            if(d.trial_left===0)trialFinishedCta(chat,'🎨','designer');
             scrollToEnd(chat);                        // сразу к кнопкам/картинке (img.onload доскроллит точнее)
           } else { say('assistant',d.error||'Не удалось сгенерировать'); }
         }catch(e){t.remove();say('assistant','Ошибка генерации');}

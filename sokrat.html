@@ -640,6 +640,16 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     button.addEventListener('click',function(){if(window.sokOpenHandoff)window.sokOpenHandoff(handoff);});
     card.append(label,prompt,button);message.querySelector('.bub').appendChild(card);
   }
+  function limitCard(message,data){
+    if(!message||!data||!data.subscribe||!data.limited)return;
+    var card=document.createElement('div');card.className='handoff';
+    var label=document.createElement('div');label.className='handofflabel';
+    label.textContent='5 бесплатных ответов в день использованы';
+    var button=document.createElement('button');button.type='button';button.className='handoffbtn';
+    button.textContent='Оформить подписку';
+    button.addEventListener('click',function(){if(window.sokOpenSubscribe)window.sokOpenSubscribe();});
+    card.append(label,button);message.querySelector('.bub').appendChild(card);
+  }
   function save(){try{localStorage.setItem('sok_hist',JSON.stringify(hist.slice(-40)));}catch(e){}}
   if(hist.length){hist.forEach(m=>bubble(m.role,m.content));}else{bubble('assistant',WELCOME);}
   input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
@@ -663,7 +673,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();t.remove();
       const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
-      var answer=bubble('assistant',reply);handoffCard(answer,d.handoff);
+      var answer=bubble('assistant',reply);handoffCard(answer,d.handoff);limitCard(answer,d);
       hist.push({role:'assistant',content:reply});save();
     }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
     busy=false;send.disabled=false;input.focus();
@@ -825,6 +835,11 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     toast((d&&d.error)||'Не удалось создать оплату, попробуйте позже.');
     renderGates();
   }
+  window.sokOpenSubscribe=function(){
+    if(!state.auth){openModal('register');return;}
+    if(state.subscribed){toast('Подписка уже активна.');return;}
+    doSubscribe();
+  };
   async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();renderProjects();toast('Вы вышли.');}
 
   /* Личный кабинет: подписка (дней осталось + продление) + смена пароля/почты */

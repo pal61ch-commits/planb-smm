@@ -1136,6 +1136,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
         try{
           var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});
           var d=await r.json();t.remove();var imgs=d.images||[];
+          if(d.help){say('assistant',d.reply||'Эта команда не требует генерации.');return;}
           if(d.warning){say('assistant',d.warning);}
           if(d.subscribe){say('assistant',d.error||'Бесплатные генерации закончились — дальше по подписке.');setTrialLeft('designer',0);renderGates();}
           setTrialLeft('designer',d.trial_left);

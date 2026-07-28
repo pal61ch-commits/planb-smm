@@ -143,9 +143,11 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .lockwrap .ic{font-size:54px;filter:drop-shadow(0 8px 22px rgba(245,196,0,.3))}
 .lockwrap h2{font-size:clamp(24px,4vw,32px)}
 .lockwrap .what{color:var(--muted);font-size:15.5px;max-width:520px}
-.price{display:inline-flex;align-items:baseline;gap:8px;margin:6px 0 2px}
+.pricelead{font-family:'Manrope';font-size:13px;font-weight:700;color:var(--text);margin-top:4px}
+.price{display:inline-flex;align-items:baseline;justify-content:center;gap:8px;margin:-3px 0 0;flex-wrap:wrap}
 .price b{font-family:'Manrope';font-weight:800;font-size:40px;color:var(--yellow);line-height:1}
 .price span{color:var(--muted);font-size:15px}
+.bundleline{color:var(--muted);font-size:13px}
 
 /* gate (динамический CTA в платной вкладке) */
 .gate{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;min-height:58px;justify-content:center}
@@ -172,6 +174,16 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   font-family:'Manrope';font-weight:800;font-size:15px;cursor:pointer;transition:.2s var(--ease)}
 .msubmit:hover{background:var(--yellow2)}
 .mcard.acct{max-width:420px;max-height:90vh;overflow-y:auto}
+.mcard.suboffer{max-width:480px;max-height:92vh;overflow-y:auto;padding:32px 30px}
+.subprice{display:flex;align-items:baseline;gap:10px;margin:20px 0 16px}
+.subprice b{font-family:'Manrope';font-size:38px;color:var(--yellow);line-height:1}
+.subprice span{font-size:15px;color:var(--muted)}
+.subfeatures{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.subfeatures li{padding:10px 12px;border-radius:11px;background:var(--glass2);border:1px solid var(--gb);font-size:14px;line-height:1.4}
+.subtrust{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:15px}
+.subtrust a{color:var(--yellow)}
+.subcancel{width:100%;margin-top:9px;padding:10px;background:none;border:none;color:var(--muted);font:inherit;cursor:pointer}
+.subcancel:hover{color:var(--text)}
 .acctsub{font-size:13.5px;line-height:1.5;padding:13px 15px;border-radius:13px;background:var(--glass2);border:1px solid var(--gb);margin:12px 0 4px}
 .acctsub .days{color:var(--yellow);font-weight:700}
 .acctsub .renew{width:100%;margin-top:11px;padding:11px;border-radius:11px;background:var(--yellow);color:#15140c;border:none;font-weight:700;cursor:pointer}
@@ -371,7 +383,9 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="ic">🎨</div>
       <h2>Дизайнер <span class="yel">объявлений</span></h2>
       <p class="what">Продающие баннеры и картинки для Авито — по тексту или вашему образцу. Один запрос — готовое цельное изображение под объявление (без коллажей).</p>
-      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="pricelead">Входит в единую подписку</div>
+      <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
+      <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
       <div class="gate" data-gate="designer"></div>
     </div>
     <div class="toolui" data-tool="designer" hidden>
@@ -398,7 +412,9 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="ic">✍️</div>
       <h2>Копирайтер <span class="yel">для Авито</span></h2>
       <p class="what">Продающие тексты объявлений с SEO-ключами под поиск Авито: цепляющий заголовок + структура Боль → Решение → Выгоды → Призыв. Тон на выбор.</p>
-      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="pricelead">Входит в единую подписку</div>
+      <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
+      <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
       <div class="gate" data-gate="copywriter"></div>
     </div>
     <div class="toolui" data-tool="copywriter" hidden>
@@ -418,7 +434,9 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="ic">📦</div>
       <h2>Автозагрузка <span class="yel">Авито</span></h2>
       <p class="what">Массовое размещение и размножение объявлений по городам, уникализация фото и текстов, проверка фида автозагрузки. Сотни объявлений за минуты.</p>
-      <div class="price"><b>3000 ₽</b><span>/ месяц</span></div>
+      <div class="pricelead">Входит в единую подписку</div>
+      <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
+      <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
       <div class="gate" data-gate="autoload"></div>
     </div>
     <div class="toolui" data-tool="autoload" hidden>
@@ -478,6 +496,26 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       </div>
     </form>
     <div class="mtoggle" id="mToggle"></div>
+  </div>
+</div>
+
+<!-- оффер единой подписки: до перехода к платёжному провайдеру -->
+<div class="modal" id="subModal">
+  <div class="mcard suboffer">
+    <button class="mclose" id="subClose" aria-label="Закрыть">×</button>
+    <h3>Одна подписка — весь Сократ</h3>
+    <div class="msub">Не три отдельных тарифа: один доступ к консультанту и всем рабочим инструментам.</div>
+    <div class="subprice"><b>3000 ₽</b><span>за 30 дней</span></div>
+    <ul class="subfeatures">
+      <li>🦉 Сократ-консультант без дневного лимита</li>
+      <li>✍️ Копирайтер без лимита генераций</li>
+      <li>🎨 Дизайнер без лимита генераций</li>
+      <li>📦 Автозагрузка без лимита операций</li>
+    </ul>
+    <div class="subtrust">Разовая оплата картой или СБП на защищённой странице платёжного провайдера. Доступ включается после подтверждения платежа. Автосписаний нет, продление — только вручную. <a href="https://planb-prodvizhenie.ru/sokrat-tarify.html" target="_blank" rel="noopener">Условия тарифа</a>.</div>
+    <button class="msubmit" id="subPay" type="button">Перейти к оплате · 3000 ₽</button>
+    <div class="merr" id="subErr"></div>
+    <button class="subcancel" id="subCancel" type="button">Пока не нужно</button>
   </div>
 </div>
 
@@ -717,15 +755,16 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
 (function(){
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
   let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5,
-    projectsEnabled:false,projects:[],activeProjectId:null}, mode='login', resetCode='', pendingSubscribe=false;
+    projectsEnabled:false,projects:[],activeProjectId:null}, mode='login', resetCode='', pendingSubscribe=null;
+  let subscribeTrigger='consult', subscribeBusy=false;
   let pendingHandoff=(function(){try{return JSON.parse(sessionStorage.getItem('sok_handoff')||'null');}catch(e){return null;}})();
   function toolAccess(tool){return state.subscribed||(state.trial&&(state.trial[tool]||0)>0);}
   function setTrialLeft(tool,left){if(typeof left!=='number')return;state.trial=state.trial||{};state.trial[tool]=left;updateTrialBadge(tool);}
   function trialFinishedCta(chat,icon,tool){
     if(!chat||state.subscribed||chat.querySelector('.trial-finished-cta'))return;
     var m=document.createElement('div');m.className='msg s trial-finished-cta';
-    m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Пять бесплатных генераций закончились.</strong><br>Последний результат уже ваш. Подписка 3000 ₽/месяц открывает безлимит сразу на Копирайтер, Дизайнер и Автозагрузку.<div style="margin-top:13px"><button class="gbtn pay" type="button">Оформить подписку · 3000 ₽/мес</button></div></div>';
-    m.querySelector('button').onclick=function(){doSubscribe(tool);};chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
+    m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Пять бесплатных генераций закончились.</strong><br>Последний результат уже ваш. Единая подписка за 3000 ₽ на 30 дней снимает дневной лимит консультанта и открывает безлимит на все три инструмента. Автосписаний нет.<div style="margin-top:13px"><button class="gbtn pay" type="button">Открыть весь Сократ · 3000 ₽</button></div></div>';
+    m.querySelector('button').onclick=function(){openSubscribe(tool);};chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
   }
   function updateTrialBadge(tool){
     var ui=document.querySelector('.toolui[data-tool="'+tool+'"]'); if(!ui)return;
@@ -828,16 +867,16 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     $$('.gate').forEach(function(g){
       var html,fn;
       if(!state.auth){
-        html='<button class="gbtn">🎁 Попробовать бесплатно</button><p class="ghint">Первые '+FG+' генераций каждого инструмента — бесплатно после регистрации (почта — минута). Дальше — подписка 3000 ₽/мес.</p>';
+        html='<button class="gbtn">🎁 Попробовать бесплатно</button><p class="ghint">Первые '+FG+' генераций каждого инструмента — бесплатно после регистрации. Затем единая подписка: 3000 ₽ за 30 дней на весь Сократ.</p>';
         fn=function(){openModal('register');};
       }else if(state.subscribed){
         html='<div class="subactive">✅ Подписка активна до '+fmtDate(state.until)+'</div><p class="ghint">Инструмент подключается — совсем скоро. Спасибо, что с нами!</p>';
         fn=function(){};
       }else{
-        html='<button class="gbtn pay">Оплатить 3000 ₽ / месяц</button><p class="ghint">🎁 Ваши '+FG+' бесплатных генераций использованы — понравилось? Подписка = безлимит на все инструменты, картой или СБП.</p>';
+        html='<button class="gbtn pay">Открыть весь Сократ · 3000 ₽</button><p class="ghint">Единая подписка на 30 дней: консультант без дневного лимита + все инструменты без лимита генераций. Разовая оплата, без автосписаний.</p>';
         var gateUi=g.closest('.panel')&&g.closest('.panel').querySelector('.toolui');
         var gateTool=gateUi?gateUi.getAttribute('data-tool'):null;
-        fn=function(){doSubscribe(gateTool);};
+        fn=function(){openSubscribe(gateTool);};
       }
       g.innerHTML=html; var b=g.querySelector('.gbtn'); if(b)b.onclick=fn;
     });
@@ -877,18 +916,32 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     try{await api('/c/sokrat/notice/ack',{sess:sess});}catch(e){}
     state.notice=null;
   }
-  async function doSubscribe(triggerTool){
-    if(!state.auth){pendingSubscribe=true;openModal('login');return;}
-    const btn=document.querySelector('.gate .gbtn.pay'); if(btn){btn.disabled=true;btn.textContent='Создаём оплату…';}
-    const {st,d}=await api('/c/sokrat/subscribe',{trigger_tool:triggerTool||null});
+  function openSubscribe(triggerTool){
+    if(state.subscribed){toast('Подписка уже активна.');return;}
+    subscribeTrigger=['consult','copywriter','designer','autoload','account'].includes(triggerTool)?triggerTool:'consult';
+    if(!state.auth){pendingSubscribe=subscribeTrigger;openModal('register');return;}
+    subscribeBusy=false;$('#subErr').textContent='';$('#subPay').disabled=false;
+    $('#subPay').textContent='Перейти к оплате · 3000 ₽';
+    $('#subModal').classList.add('on');
+    api('/c/sokrat/subscription/offer-event',{event:'subscription_offer_view',trigger_tool:subscribeTrigger});
+  }
+  function closeSubscribe(trackDismiss){
+    if(subscribeBusy)return;
+    if($('#subModal').classList.contains('on')&&trackDismiss!==false){
+      api('/c/sokrat/subscription/offer-event',{event:'subscription_offer_dismissed',trigger_tool:subscribeTrigger});
+    }
+    $('#subModal').classList.remove('on');
+  }
+  async function startCheckout(){
+    if(subscribeBusy)return;
+    subscribeBusy=true;const btn=$('#subPay');btn.disabled=true;btn.textContent='Создаём оплату…';$('#subErr').textContent='';
+    const {d}=await api('/c/sokrat/subscribe',{trigger_tool:subscribeTrigger});
     if(d&&d.redirect){window.location.href=d.redirect;return;}
-    toast((d&&d.error)||'Не удалось создать оплату, попробуйте позже.');
-    renderGates();
+    subscribeBusy=false;btn.disabled=false;btn.textContent='Перейти к оплате · 3000 ₽';
+    $('#subErr').textContent=(d&&d.error)||'Не удалось создать оплату, попробуйте позже.';
   }
   window.sokOpenSubscribe=function(){
-    if(!state.auth){pendingSubscribe=true;openModal('register');return;}
-    if(state.subscribed){toast('Подписка уже активна.');return;}
-    doSubscribe('consult');
+    openSubscribe('consult');
   };
   async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();renderProjects();toast('Вы вышли.');}
 
@@ -898,12 +951,12 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     var el=$('#aSub'); if(!el) return;
     if(state.subscribed){
       var dl=acctDays();
-      el.innerHTML='✅ Подписка активна <b>до '+fmtDate(state.until)+'</b>'+(dl!=null?' · осталось <span class="days">'+dl+' дн.</span>':'')+'<button class="renew" id="aRenew">Продлить на месяц · 3000 ₽</button>';
+      el.innerHTML='✅ Подписка активна <b>до '+fmtDate(state.until)+'</b>'+(dl!=null?' · осталось <span class="days">'+dl+' дн.</span>':'')+'<button class="renew" id="aRenew">Продлить на 30 дней · 3000 ₽</button>';
     }else{
       var t=state.trial||{},fg=state.freeGens||5;
-      el.innerHTML='Подписки нет. 🎁 Бесплатные генерации: ✍️ '+(t.copywriter||0)+'/'+fg+' · 🎨 '+(t.designer||0)+'/'+fg+' · 📦 '+(t.autoload||0)+'/'+fg+'.<button class="renew" id="aRenew">Оформить безлимит · 3000 ₽ / мес</button>';
+      el.innerHTML='Подписки нет. 🎁 Бесплатные генерации: ✍️ '+(t.copywriter||0)+'/'+fg+' · 🎨 '+(t.designer||0)+'/'+fg+' · 📦 '+(t.autoload||0)+'/'+fg+'.<button class="renew" id="aRenew">Открыть весь Сократ · 3000 ₽ / 30 дней</button>';
     }
-    var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); doSubscribe('account'); };
+    var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); openSubscribe('account'); };
   }
   function renderAcctIdentity(){
     var status=$('#aIdentityStatus'),tg=$('#aTgBtn'),verify=$('#aVerifyBtn');
@@ -960,7 +1013,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
     btn.disabled=false;
     if(mode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast('Пароль изменён. Войдите заново.');}
-    else if(d&&d.token){var goPay=pendingSubscribe;pendingSubscribe=false;setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');if(goPay&&!state.subscribed)await doSubscribe('consult');}
+    else if(d&&d.token){var goPay=pendingSubscribe;pendingSubscribe=null;setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');if(goPay&&!state.subscribed)openSubscribe(goPay);}
     else if(d&&d.registered){$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
     else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
   }
@@ -974,10 +1027,10 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     const q=new URLSearchParams(location.search);
     if(q.get('paid')==='ok'){
       toast('Оплата получена — активируем подписку…');
-      await api('/c/sokrat/payment/reconcile',{});
+      await api('/c/sokrat/payment/reconcile',{return_status:'ok'});
       let n=0;const iv=setInterval(async function(){n++;await refresh();if(state.subscribed||n>=8){clearInterval(iv);if(state.subscribed)toast('Подписка активна! 🎉');}},2000);
       history.replaceState({},'',location.pathname);
-    }else if(q.get('paid')==='fail'){toast('Оплата не прошла. Попробуйте ещё раз.');history.replaceState({},'',location.pathname);}
+    }else if(q.get('paid')==='fail'){await api('/c/sokrat/payment/return',{status:'fail'});toast('Оплата не прошла. Деньги не списаны — можно попробовать ещё раз.');history.replaceState({},'',location.pathname);}
   }
   async function handleAuthLinks(){
     const q=new URLSearchParams((location.hash||'').replace(/^#/,'')||location.search);
@@ -993,10 +1046,14 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   }
 
   $('#mForm').addEventListener('submit',submitModal);
-  function cancelAuthModal(){pendingSubscribe=false;closeModal();}
+  function cancelAuthModal(){pendingSubscribe=null;closeModal();}
   $('#mClose').addEventListener('click',cancelAuthModal);
   $('#authModal').addEventListener('click',function(e){if(e.target.id==='authModal')cancelAuthModal();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'){cancelAuthModal();closeAcct();}});
+  $('#subPay').addEventListener('click',startCheckout);
+  $('#subClose').addEventListener('click',function(){closeSubscribe(true);});
+  $('#subCancel').addEventListener('click',function(){closeSubscribe(true);});
+  $('#subModal').addEventListener('click',function(e){if(e.target.id==='subModal')closeSubscribe(true);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){cancelAuthModal();closeSubscribe(true);closeAcct();}});
 
   $('#aClose').addEventListener('click',closeAcct);
   $('#acctModal').addEventListener('click',function(e){if(e.target.id==='acctModal')closeAcct();});
@@ -1195,16 +1252,16 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   var HOW=[
     {ic:'🦉',name:'Сократ-консультант',free:true,steps:{any:'Просто напишите вопрос по Авито в чате слева. Без регистрации доступно 5 бесплатных ответов в день; подписка снимает дневной лимит.'}},
     {ic:'🎨',name:'Дизайнер — картинки и баннеры',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху (почта + пароль). 🎁 Первые 5 генераций — бесплатно.','Откройте вкладку «Дизайнер».','Выберите режим: «Картинка для объявления» (1280×960, формат Авито 4:3) или «Баннер профиля» (ПК + моб).','Опишите картинку — получите готовое изображение точно под размеры Авито.','Дальше — подписка 3000 ₽/мес (безлимит).'],
-      nosub:['🎁 Первые 5 генераций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Дизайнер» → выберите режим → опишите картинку → готовое изображение.','Дальше — подписка 3000 ₽/мес (безлимит).'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху (почта + пароль). 🎁 Первые 5 генераций — бесплатно.','Откройте вкладку «Дизайнер».','Выберите режим: «Картинка для объявления» (1280×960, формат Авито 4:3) или «Баннер профиля» (ПК + моб).','Опишите картинку — получите готовое изображение точно под размеры Авито.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
+      nosub:['🎁 Первые 5 генераций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Дизайнер» → выберите режим → опишите картинку → готовое изображение.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
       sub:['Откройте вкладку «Дизайнер» → выберите режим (объявление / баннер профиля) → опишите картинку → получите готовое изображение под размеры Авито.']}},
     {ic:'✍️',name:'Копирайтер — тексты объявлений',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 текстов — бесплатно.','Откройте вкладку «Копирайтер».','Напишите, что продаёте — получите готовый продающий текст: заголовок + структура + ключи под поиск Авито.','Дальше — подписка 3000 ₽/мес (безлимит).'],
-      nosub:['🎁 Первые 5 текстов — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Копирайтер» → напишите что продаёте → готовый текст объявления.','Дальше — подписка 3000 ₽/мес (безлимит).'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 текстов — бесплатно.','Откройте вкладку «Копирайтер».','Напишите, что продаёте — получите готовый продающий текст: заголовок + структура + ключи под поиск Авито.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
+      nosub:['🎁 Первые 5 текстов — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Копирайтер» → напишите что продаёте → готовый текст объявления.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
       sub:['Откройте вкладку «Копирайтер» → напишите что продаёте → получите готовый текст объявления под Авито.']}},
     {ic:'📦',name:'Автозагрузка — работа с фидом',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 операций — бесплатно.','Откройте вкладку «Автозагрузка».','Загрузите свой xlsx-фид (или создайте объявление с нуля командой).','Командами: «размножь по городам», «поставь цену», «перепиши заголовки по правилам» → скачайте готовый файл.','Добавите свои ключи Avito API — проверю отчёты автозагрузки с ошибками и поставлю цену за просмотр (CPV) на объявления.','Дальше — подписка 3000 ₽/мес (безлимит).'],
-      nosub:['🎁 Первые 5 операций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Автозагрузка» → загрузите фид → командами правьте/масштабируйте → скачайте готовый файл.','Дальше — подписка 3000 ₽/мес (безлимит).'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 операций — бесплатно.','Откройте вкладку «Автозагрузка».','Загрузите свой xlsx-фид (или создайте объявление с нуля командой).','Командами: «размножь по городам», «поставь цену», «перепиши заголовки по правилам» → скачайте готовый файл.','Добавите свои ключи Avito API — проверю отчёты автозагрузки с ошибками и поставлю цену за просмотр (CPV) на объявления.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
+      nosub:['🎁 Первые 5 операций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Автозагрузка» → загрузите фид → командами правьте/масштабируйте → скачайте готовый файл.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
       sub:['Откройте вкладку «Автозагрузка» → загрузите xlsx или создайте с нуля → командами масштабируйте по городам / меняйте цены / правьте тексты → скачайте. С ключами Avito API — отчёты + цена за просмотр.']}}
   ];
   function renderHow(){

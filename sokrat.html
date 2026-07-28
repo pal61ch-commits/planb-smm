@@ -481,7 +481,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   <div class="mcard">
     <button class="mclose" id="mClose" aria-label="Закрыть">×</button>
     <h3 id="mTitle">Вход</h3>
-    <div class="msub">Доступ к инструментам Plan B. Без входа у Сократа — 5 бесплатных ответов в день; подписка снимает лимит.</div>
+    <div class="msub" id="mSub">Доступ к инструментам Plan B. Без входа у Сократа — 5 бесплатных ответов в день; подписка снимает лимит.</div>
     <form id="mForm" autocomplete="on">
       <label id="mEmailLabel">Email</label>
       <input id="mEmail" type="email" autocomplete="email" placeholder="you@mail.ru" required>
@@ -799,6 +799,10 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     pendingHandoff=handoff||null;
     try{pendingHandoff?sessionStorage.setItem('sok_handoff',JSON.stringify(pendingHandoff)):sessionStorage.removeItem('sok_handoff');}catch(e){}
   }
+  function trackHandoff(event,handoff){
+    if(!handoff||!handoff.id||!handoff.tool)return;
+    api('/c/sokrat/handoff/event',{event:event,handoff_id:handoff.id,tool:handoff.tool});
+  }
   function handoffId(tool){
     return pendingHandoff&&pendingHandoff.tool===tool?pendingHandoff.id:null;
   }
@@ -807,7 +811,14 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   }
   function activatePendingHandoff(){
     if(!pendingHandoff)return;
-    if(!state.auth){openModal('register');return;}
+    if(!state.auth){
+      var firstRegistrationStart=!pendingHandoff.registrationStarted;
+      if(firstRegistrationStart){
+        pendingHandoff.registrationStarted=true;savePendingHandoff(pendingHandoff);
+        trackHandoff('handoff_registration_started',pendingHandoff);
+      }
+      openModal('register',!firstRegistrationStart);return;
+    }
     showTab(pendingHandoff.tool);
     if(!toolAccess(pendingHandoff.tool)){
       toast('Готовый запрос сохранён. После бесплатного лимита инструмент откроется по подписке.');
@@ -815,11 +826,18 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     }
     var form=document.querySelector('[data-toolform="'+pendingHandoff.tool+'"]');
     var field=form&&form.querySelector('textarea');
-    if(field){field.value=pendingHandoff.prompt||'';field.dispatchEvent(new Event('input'));field.focus();toast('Готовый запрос вставлен — проверьте и нажмите отправить.');}
+    if(field){
+      field.value=pendingHandoff.prompt||'';field.dispatchEvent(new Event('input'));field.focus();
+      if(!pendingHandoff.activated){
+        pendingHandoff.activated=true;savePendingHandoff(pendingHandoff);
+        trackHandoff('handoff_activated',pendingHandoff);
+      }
+      toast('Готовый запрос вставлен — проверьте и нажмите отправить.');
+    }
   }
   window.sokOpenHandoff=function(handoff){
     if(!handoff||!['copywriter','designer','autoload'].includes(handoff.tool))return;
-    savePendingHandoff(handoff);sokTrack('handoff_opened','/handoff/'+handoff.tool);activatePendingHandoff();
+    savePendingHandoff(handoff);trackHandoff('handoff_opened',handoff);activatePendingHandoff();
   };
 
   function renderProjects(){
@@ -979,12 +997,19 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   function closeAcct(){ $('#acctModal').classList.remove('on'); }
 
   /* модалка */
-  function openModal(m){mode=m;if(m==='register')sokTrack('signup_started','/signup');renderModal();$('#authModal').classList.add('on');setTimeout(function(){(m==='reset'?$('#mPass'):$('#mEmail')).focus();},50);}
+  function openModal(m,skipSignupTrack){mode=m;if(m==='register'&&!skipSignupTrack)sokTrack('signup_started','/signup');renderModal();$('#authModal').classList.add('on');setTimeout(function(){(m==='reset'?$('#mPass'):$('#mEmail')).focus();},50);}
   function closeModal(){$('#authModal').classList.remove('on');$('#mErr').textContent='';}
   function renderModal(){
     var reset=mode==='reset';
-    $('#mTitle').textContent=reset?'Новый пароль':(mode==='login'?'Вход':'Регистрация');
-    $('#mSubmit').textContent=reset?'Сохранить пароль':(mode==='login'?'Войти':'Зарегистрироваться');
+    var handoffTool=pendingHandoff&&({copywriter:'Копирайтер',designer:'Дизайнер',autoload:'Автозагрузка'})[pendingHandoff.tool];
+    var handoffRegister=!!handoffTool&&mode==='register';
+    $('#mTitle').textContent=reset?'Новый пароль':(mode==='login'?'Вход':(handoffRegister?'Готовый запрос уже собран':'Регистрация'));
+    $('#mSub').textContent=reset
+      ?'Задайте новый пароль — после сохранения потребуется войти заново.'
+      :(handoffTool
+        ?'После входа запрос автоматически откроется в инструменте «'+handoffTool+'». Первые генерации бесплатны.'
+        :'Доступ к инструментам Plan B. Без входа у Сократа — 5 бесплатных ответов в день; подписка снимает лимит.');
+    $('#mSubmit').textContent=reset?'Сохранить пароль':(mode==='login'?'Войти':(handoffRegister?'Зарегистрироваться и открыть':'Зарегистрироваться'));
     $('#mEmailLabel').style.display=reset?'none':'block';$('#mEmail').style.display=reset?'none':'block';$('#mEmail').required=!reset;
     $('#mPassLabel').textContent=reset?'Новый пароль':'Пароль';
     $('#mPass').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');

@@ -649,9 +649,9 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     if(!message||!data||!data.subscribe||!data.limited)return;
     var card=document.createElement('div');card.className='handoff';
     var label=document.createElement('div');label.className='handofflabel';
-    label.textContent='5 бесплатных ответов в день использованы';
+    label.textContent='5 бесплатных ответов на сегодня использованы';
     var button=document.createElement('button');button.type='button';button.className='handoffbtn';
-    button.textContent='Оформить подписку';
+    button.textContent='Продолжить без лимита · 3000 ₽/мес';
     button.addEventListener('click',function(){if(window.sokOpenSubscribe)window.sokOpenSubscribe();});
     card.append(label,button);message.querySelector('.bub').appendChild(card);
   }
@@ -717,7 +717,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
 (function(){
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
   let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5,
-    projectsEnabled:false,projects:[],activeProjectId:null}, mode='login', resetCode='';
+    projectsEnabled:false,projects:[],activeProjectId:null}, mode='login', resetCode='', pendingSubscribe=false;
   let pendingHandoff=(function(){try{return JSON.parse(sessionStorage.getItem('sok_handoff')||'null');}catch(e){return null;}})();
   function toolAccess(tool){return state.subscribed||(state.trial&&(state.trial[tool]||0)>0);}
   function setTrialLeft(tool,left){if(typeof left!=='number')return;state.trial=state.trial||{};state.trial[tool]=left;updateTrialBadge(tool);}
@@ -865,7 +865,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     state.notice=null;
   }
   async function doSubscribe(){
-    if(!state.auth){openModal('login');return;}
+    if(!state.auth){pendingSubscribe=true;openModal('login');return;}
     const btn=document.querySelector('.gate .gbtn.pay'); if(btn){btn.disabled=true;btn.textContent='Создаём оплату…';}
     const {st,d}=await api('/c/sokrat/subscribe',{});
     if(d&&d.redirect){window.location.href=d.redirect;return;}
@@ -873,7 +873,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     renderGates();
   }
   window.sokOpenSubscribe=function(){
-    if(!state.auth){openModal('register');return;}
+    if(!state.auth){pendingSubscribe=true;openModal('register');return;}
     if(state.subscribed){toast('Подписка уже активна.');return;}
     doSubscribe();
   };
@@ -947,7 +947,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
     btn.disabled=false;
     if(mode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast('Пароль изменён. Войдите заново.');}
-    else if(d&&d.token){setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');}
+    else if(d&&d.token){var goPay=pendingSubscribe;pendingSubscribe=false;setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');if(goPay&&!state.subscribed)await doSubscribe();}
     else if(d&&d.registered){$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
     else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
   }
@@ -980,9 +980,10 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   }
 
   $('#mForm').addEventListener('submit',submitModal);
-  $('#mClose').addEventListener('click',closeModal);
-  $('#authModal').addEventListener('click',function(e){if(e.target.id==='authModal')closeModal();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeAcct();}});
+  function cancelAuthModal(){pendingSubscribe=false;closeModal();}
+  $('#mClose').addEventListener('click',cancelAuthModal);
+  $('#authModal').addEventListener('click',function(e){if(e.target.id==='authModal')cancelAuthModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){cancelAuthModal();closeAcct();}});
 
   $('#aClose').addEventListener('click',closeAcct);
   $('#acctModal').addEventListener('click',function(e){if(e.target.id==='acctModal')closeAcct();});

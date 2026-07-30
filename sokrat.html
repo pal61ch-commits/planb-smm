@@ -589,6 +589,7 @@ function sokAuthSet(token){
 var SOK_VIS=(function(){try{var v=localStorage.getItem('sok_vis');if(!v){v='v'+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem('sok_vis',v);}return v;}catch(e){return 'v'+Math.random().toString(36).slice(2,10);}})();
 var SOK_UTM=(function(){try{var q=new URLSearchParams(location.search),o={},any=false;['utm_source','utm_medium','utm_campaign'].forEach(function(k){var val=q.get(k);if(val){o[k]=val.slice(0,120);any=true;}});var ref=q.get('ref');if(ref&&!o.utm_source){o.utm_source=ref.slice(0,120);o.utm_medium=o.utm_medium||'referral';any=true;}if(any){localStorage.setItem('sok_utm',JSON.stringify(o));return o;}return JSON.parse(localStorage.getItem('sok_utm')||'{}');}catch(e){return {};}})();
 function sokTrack(ev,pth){try{var b=Object.assign({event:ev,visitor:SOK_VIS,ref:document.referrer||'',path:pth||location.pathname},SOK_UTM);fetch(SOK_API_BASE+'/c/sokrat/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b),keepalive:true}).catch(function(){});}catch(e){}}
+function sokGoal(goal,params){try{if(typeof ym==='function')ym(110884885,'reachGoal',goal,params||{});}catch(e){}}
 try{sokTrack('visit');}catch(e){}
 
 /* ── Лёгкое мерцание звёзд поверх фото-галактики ── */
@@ -741,6 +742,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       payload.token=sokAuthGet();
       const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();t.remove();
+      if(d&&d.error===false&&!d.limited)sokGoal('SOKRAT_CONSULT_SUCCESS');
       const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
       var answer=bubble('assistant',reply);handoffCard(answer,d.handoff);limitCard(answer,d);feedbackCard(answer,d);
       hist.push({role:'assistant',content:reply});save();
@@ -881,6 +883,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   function trackPaywall(tool){
     if(!tool||_paywallSeen[tool])return;
     _paywallSeen[tool]=true;
+    sokGoal('SOKRAT_PAYWALL_VIEW',{tool:tool});
     api('/c/sokrat/tool/paywall-view',{tool:tool});
   }
   function renderGates(){
@@ -957,7 +960,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     if(subscribeBusy)return;
     subscribeBusy=true;const btn=$('#subPay');btn.disabled=true;btn.textContent='Создаём оплату…';$('#subErr').textContent='';
     const {d}=await api('/c/sokrat/subscribe',{trigger_tool:subscribeTrigger});
-    if(d&&d.redirect){window.location.href=d.redirect;return;}
+    if(d&&d.redirect){sokGoal('SOKRAT_PAY_CLICK',{tool:subscribeTrigger,amount:3000,currency:'RUB'});window.location.href=d.redirect;return;}
     subscribeBusy=false;btn.disabled=false;btn.textContent='Перейти к оплате · 3000 ₽';
     $('#subErr').textContent=(d&&d.error)||'Не удалось создать оплату, попробуйте позже.';
   }
@@ -1033,6 +1036,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   }
   async function submitModal(e){
     if(e)e.preventDefault();
+    const submittedMode=mode;
     const email=$('#mEmail').value.trim(), pw=$('#mPass').value;
     if((mode!=='reset'&&!email)||!pw){$('#mErr').textContent=mode==='reset'?'Введите новый пароль':'Заполните почту и пароль';return;}
     const btn=$('#mSubmit');btn.disabled=true;
@@ -1041,8 +1045,8 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
     btn.disabled=false;
     if(mode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast('Пароль изменён. Войдите заново.');}
-    else if(d&&d.token){var goPay=pendingSubscribe;pendingSubscribe=null;setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(mode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');if(goPay&&!state.subscribed)openSubscribe(goPay);}
-    else if(d&&d.registered){$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
+    else if(d&&d.token){var goPay=pendingSubscribe;pendingSubscribe=null;if(submittedMode==='register')sokGoal('SOKRAT_REGISTER');setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(submittedMode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');if(goPay&&!state.subscribed)openSubscribe(goPay);}
+    else if(d&&d.registered){if(submittedMode==='register')sokGoal('SOKRAT_REGISTER');$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
     else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
   }
 
@@ -1055,7 +1059,8 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     const q=new URLSearchParams(location.search);
     if(q.get('paid')==='ok'){
       toast('Оплата получена — активируем подписку…');
-      await api('/c/sokrat/payment/reconcile',{return_status:'ok'});
+      var reconciled=await api('/c/sokrat/payment/reconcile',{return_status:'ok'});
+      if(reconciled.d&&reconciled.d.confirmed>0&&reconciled.d.subscribed===true)sokGoal('SOKRAT_PAYMENT_CONFIRMED',{amount:3000,currency:'RUB'});
       let n=0;const iv=setInterval(async function(){n++;await refresh();if(state.subscribed||n>=8){clearInterval(iv);if(state.subscribed)toast('Подписка активна! 🎉');}},2000);
       history.replaceState({},'',location.pathname);
     }else if(q.get('paid')==='fail'){await api('/c/sokrat/payment/return',{status:'fail'});toast('Оплата не прошла. Деньги не списаны — можно попробовать ещё раз.');history.replaceState({},'',location.pathname);}

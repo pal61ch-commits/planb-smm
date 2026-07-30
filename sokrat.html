@@ -719,7 +719,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     var label=document.createElement('div');label.className='handofflabel';
     label.textContent='5 бесплатных ответов на сегодня использованы';
     var button=document.createElement('button');button.type='button';button.className='handoffbtn';
-    button.textContent='Продолжить без лимита · 3000 ₽/мес';
+    button.textContent='Продолжить без лимита · 3000 ₽ за 30 дней';
     button.addEventListener('click',function(){if(window.sokOpenSubscribe)window.sokOpenSubscribe();});
     card.append(label,button);message.querySelector('.bub').appendChild(card);
   }

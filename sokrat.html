@@ -184,6 +184,14 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .subtrust a{color:var(--yellow)}
 .subcancel{width:100%;margin-top:9px;padding:10px;background:none;border:none;color:var(--muted);font:inherit;cursor:pointer}
 .subcancel:hover{color:var(--text)}
+.mcard.activation{max-width:500px}
+.activationchoices{display:grid;gap:10px;margin-top:18px}
+.activationchoice{width:100%;display:grid;grid-template-columns:42px 1fr;gap:11px;align-items:center;text-align:left;
+  padding:13px 14px;border-radius:13px;background:var(--glass2);border:1px solid var(--gb);color:var(--text);cursor:pointer;transition:.18s var(--ease)}
+.activationchoice:hover,.activationchoice:focus{outline:none;border-color:var(--yellow);background:rgba(245,196,0,.09);transform:translateY(-1px)}
+.activationchoice .aic{font-size:27px;text-align:center}
+.activationchoice b{display:block;font-family:'Manrope';font-size:14px;margin-bottom:2px}
+.activationchoice span{display:block;color:var(--muted);font-size:12.5px;line-height:1.35}
 .acctsub{font-size:13.5px;line-height:1.5;padding:13px 15px;border-radius:13px;background:var(--glass2);border:1px solid var(--gb);margin:12px 0 4px}
 .acctsub .days{color:var(--yellow);font-weight:700}
 .acctsub .renew{width:100%;margin-top:11px;padding:11px;border-radius:11px;background:var(--yellow);color:#15140c;border:none;font-weight:700;cursor:pointer}
@@ -496,6 +504,27 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       </div>
     </form>
     <div class="mtoggle" id="mToggle"></div>
+  </div>
+</div>
+
+<!-- первый полезный результат после обычной регистрации -->
+<div class="modal" id="activationModal" role="dialog" aria-modal="true" aria-labelledby="activationTitle">
+  <div class="mcard activation">
+    <button class="mclose" id="activationClose" aria-label="Закрыть">×</button>
+    <h3 id="activationTitle">Аккаунт готов. Сделаем первый результат?</h3>
+    <div class="msub">Выберите одну задачу — у каждого инструмента есть 5 бесплатных генераций. Оплата сейчас не нужна.</div>
+    <div class="activationchoices">
+      <button class="activationchoice" type="button" data-activation-tool="copywriter">
+        <span class="aic">✍️</span><span><b>Написать объявление</b><span>Готовый заголовок и продающий текст для Авито</span></span>
+      </button>
+      <button class="activationchoice" type="button" data-activation-tool="designer">
+        <span class="aic">🎨</span><span><b>Сделать картинку</b><span>Изображение для объявления по описанию или образцу</span></span>
+      </button>
+      <button class="activationchoice" type="button" data-activation-tool="autoload">
+        <span class="aic">📦</span><span><b>Обработать объявления</b><span>Загрузить XLSX, изменить цены, тексты или города</span></span>
+      </button>
+    </div>
+    <button class="subcancel" id="activationLater" type="button">Пока продолжу консультацию</button>
   </div>
 </div>
 
@@ -845,6 +874,50 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     savePendingHandoff(handoff);trackHandoff('handoff_opened',handoff);activatePendingHandoff();
   };
 
+  function openActivationGuide(){
+    if(!state.auth)return;
+    $('#activationModal').classList.add('on');
+    api('/c/sokrat/activation/event',{event:'activation_guide_view'});
+    setTimeout(function(){
+      var first=$('[data-activation-tool="copywriter"]');if(first)first.focus();
+    },50);
+  }
+  function closeActivationGuide(trackDismissal){
+    var modal=$('#activationModal');
+    if(!modal.classList.contains('on'))return;
+    modal.classList.remove('on');
+    if(trackDismissal)api('/c/sokrat/activation/event',{event:'activation_guide_dismissed'});
+  }
+  function chooseActivationTool(tool){
+    if(!['copywriter','designer','autoload'].includes(tool))return;
+    closeActivationGuide(false);
+    api('/c/sokrat/activation/event',{event:'activation_guide_choice',tool:tool});
+    showTab(tool);
+    var hints={
+      copywriter:'Напишите, что продаёте, город и главную выгоду.',
+      designer:'Опишите нужную картинку или прикрепите свой образец.',
+      autoload:'Прикрепите XLSX и напишите, что изменить.'
+    };
+    toast(hints[tool]);
+    setTimeout(function(){
+      var form=document.querySelector('[data-toolform="'+tool+'"]');
+      var field=form&&form.querySelector('textarea');if(field)field.focus();
+    },80);
+  }
+  document.querySelectorAll('[data-activation-tool]').forEach(function(button){
+    button.addEventListener('click',function(){
+      chooseActivationTool(button.getAttribute('data-activation-tool'));
+    });
+  });
+  $('#activationClose').addEventListener('click',function(){closeActivationGuide(true);});
+  $('#activationLater').addEventListener('click',function(){
+    closeActivationGuide(true);showTab('sokrat');
+    setTimeout(function(){var input=$('#input');if(input)input.focus();},80);
+  });
+  $('#activationModal').addEventListener('click',function(e){
+    if(e.target.id==='activationModal')closeActivationGuide(true);
+  });
+
   function renderProjects(){
     var bar=$('#projectbar'),select=$('#projectSelect'),summary=$('#projectSummary');
     if(!bar||!state.auth||!state.projectsEnabled){if(bar)bar.hidden=true;return;}
@@ -1053,7 +1126,16 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
     btn.disabled=false;
     if(mode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast('Пароль изменён. Войдите заново.');}
-    else if(d&&d.token){var goPay=pendingSubscribe;pendingSubscribe=null;if(submittedMode==='register')sokGoal('SOKRAT_REGISTER');setToken(d.token);state=accountState(d);await refreshProjects();closeModal();renderAuthbox();renderGates();renderProjects();activatePendingHandoff();toast(submittedMode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');if(goPay&&!state.subscribed)openSubscribe(goPay);}
+    else if(d&&d.token){
+      var goPay=pendingSubscribe;pendingSubscribe=null;
+      var hasHandoff=!!pendingHandoff;
+      if(submittedMode==='register')sokGoal('SOKRAT_REGISTER');
+      setToken(d.token);state=accountState(d);await refreshProjects();closeModal();
+      renderAuthbox();renderGates();renderProjects();activatePendingHandoff();
+      toast(submittedMode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');
+      if(goPay&&!state.subscribed)openSubscribe(goPay);
+      else if(submittedMode==='register'&&!hasHandoff)openActivationGuide();
+    }
     else if(d&&d.registered){if(submittedMode==='register')sokGoal('SOKRAT_REGISTER');$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
     else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
   }

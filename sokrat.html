@@ -1027,7 +1027,11 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     $('#mLegal').hidden=mode!=='register';
     $('#mPass').placeholder=mode==='login'?'Пароль':'8–256 символов';
     $('#mToggle').innerHTML=reset?'':(mode==='login'?'Нет аккаунта? <a id="mSwap">Зарегистрироваться</a> · <a id="mForgot">Забыли пароль?</a>':'Уже есть аккаунт? <a id="mSwap">Войти</a>');
-    var swap=$('#mSwap');if(swap)swap.onclick=function(){mode=(mode==='login'?'register':'login');renderModal();};
+    var swap=$('#mSwap');if(swap)swap.onclick=function(){
+      mode=(mode==='login'?'register':'login');
+      if(mode==='register')sokTrack('signup_started','/signup');
+      renderModal();
+    };
     var forgot=$('#mForgot');if(forgot)forgot.onclick=requestPasswordReset;
     $('#mErr').textContent='';
   }

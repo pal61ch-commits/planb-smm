@@ -943,9 +943,10 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   function openSubscribe(triggerTool){
     if(state.subscribed){toast('Подписка уже активна.');return;}
     subscribeTrigger=['consult','copywriter','designer','autoload','account'].includes(triggerTool)?triggerTool:'consult';
-    if(!state.auth){pendingSubscribe=subscribeTrigger;openModal('register');return;}
     subscribeBusy=false;$('#subErr').textContent='';$('#subPay').disabled=false;
-    $('#subPay').textContent='Перейти к оплате · 3000 ₽';
+    $('#subPay').textContent=state.auth
+      ?'Перейти к оплате · 3000 ₽'
+      :'Зарегистрироваться и перейти к оплате · 3000 ₽';
     $('#subModal').classList.add('on');
     api('/c/sokrat/subscription/offer-event',{event:'subscription_offer_view',trigger_tool:subscribeTrigger});
   }
@@ -958,6 +959,9 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   }
   async function startCheckout(){
     if(subscribeBusy)return;
+    if(!state.auth){
+      pendingSubscribe=subscribeTrigger;closeSubscribe(false);openModal('register');return;
+    }
     subscribeBusy=true;const btn=$('#subPay');btn.disabled=true;btn.textContent='Создаём оплату…';$('#subErr').textContent='';
     const {d}=await api('/c/sokrat/subscribe',{trigger_tool:subscribeTrigger});
     if(d&&d.redirect){sokGoal('SOKRAT_PAY_CLICK',{tool:subscribeTrigger,amount:3000,currency:'RUB'});window.location.href=d.redirect;return;}

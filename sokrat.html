@@ -789,6 +789,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
     projectsEnabled:false,projects:[],activeProjectId:null}, mode='login', resetCode='', pendingSubscribe=null;
   let subscribeTrigger='consult', subscribeBusy=false;
   let telegramRetentionBusy=false, telegramRetentionShown=false;
+  let subscriptionNudgeBusy=false, subscriptionNudgeShown=false;
   let pendingHandoff=(function(){try{return JSON.parse(sessionStorage.getItem('sok_handoff')||'null');}catch(e){return null;}})();
   function toolAccess(tool){return state.subscribed||(state.trial&&(state.trial[tool]||0)>0);}
   function setTrialLeft(tool,left){if(typeof left!=='number')return;state.trial=state.trial||{};state.trial[tool]=left;updateTrialBadge(tool);}
@@ -800,13 +801,13 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
   }
   async function telegramRetentionCta(chat,icon){
     if(!chat||!state.auth||state.telegramLinked||telegramRetentionBusy||
-       telegramRetentionShown||chat.querySelector('.telegram-retention-cta'))return;
+       telegramRetentionShown||chat.querySelector('.telegram-retention-cta'))return false;
     telegramRetentionBusy=true;
     var check=await api('/c/sokrat/retention/event',{
       event:'telegram_retention_prompt_view'
     });
     telegramRetentionBusy=false;
-    if(!check.d||!check.d.show||state.telegramLinked)return;
+    if(!check.d||!check.d.show||state.telegramLinked)return false;
     telegramRetentionShown=true;
     var m=document.createElement('div');m.className='msg s telegram-retention-cta';
     m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Хотите пользоваться Сократом и в Telegram?</strong><br>Свяжите бота с этим аккаунтом — подписка, бесплатные лимиты и проекты будут общими.<div style="margin-top:13px"><button class="gbtn" type="button">Связать Telegram</button></div><div class="muted tg-retention-status" style="margin-top:8px"></div></div>';
@@ -834,6 +835,32 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       }
     });
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
+    return true;
+  }
+  async function subscriptionNudgeCta(chat,icon,tool){
+    if(!chat||!state.auth||state.subscribed||subscriptionNudgeBusy||
+       subscriptionNudgeShown||chat.querySelector('.subscription-nudge-cta'))return false;
+    subscriptionNudgeBusy=true;
+    var check=await api('/c/sokrat/conversion/event',{
+      event:'subscription_nudge_view',tool:tool
+    });
+    subscriptionNudgeBusy=false;
+    if(!check.d||!check.d.show||state.subscribed)return false;
+    subscriptionNudgeShown=true;
+    var m=document.createElement('div');m.className='msg s subscription-nudge-cta';
+    m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Если Сократ уже приносит пользу</strong><br>В единой подписке консультант работает без дневного лимита, а Копирайтер, Дизайнер и Автозагрузка — без лимита генераций. 3000 ₽ за 30 дней, без автосписаний.<div style="margin-top:13px"><button class="gbtn" type="button">Посмотреть подписку</button></div></div>';
+    m.querySelector('button').addEventListener('click',async function(){
+      await api('/c/sokrat/conversion/event',{
+        event:'subscription_nudge_clicked',tool:tool
+      });
+      openSubscribe(tool);
+    });
+    chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
+    return true;
+  }
+  async function postResultCtas(chat,icon,tool){
+    var retained=await telegramRetentionCta(chat,icon);
+    if(!retained)await subscriptionNudgeCta(chat,icon,tool);
   }
   function updateTrialBadge(tool){
     var ui=document.querySelector('.toolui[data-tool="'+tool+'"]'); if(!ui)return;
@@ -1354,7 +1381,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
       var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});return m;};
       say('assistant','Опишите товар или услугу — выдам готовый заголовок и текст объявления, каждый со своей кнопкой «Копировать». Готово к вставке в Авито.');
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist,project_id:activeProjectId(),handoff_id:handoffId('copywriter'),handoff_source:handoffSource('copywriter')});t.remove();var d=r.d||{};if(d.help){say('assistant',d.reply||'Эта команда не требует генерации.');}else if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{var resultMessage=null;if(d.title)resultMessage=copyBubble('Заголовок',d.title);if(d.body)resultMessage=copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);toolFeedbackCard(resultMessage,'copywriter',d.result_id);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});completeHandoff('copywriter');refreshProjects();if(d.trial_left===0)trialFinishedCta(chat,'✍️','copywriter');else telegramRetentionCta(chat,'✍️');}btn.disabled=false;ta.focus();});
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist,project_id:activeProjectId(),handoff_id:handoffId('copywriter'),handoff_source:handoffSource('copywriter')});t.remove();var d=r.d||{};if(d.help){say('assistant',d.reply||'Эта команда не требует генерации.');}else if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{var resultMessage=null;if(d.title)resultMessage=copyBubble('Заголовок',d.title);if(d.body)resultMessage=copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);toolFeedbackCard(resultMessage,'copywriter',d.result_id);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});completeHandoff('copywriter');refreshProjects();if(d.trial_left===0)trialFinishedCta(chat,'✍️','copywriter');else postResultCtas(chat,'✍️','copywriter');}btn.disabled=false;ta.focus();});
     } else if(name==='autoload'){
       var chat=document.getElementById('al-chat'), att=wireAttach(form);
       var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
@@ -1363,7 +1390,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
       async function alDownload(){var h={'Content-Type':'application/json'};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h,body:JSON.stringify({project_id:activeProjectId()})});if(!r.ok){say('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){say('assistant','Ошибка скачивания');}}
       function dlBubble(){var m=document.createElement('div');m.className='msg s';m.innerHTML='<div class="av">📦</div><div class="bub" style="background:none;border:none;padding:0"><a class="dlfile" href="#">📄 avito_feed.xlsx — скачать</a></div>';m.querySelector('.dlfile').addEventListener('click',function(ev){ev.preventDefault();alDownload();});chat.appendChild(m);chat.scrollTop=chat.scrollHeight;}
       async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);if(activeProjectId()!=null)fd.append('project_id',String(activeProjectId()));var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','📦 Загрузил фид: '+d.summary+'\nЧто сделать? Напр.: «размножь по топ-30 городам», «перепиши заголовки», «поставь цену 500».');refreshProjects();}else{say('assistant',d.error||'Не смог прочитать файл');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v,project_id:activeProjectId(),handoff_id:handoffId('autoload'),handoff_source:handoffSource('autoload')});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}else if(d.reply){completeHandoff('autoload');}setTrialLeft('autoload',d.trial_left);if(d.ready){dlBubble();refreshProjects();if(d.trial_left!==0)telegramRetentionCta(chat,'📦');}if(d.reply&&d.trial_left===0)trialFinishedCta(chat,'📦','autoload');}btn.disabled=false;ta.focus();});
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v,project_id:activeProjectId(),handoff_id:handoffId('autoload'),handoff_source:handoffSource('autoload')});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}else if(d.reply){completeHandoff('autoload');}setTrialLeft('autoload',d.trial_left);if(d.ready){dlBubble();refreshProjects();if(d.trial_left!==0)postResultCtas(chat,'📦','autoload');}if(d.reply&&d.trial_left===0)trialFinishedCta(chat,'📦','autoload');}btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
       var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form), curImg=null;
       ui.querySelectorAll('.dzmode').forEach(function(mb){mb.addEventListener('click',function(){mode=mb.getAttribute('data-mode');ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x===mb);});});});
@@ -1403,7 +1430,7 @@ try{ var _savedTab=localStorage.getItem('sok_tab'); if(_savedTab && document.que
             ctl.querySelector('.r-repeat').addEventListener('click',function(){curImg=baseImg;gen(promptText,fl);});
             ctl.querySelector('.r-restart').addEventListener('click',function(){curImg=null;att.clear();mode='listing';ui.querySelectorAll('.dzmode').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-mode')==='listing');});say('assistant',DZNEWTASK);var ta=form.querySelector('textarea');if(ta){ta.value='';ta.focus();}});
             if(d.trial_left===0)trialFinishedCta(chat,'🎨','designer');
-            else telegramRetentionCta(chat,'🎨');
+            else postResultCtas(chat,'🎨','designer');
             scrollToEnd(chat);                        // сразу к кнопкам/картинке (img.onload доскроллит точнее)
           } else { say('assistant',d.error||'Не удалось сгенерировать'); }
         }catch(e){t.remove();say('assistant','Ошибка генерации');}

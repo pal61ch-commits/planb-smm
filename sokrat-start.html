@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://mc.yandex.ru; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://mc.yandex.ru; connect-src 'self' https://mc.yandex.ru wss://mc.yandex.ru; frame-src https://mc.yandex.ru; upgrade-insecure-requests">
+<title>Сократ — нейросеть и ИИ-авитолог для объявлений Авито</title>
+<meta name="description" content="Сократ помогает с Авито: консультирует, пишет тексты объявлений, создаёт картинки 1280×960 и работает с файлами автозагрузки. Попробуйте бесплатно, затем 3000 ₽ за 30 дней.">
+<meta name="robots" content="noindex,follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Сократ — ИИ-авитолог">
+<meta property="og:title" content="Сократ: ИИ-инструменты для Авито в одном аккаунте">
+<meta property="og:description" content="Консультант, копирайтер, дизайнер и автозагрузка. Бесплатная проба, затем единая подписка 3000 ₽ за 30 дней.">
+<meta property="og:image" content="https://planb-prodvizhenie.ru/og-sokrat.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-sokrat-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080a09;--card:#101411;--card2:#151a16;--line:rgba(255,255,255,.10);--gold:#f5c400;--gold2:#ffe06b;--green:#3de083;--text:#f7f7f2;--muted:#aaaead;--shadow:0 28px 90px rgba(0,0,0,.48)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 76% 8%,rgba(26,123,70,.20),transparent 30%),radial-gradient(circle at 12% 24%,rgba(245,196,0,.10),transparent 27%),var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.shell{width:min(1120px,calc(100% - 36px));margin:0 auto}
+.top{height:82px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{width:250px;max-width:58vw;height:auto;display:block}
+.topnote{font-size:13px;color:var(--muted);white-space:nowrap}
+.hero{min-height:670px;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);align-items:center;gap:52px;padding:54px 0 86px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid rgba(61,224,131,.28);border-radius:999px;background:rgba(61,224,131,.08);color:#a9f5ca;font-size:13px;font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green)}
+h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.035em;line-height:1.05;margin:0}
+h1{font-size:clamp(44px,6.4vw,78px);margin:24px 0 22px;max-width:780px}
+.gold{color:var(--gold)}
+.lead{font-size:clamp(18px,2vw,23px);color:#d3d5d0;max-width:720px;margin:0 0 28px}
+.ticks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 22px;margin:0 0 30px;padding:0;list-style:none;color:#e5e6e1}
+.ticks li{display:flex;gap:9px;align-items:flex-start;font-size:15px}
+.ticks li:before{content:'✓';color:var(--green);font-weight:800}
+.cta{display:inline-flex;align-items:center;justify-content:center;min-height:60px;padding:0 28px;border-radius:15px;text-decoration:none;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#17150b;font-family:'Manrope',sans-serif;font-weight:800;font-size:18px;box-shadow:0 18px 44px rgba(245,196,0,.20);transition:transform .2s,box-shadow .2s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 22px 52px rgba(245,196,0,.27)}
+.under{font-size:13px;color:var(--muted);margin:12px 0 0}
+.visual{position:relative;min-height:570px;display:grid;place-items:center}
+.halo{position:absolute;width:410px;height:410px;border-radius:50%;background:radial-gradient(circle,rgba(61,224,131,.20),rgba(61,224,131,.04) 48%,transparent 70%);filter:blur(2px)}
+.owl{position:relative;width:180px;height:auto;filter:drop-shadow(0 25px 48px rgba(0,0,0,.72)) drop-shadow(0 0 28px rgba(61,224,131,.16));z-index:2}
+.tool{position:absolute;width:205px;padding:17px 18px;border:1px solid var(--line);border-radius:17px;background:rgba(15,20,16,.86);backdrop-filter:blur(14px);box-shadow:var(--shadow);z-index:3}
+.tool b{display:block;font-family:'Manrope';font-size:15px;margin-bottom:4px}
+.tool span{font-size:12px;color:var(--muted)}
+.t1{left:0;top:75px}.t2{right:0;top:145px}.t3{left:16px;bottom:90px}.t4{right:8px;bottom:35px}
+.tool i{font-style:normal;font-size:22px;display:block;margin-bottom:7px}
+.pricecard{position:absolute;left:50%;bottom:0;transform:translateX(-50%);z-index:4;width:275px;text-align:center;border:1px solid rgba(245,196,0,.32);border-radius:18px;background:#11140f;padding:16px 18px;box-shadow:0 18px 58px rgba(0,0,0,.55)}
+.pricecard strong{font:800 27px 'Manrope';color:var(--gold)}
+.pricecard span{font-size:13px;color:var(--muted)}
+.strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.stripin{display:grid;grid-template-columns:repeat(3,1fr);gap:1px}
+.fact{padding:24px 28px;text-align:center;border-right:1px solid var(--line)}
+.fact:last-child{border:0}.fact b{display:block;font:800 22px 'Manrope';color:var(--gold);margin-bottom:4px}.fact span{font-size:13px;color:var(--muted)}
+section{padding:96px 0}
+.sectionhead{max-width:720px;margin:0 auto 46px;text-align:center}.sectionhead h2{font-size:clamp(35px,5vw,54px);margin-bottom:15px}.sectionhead p{margin:0;color:var(--muted);font-size:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{border:1px solid var(--line);border-radius:20px;background:linear-gradient(155deg,var(--card2),var(--card));padding:26px 22px;min-height:240px}
+.card .icon{font-size:28px;margin-bottom:34px}.card h3{font-size:20px;margin-bottom:12px}.card p{margin:0;color:var(--muted);font-size:14px}
+.process{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:step}
+.step{counter-increment:step;border-top:1px solid rgba(245,196,0,.36);padding:26px 8px 0}.step:before{content:'0' counter(step);display:block;color:var(--gold);font:800 14px 'Manrope';margin-bottom:24px}.step h3{font-size:21px;margin-bottom:10px}.step p{margin:0;color:var(--muted)}
+.offer{display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:center;border:1px solid rgba(245,196,0,.25);border-radius:28px;background:linear-gradient(135deg,rgba(245,196,0,.09),rgba(61,224,131,.05));padding:48px}
+.offer h2{font-size:clamp(36px,5vw,56px);margin-bottom:18px}.offer p{color:#d1d3cf;font-size:18px;margin:0 0 20px}.offer ul{margin:0;padding:0;list-style:none;color:var(--muted)}.offer li{margin:8px 0}.offer li:before{content:'✓';color:var(--green);margin-right:10px;font-weight:800}
+.checkout{border:1px solid var(--line);background:rgba(8,10,9,.78);border-radius:22px;padding:28px;text-align:center}.checkout small{display:block;color:var(--muted);margin-bottom:8px}.checkout .amount{font:800 46px 'Manrope';color:var(--gold);line-height:1}.checkout .period{color:var(--muted);margin:6px 0 20px}.checkout .cta{width:100%}.checkout .safe{font-size:12px;color:var(--muted);margin-top:13px}
+.faq{max-width:820px;margin:0 auto}.faq details{border-bottom:1px solid var(--line);padding:22px 0}.faq summary{cursor:pointer;font:700 18px 'Manrope';list-style:none}.faq summary::-webkit-details-marker{display:none}.faq summary:after{content:'+';float:right;color:var(--gold);font-size:24px}.faq details[open] summary:after{content:'−'}.faq p{color:var(--muted);margin:12px 36px 0 0}
+.final{text-align:center;padding-top:40px}.final h2{font-size:clamp(38px,5vw,60px);max-width:780px;margin:0 auto 18px}.final p{color:var(--muted);font-size:18px;margin:0 auto 26px;max-width:660px}
+footer{border-top:1px solid var(--line);margin-top:90px;padding:28px 0 36px;color:var(--muted);font-size:12px}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.foot a{text-decoration:none}.foot a:hover{color:var(--text)}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:38px;gap:22px}.visual{min-height:500px}.grid4{grid-template-columns:repeat(2,1fr)}.offer{grid-template-columns:1fr}.stripin{grid-template-columns:1fr}.fact{border-right:0;border-bottom:1px solid var(--line)}}
+@media(max-width:560px){.shell{width:min(100% - 28px,1120px)}.top{height:70px}.topnote{display:none}.logo{width:205px}h1{font-size:43px}.lead{font-size:18px}.ticks{grid-template-columns:1fr}.cta{width:100%}.hero{min-height:auto;padding:42px 0 66px}.visual{min-height:520px}.halo{width:310px;height:310px}.owl{width:135px}.tool{width:162px;padding:13px}.tool span{display:none}.t1{top:70px}.t2{top:115px}.t3{left:0;bottom:128px}.t4{right:0;bottom:90px}.pricecard{width:245px}.grid4,.process{grid-template-columns:1fr}.card{min-height:0}.offer{padding:28px 20px}.checkout{padding:24px 18px}section{padding:72px 0}.fact{padding:20px}.foot{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cta{transition:none}}
+</style>
+<script>
+(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r)return}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=110884885','ym');
+ym(110884885,'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});
+</script>
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/110884885" style="position:absolute;left:-9999px" alt=""></div></noscript>
+<header class="shell top">
+  <img class="logo" src="/logos/sokrat-logo-owltech-transparent.png" alt="Сократ — ИИ-авитолог">
+  <div class="topnote">Сделан командой Plan B для работы с Авито</div>
+</header>
+
+<main>
+  <section class="shell hero">
+    <div>
+      <div class="eyebrow"><span class="dot"></span>Нейросеть, заточенная только под Авито</div>
+      <h1>Готовое объявление для Авито <span class="gold">в одном окне</span></h1>
+      <p class="lead">Сократ консультирует по Авито, пишет текст объявления, создаёт картинки 1280×960 и помогает с файлами автозагрузки.</p>
+      <ul class="ticks">
+        <li>Не обычный GPT</li>
+        <li>Только задачи Авито</li>
+        <li>Пять бесплатных проб каждого инструмента</li>
+        <li>Без карты и оплаты на старте</li>
+      </ul>
+      <a class="cta js-start" href="/sokrat">Попробовать Сократа бесплатно</a>
+      <p class="under">После бесплатных лимитов: единая подписка 3000 ₽ на 30 дней. Автосписаний нет.</p>
+    </div>
+    <div class="visual" aria-label="Возможности Сократа">
+      <div class="halo"></div>
+      <img class="owl" src="/sokrat-owl.png" alt="Сова Сократ">
+      <div class="tool t1"><i>💬</i><b>Консультант</b><span>Ответит на вопрос по вашему аккаунту</span></div>
+      <div class="tool t2"><i>✍️</i><b>Копирайтер</b><span>Соберёт заголовок и текст объявления</span></div>
+      <div class="tool t3"><i>🎨</i><b>Дизайнер</b><span>Сделает картинку под формат Авито</span></div>
+      <div class="tool t4"><i>📦</i><b>Автозагрузка</b><span>Поможет обработать и масштабировать фид</span></div>
+      <div class="pricecard"><strong>3000 ₽</strong> <span>/ 30 дней</span><br><span>одна подписка на весь Сократ</span></div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="shell stripin">
+      <div class="fact"><b>5 ответов в день</b><span>консультант без регистрации</span></div>
+      <div class="fact"><b>5 генераций</b><span>каждого инструмента после регистрации</span></div>
+      <div class="fact"><b>0 автосписаний</b><span>продление только вручную</span></div>
+    </div>
+  </div>
+
+  <section class="shell">
+    <div class="sectionhead">
+      <h2>Четыре задачи Авито, <span class="gold">один аккаунт</span></h2>
+      <p>Не нужно переносить вводные между разными чатами и заново объяснять, что вы продаёте.</p>
+    </div>
+    <div class="grid4">
+      <article class="card"><div class="icon">💬</div><h3>Разобраться</h3><p>Задайте вопрос про объявление, выдачу, продвижение или настройки аккаунта. Сократ отвечает в контексте Авито.</p></article>
+      <article class="card"><div class="icon">✍️</div><h3>Написать текст</h3><p>Получите заголовок и структуру объявления под ваш товар или услугу, а не универсальный текст «для всего».</p></article>
+      <article class="card"><div class="icon">🎨</div><h3>Сделать картинку</h3><p>Создайте изображение для объявления в формате 1280×960 или баннер профиля под компьютер и телефон.</p></article>
+      <article class="card"><div class="icon">📦</div><h3>Подготовить фид</h3><p>Загрузите XLSX и попросите изменить цены, заголовки, города или подготовить файл автозагрузки.</p></article>
+    </div>
+  </section>
+
+  <section class="shell">
+    <div class="sectionhead"><h2>Как начать</h2><p>Сначала получите результат. Решение о подписке примете после бесплатной пробы.</p></div>
+    <div class="process">
+      <article class="step"><h3>Откройте Сократа</h3><p>Для консультации регистрация не нужна. Напишите вопрос по Авито прямо в чате.</p></article>
+      <article class="step"><h3>Попробуйте инструменты</h3><p>Создайте аккаунт и получите по пять бесплатных генераций Копирайтера, Дизайнера и Автозагрузки.</p></article>
+      <article class="step"><h3>Подключите весь набор</h3><p>Если Сократ подходит, откройте все инструменты и снимите дневной лимит консультанта на 30 дней.</p></article>
+    </div>
+  </section>
+
+  <section class="shell">
+    <div class="offer">
+      <div>
+        <h2>Одна подписка. <span class="gold">Весь Сократ.</span></h2>
+        <p>Подключаете не отдельную нейросеть для текста или картинок, а комплект инструментов для работы с объявлениями Авито.</p>
+        <ul>
+          <li>консультант без дневного лимита</li>
+          <li>Копирайтер, Дизайнер и Автозагрузка без лимита генераций</li>
+          <li>единый аккаунт в веб-версии и Telegram</li>
+          <li>разовая оплата картой или СБП, без автосписаний</li>
+        </ul>
+      </div>
+      <div class="checkout">
+        <small>После бесплатной пробы</small>
+        <div class="amount">3000 ₽</div>
+        <div class="period">за 30 дней</div>
+        <a class="cta js-start" href="/sokrat">Попробовать бесплатно</a>
+        <div class="safe">Оплата сейчас не нужна</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell">
+    <div class="sectionhead"><h2>Коротко о главном</h2></div>
+    <div class="faq">
+      <details><summary>Это обычная нейросеть?</summary><p>Нет. Сократ не позиционируется как универсальный чат или генератор картинок. Его сценарии и инструменты собраны для работы с объявлениями и аккаунтами Авито.</p></details>
+      <details><summary>Что доступно бесплатно?</summary><p>Без регистрации консультант даёт пять ответов в день. После регистрации доступны по пять бесплатных генераций Копирайтера, Дизайнера и Автозагрузки.</p></details>
+      <details><summary>Когда нужно платить?</summary><p>Только после бесплатных лимитов, если хотите продолжить. Единая подписка стоит 3000 ₽ за 30 дней. Продление вручную, автоматических списаний нет.</p></details>
+      <details><summary>Можно работать в Telegram?</summary><p>Да. Веб-аккаунт можно связать с ботом Сократа, чтобы подписка, бесплатные лимиты и проекты были общими.</p></details>
+    </div>
+  </section>
+
+  <section class="shell final">
+    <h2>Дайте Сократу одну задачу по Авито</h2>
+    <p>Проверьте качество на своём товаре или услуге. Регистрация и карта для первого вопроса не нужны.</p>
+    <a class="cta js-start" href="/sokrat">Начать бесплатно</a>
+  </section>
+</main>
+
+<footer>
+  <div class="shell foot">
+    <span>Сократ — ИИ-авитолог Plan B</span>
+    <span><a href="/sokrat-tarify.html">Тарифы</a> · <a href="/sokrat-oferta.html">Пользовательское соглашение</a> · <a href="/sokrat-privacy.html">Конфиденциальность</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var query=new URLSearchParams(location.search);
+  if(!query.get('utm_content'))query.set('utm_content','sokrat-prelander');
+  document.querySelectorAll('.js-start').forEach(function(link){
+    link.href='/sokrat'+(query.toString()?'?'+query.toString():'');
+    link.addEventListener('click',function(){try{ym(110884885,'reachGoal','SOKRAT_PRELANDER_CTA',{placement:link.textContent.trim()})}catch(e){}});
+  });
+  try{ym(110884885,'reachGoal','SOKRAT_PRELANDER_VIEW')}catch(e){}
+})();
+</script>
+</body>
+</html>

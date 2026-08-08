@@ -334,7 +334,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 <script>
 /* Мобилка: высота экрана = ВИДИМАЯ часть (visualViewport). На iOS клавиатура НЕ ужимает layout viewport —
    без этого композер уходит под клаву и «всё съезжает». Тут --vvh ужимается → композер всегда виден. */
-(function(){var vv=window.visualViewport,r=document.documentElement;function a(){var h=vv?vv.height:window.innerHeight;r.style.setProperty('--vvh',h+'px');}a();if(vv){vv.addEventListener('resize',a);vv.addEventListener('scroll',a);}window.addEventListener('resize',a);window.addEventListener('orientationchange',a);})();
+(function(){var vv=window.visualViewport,r=document.documentElement,last=0,raf=0;function a(){raf=0;var h=Math.round(vv?vv.height:window.innerHeight);if(Math.abs(h-last)<2)return;last=h;r.style.setProperty('--vvh',h+'px');}function q(){if(!raf)raf=requestAnimationFrame(a);}a();if(vv)vv.addEventListener('resize',q,{passive:true});window.addEventListener('resize',q,{passive:true});window.addEventListener('orientationchange',q,{passive:true});})();
 </script>
 
 <main class="wrap">
@@ -558,17 +558,18 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="accth">🔗 Единый аккаунт</div>
       <div class="msub" id="aIdentityStatus"></div>
       <button class="msubmit slim" id="aTgBtn" type="button">Связать Telegram</button>
+      <button class="msubmit slim" id="aMaxBtn" type="button">Связать MAX</button>
       <button class="msubmit slim" id="aVerifyBtn" type="button">Подтвердить почту</button>
       <div class="merr" id="aIdentityErr"></div>
     </div>
-    <div class="acctsec">
+    <div class="acctsec account-password-only">
       <div class="accth">🔑 Сменить пароль</div>
       <input id="aOldPw" type="password" maxlength="256" autocomplete="current-password" placeholder="текущий пароль">
       <input id="aNewPw" type="password" minlength="8" maxlength="256" autocomplete="new-password" placeholder="новый пароль (8–256)">
       <button class="msubmit slim" id="aPwBtn" type="button">Сменить пароль</button>
       <div class="merr" id="aPwErr"></div>
     </div>
-    <div class="acctsec">
+    <div class="acctsec account-password-only">
       <div class="accth">✉️ Сменить почту</div>
       <input id="aNewEmail" type="email" autocomplete="email" placeholder="новая почта">
       <input id="aEmailPw" type="password" autocomplete="current-password" placeholder="текущий пароль">
@@ -579,12 +580,18 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <div class="accth">🗂 Ваши данные</div>
       <button class="msubmit slim" id="aExportBtn" type="button">Скачать архив данных</button>
       <div class="privacyhint">В архиве нет пароля, токенов и секретов Avito.</div>
+    </div>
+    <div class="acctsec account-password-only">
       <div class="accth" style="margin-top:15px;color:#ff9c9c">Удалить аккаунт</div>
       <div class="privacyhint">Личные данные и файлы будут удалены. Обезличенные финансовые записи сохранятся для учёта.</div>
       <input id="aDeletePw" type="password" maxlength="256" autocomplete="current-password" placeholder="текущий пароль">
       <input id="aDeleteConfirm" type="text" autocomplete="off" placeholder="напишите УДАЛИТЬ">
       <button class="dangerbtn" id="aDeleteBtn" type="button">Удалить аккаунт и данные</button>
       <div class="merr" id="aPrivacyErr"></div>
+    </div>
+    <div class="acctsec">
+      <div class="accth">🛟 Помощь и документы</div>
+      <div class="privacyhint"><a id="aSupportLink" href="https://t.me/sokrat_avitologbot?start=support" target="_blank" rel="noopener">Написать в поддержку</a> · <a href="https://planb-prodvizhenie.ru/sokrat-tarify.html" target="_blank" rel="noopener">Тарифы</a> · <a href="https://planb-prodvizhenie.ru/sokrat-oferta.html" target="_blank" rel="noopener">Соглашение</a> · <a href="https://planb-prodvizhenie.ru/sokrat-privacy.html" target="_blank" rel="noopener">Конфиденциальность</a></div>
     </div>
     <button class="authbtn ghost" id="aLogout" style="width:100%;margin-top:18px">Выйти из аккаунта</button>
   </div>
@@ -881,9 +888,10 @@ try{
   function fmtDate(iso){try{return new Date(iso).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
   function setToken(t){token=t||'';_paywallSeen={};sokAuthSet(token);}
   function accountState(d){
-    return {auth:true,email:d.email,subscribed:!!d.subscribed,until:d.subscription_until,
+    return {auth:true,email:d.email||'MAX',hasPassword:!!d.has_password,subscribed:!!d.subscribed,until:d.subscription_until,
       trial:d.trial||null,freeGens:d.free_gens||5,notice:d.notice||null,
       telegramLinked:!!d.telegram_linked,emailVerified:!!d.email_verified,
+      maxLinked:!!d.max_linked,maxLinkAvailable:!!d.max_link_available,
       emailVerificationAvailable:!!d.email_verification_available,
       projectsEnabled:!!d.projects_enabled,projects:[],activeProjectId:null,
       renewalDue:!!d.renewal_due,renewalDays:d.renewal_days};
@@ -1125,22 +1133,26 @@ try{
       el.innerHTML='✅ Подписка активна <b>до '+fmtDate(state.until)+'</b>'+(dl!=null?' · осталось <span class="days">'+dl+' дн.</span>':'')+'<button class="renew" id="aRenew">Продлить на 30 дней · 3000 ₽</button>';
     }else{
       var t=state.trial||{},fg=state.freeGens||5;
-      el.innerHTML='Подписки нет. 🎁 Бесплатные генерации: ✍️ '+(t.copywriter||0)+'/'+fg+' · 🎨 '+(t.designer||0)+'/'+fg+' · 📦 '+(t.autoload||0)+'/'+fg+'.<button class="renew" id="aRenew">Открыть весь Сократ · 3000 ₽ / 30 дней</button>';
+      function tf(v){v=v||0;return v+'/'+Math.max(fg,v);}
+      el.innerHTML='Подписки нет. 🎁 Бесплатные генерации: ✍️ '+tf(t.copywriter)+' · 🎨 '+tf(t.designer)+' · 📦 '+tf(t.autoload)+'.<button class="renew" id="aRenew">Открыть весь Сократ · 3000 ₽ / 30 дней</button>';
     }
     var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); openSubscribe('account'); };
   }
   function renderAcctIdentity(){
-    var status=$('#aIdentityStatus'),tg=$('#aTgBtn'),verify=$('#aVerifyBtn');
+    var status=$('#aIdentityStatus'),tg=$('#aTgBtn'),mx=$('#aMaxBtn'),verify=$('#aVerifyBtn');
     var parts=[];
     parts.push(state.telegramLinked?'✅ Telegram связан':'Telegram пока не связан');
+    if(state.maxLinkAvailable)parts.push(state.maxLinked?'✅ MAX связан':'MAX пока не связан');
     if(state.emailVerificationAvailable)parts.push(state.emailVerified?'✅ почта подтверждена':'Почта не подтверждена');
     status.textContent=parts.join(' · ');
     tg.style.display=state.telegramLinked?'none':'block';
+    mx.style.display=(state.maxLinkAvailable&&!state.maxLinked)?'block':'none';
     verify.style.display=(state.emailVerificationAvailable&&!state.emailVerified)?'block':'none';
   }
   function openAcct(){
     if(!state.auth){ openModal('login'); return; }
     $('#aEmailLine').textContent=state.email||'';
+    document.querySelectorAll('.account-password-only').forEach(function(section){section.hidden=!state.hasPassword;});
     renderAcctSub();
     renderAcctIdentity();
     ['aPwErr','aEmailErr','aIdentityErr','aPrivacyErr'].forEach(function(id){var e=$('#'+id);if(e){e.className='merr';e.textContent='';}});
@@ -1169,13 +1181,14 @@ try{
     $('#mPass').minLength=mode==='login'?1:8;
     $('#mLegal').hidden=mode!=='register';
     $('#mPass').placeholder=mode==='login'?'Пароль':'8–256 символов';
-    $('#mToggle').innerHTML=reset?'':(mode==='login'?'Нет аккаунта? <a id="mSwap">Зарегистрироваться</a> · <a id="mForgot">Забыли пароль?</a>':'Уже есть аккаунт? <a id="mSwap">Войти</a>');
-    var swap=$('#mSwap');if(swap)swap.onclick=function(){
+    $('#mToggle').innerHTML=reset?'':(mode==='login'?'Нет аккаунта? <a id="mSwap" href="#register">Зарегистрироваться</a> · <a id="mForgot" href="#password-reset">Забыли пароль?</a>':'Уже есть аккаунт? <a id="mSwap" href="#login">Войти</a>');
+    var swap=$('#mSwap');if(swap)swap.onclick=function(e){
+      if(e)e.preventDefault();
       mode=(mode==='login'?'register':'login');
       if(mode==='register')sokTrack('signup_started','/signup');
       renderModal();
     };
-    var forgot=$('#mForgot');if(forgot)forgot.onclick=requestPasswordReset;
+    var forgot=$('#mForgot');if(forgot)forgot.onclick=function(e){if(e)e.preventDefault();requestPasswordReset();};
     $('#mErr').textContent='';
   }
   async function requestPasswordReset(){
@@ -1276,6 +1289,13 @@ try{
     var res=await api('/c/sokrat/account/telegram-link',{});var d=res.d;this.disabled=false;
     if(d&&d.linked){state.telegramLinked=true;renderAcctIdentity();return;}
     if(d&&d.url){window.open(d.url,'_blank','noopener');er.className='merr ok';er.textContent='Открыл Telegram. Подтвердите запуск бота — ссылка действует 10 минут.';}
+    else{er.textContent=(d&&d.error)||'Не удалось создать ссылку';}
+  });
+  $('#aMaxBtn').addEventListener('click',async function(){
+    var er=$('#aIdentityErr');er.className='merr';er.textContent='';this.disabled=true;
+    var res=await api('/c/sokrat/account/max-link',{});var d=res.d;this.disabled=false;
+    if(d&&d.linked){state.maxLinked=true;renderAcctIdentity();return;}
+    if(d&&d.url){window.open(d.url,'_blank','noopener');er.className='merr ok';er.textContent='Открыл MAX. Запустите бота — ссылка действует 10 минут.';}
     else{er.textContent=(d&&d.error)||'Не удалось создать ссылку';}
   });
   $('#aVerifyBtn').addEventListener('click',async function(){

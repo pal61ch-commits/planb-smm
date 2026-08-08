@@ -390,7 +390,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <div class="lockwrap">
       <div class="ic">🎨</div>
       <h2>Дизайнер <span class="yel">объявлений</span></h2>
-      <p class="what">Продающие баннеры и картинки для Авито — по тексту или вашему образцу. Один запрос — готовое цельное изображение под объявление (без коллажей).</p>
+      <p class="what">Личный ИИ-дизайнер для Авито: обсуждает задачу, создаёт изображение по тексту или образцу, помнит текущий вариант и вносит правки по диалогу.</p>
       <div class="pricelead">Входит в единую подписку</div>
       <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
       <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
@@ -398,7 +398,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     </div>
     <div class="toolui" data-tool="designer" hidden>
       <div class="card">
-        <div class="toolhead">🎨 Дизайнер — картинки для объявлений</div>
+        <div class="toolhead">🎨 Дизайнер — визуальный помощник для Авито</div>
         <div class="dz-modes">
           <button type="button" class="dzmode on" data-mode="listing">📸 Картинка для объявления</button>
           <button type="button" class="dzmode" data-mode="banner">🖼 Баннер профиля (ПК+моб)</button>
@@ -419,7 +419,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <div class="lockwrap">
       <div class="ic">✍️</div>
       <h2>Копирайтер <span class="yel">для Авито</span></h2>
-      <p class="what">Продающие тексты объявлений с SEO-ключами под поиск Авито: цепляющий заголовок + структура Боль → Решение → Выгоды → Призыв. Тон на выбор.</p>
+      <p class="what">Личный ИИ-копирайтер для Авито: создаёт и разбирает объявления, помнит предыдущий вариант и дорабатывает заголовок, текст, оффер и призыв в диалоге.</p>
       <div class="pricelead">Входит в единую подписку</div>
       <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
       <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
@@ -427,7 +427,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     </div>
     <div class="toolui" data-tool="copywriter" hidden>
       <div class="card">
-        <div class="toolhead">✍️ Копирайтер — продающие тексты для Авито</div>
+        <div class="toolhead">✍️ Копирайтер — текстовый помощник для Авито</div>
         <div class="chat toolchat" id="cw-chat"></div>
         <form class="composer" data-toolform="copywriter" autocomplete="off">
           <textarea rows="2" placeholder="Что продаёте? Напр.: кожаный диван б/у, Москва, самовывоз"></textarea>
@@ -441,7 +441,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <div class="lockwrap">
       <div class="ic">📦</div>
       <h2>Автозагрузка <span class="yel">Авито</span></h2>
-      <p class="what">Массовое размещение и размножение объявлений по городам, уникализация фото и текстов, проверка фида автозагрузки. Сотни объявлений за минуты.</p>
+      <p class="what">Полноценный помощник по Автозагрузке: создаёт объявления и XLSX с нуля, анализирует и редактирует фид, работает с текстами, городами и фото-ссылками, проверяет статистику и продвижение через Avito API.</p>
       <div class="pricelead">Входит в единую подписку</div>
       <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
       <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
@@ -449,13 +449,13 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     </div>
     <div class="toolui" data-tool="autoload" hidden>
       <div class="card">
-        <div class="toolhead">📦 Автозагрузка — работа с файлом фида</div>
+        <div class="toolhead">📦 Автозагрузка — помощник по объявлениям и фиду</div>
         <div class="chat toolchat" id="al-chat"></div>
         <div class="chip" data-chip hidden></div>
         <form class="composer" data-toolform="autoload" autocomplete="off">
-          <textarea rows="2" placeholder="Загрузите xlsx 📎 и скажите что сделать: «размножь по городам», «поставь цену 700»…"></textarea>
-          <button type="button" class="attach" data-attach title="Загрузить xlsx">📎</button>
-          <input type="file" hidden data-file accept=".xlsx,.xls">
+          <textarea rows="2" placeholder="Опишите задачу своими словами — можно начать с нуля или приложить XLSX 📎"></textarea>
+          <button type="button" class="attach" data-attach title="Загрузить XLSX или фото">📎</button>
+          <input type="file" hidden data-file accept=".xlsx,.xls,image/jpeg,image/png,image/webp">
           <button class="send" type="submit" aria-label="Отправить">▶</button>
         </form>
       </div>
@@ -1405,16 +1405,16 @@ try{
       var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'✍️')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
       var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});return m;};
-      say('assistant','Опишите товар или услугу — выдам готовый заголовок и текст объявления, каждый со своей кнопкой «Копировать». Готово к вставке в Авито.');
+      say('assistant','Я ваш копирайтер по Авито. Создам или разберу объявление и продолжу править текущий вариант по коротким командам: «короче», «только заголовок», «сильнее оффер».');
       form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist,project_id:activeProjectId(),handoff_id:handoffId('copywriter'),handoff_source:handoffSource('copywriter')});t.remove();var d=r.d||{};if(d.help){say('assistant',d.reply||'Эта команда не требует генерации.');}else if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{var resultMessage=null;if(d.title)resultMessage=copyBubble('Заголовок',d.title);if(d.body)resultMessage=copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);if(d.title||d.body)sokGoal('SOKRAT_TOOL_SUCCESS',{tool:'copywriter'});toolFeedbackCard(resultMessage,'copywriter',d.result_id);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});completeHandoff('copywriter');refreshProjects();if(d.trial_left===0)trialFinishedCta(chat,'✍️','copywriter');else postResultCtas(chat,'✍️','copywriter');}btn.disabled=false;ta.focus();});
     } else if(name==='autoload'){
       var chat=document.getElementById('al-chat'), att=wireAttach(form);
       var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
       var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
-      say('assistant','Загрузите файл автозагрузки (xlsx) кнопкой 📎 и скажите, что сделать: «размножь по городам Владимирской области», «поставь цену 700», «перепиши заголовки». Готовый файл заберёте ссылкой в чате.\n\nДля отчётов и цены за просмотр (CPV) пришлите ключи Avito API обязательно с подписями:\nclient_id: ВАШ_ID\nclient_secret: ВАШ_СЕКРЕТ\nТак ключи сохранятся зашифрованными и не попадут в ИИ.');
+      say('assistant','Я помощник по объявлениям и фиду. Начните с нуля или приложите XLSX 📎: могу найти, проверить, заменить, добавить, удалить, переписать и уникализировать данные. С Avito API разберу ошибки, статистику и отсутствие лидов. Денежное действие всегда требует отдельного подтверждения.');
       async function alDownload(){var h={'Content-Type':'application/json'};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h,body:JSON.stringify({project_id:activeProjectId()})});if(!r.ok){say('assistant','Файл ещё не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';a.click();URL.revokeObjectURL(u);}catch(e){say('assistant','Ошибка скачивания');}}
       function dlBubble(){var m=document.createElement('div');m.className='msg s';m.innerHTML='<div class="av">📦</div><div class="bub" style="background:none;border:none;padding:0"><a class="dlfile" href="#">📄 avito_feed.xlsx — скачать</a></div>';m.querySelector('.dlfile').addEventListener('click',function(ev){ev.preventDefault();alDownload();});chat.appendChild(m);chat.scrollTop=chat.scrollHeight;}
-      async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);fd.append('visitor',SOK_VIS);if(activeProjectId()!=null)fd.append('project_id',String(activeProjectId()));var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/upload',{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok){say('assistant','📦 Загрузил фид: '+d.summary+'\nЧто сделать? Напр.: «размножь по топ-30 городам», «перепиши заголовки», «поставь цену 500».');refreshProjects();}else{say('assistant',d.error||'Не смог прочитать файл');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
+      async function uploadFile(fl){say('user','📎 '+fl.name);var fd=new FormData();fd.append('file',fl);fd.append('visitor',SOK_VIS);if(activeProjectId()!=null)fd.append('project_id',String(activeProjectId()));var h={};if(token)h['X-Auth-Token']=token;var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var isImage=/^image\//.test(fl.type||'')||/\.(jpe?g|png|webp)$/i.test(fl.name||'');try{var endpoint=isImage?'/c/sokrat/tool/autoload/image':'/c/sokrat/tool/autoload/upload';var r=await fetch(SOK_API_BASE+endpoint,{method:'POST',headers:h,body:fd});var d=await r.json();t.remove();if(d.ok&&isImage){say('assistant',d.reply||'Фото сохранено. Скажите, куда его добавить.');}else if(d.ok){say('assistant','📦 Фид загружен и проверен: '+d.summary+'\nГотов искать, редактировать, уникализировать и анализировать.');refreshProjects();}else{say('assistant',d.error||'Не смог прочитать файл');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}}}catch(e){t.remove();say('assistant','Ошибка загрузки');}}
       form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();var fl=att.get();if(!v&&!fl)return;var btn=form.querySelector('.send');btn.disabled=true;if(fl){await uploadFile(fl);att.clear();}if(v){ta.value='';say('user',v);var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/autoload',{message:v,project_id:activeProjectId(),handoff_id:handoffId('autoload'),handoff_source:handoffSource('autoload')});t.remove();var d=r.d||{};say('assistant',d.reply||d.error||'Не получилось, попробуйте ещё раз.');if(d.subscribe){setTrialLeft('autoload',0);renderGates();}else if(d.reply){completeHandoff('autoload');}setTrialLeft('autoload',d.trial_left);if(d.ready){sokGoal('SOKRAT_TOOL_SUCCESS',{tool:'autoload'});dlBubble();refreshProjects();if(d.trial_left!==0)postResultCtas(chat,'📦','autoload');}if(d.reply&&d.trial_left===0)trialFinishedCta(chat,'📦','autoload');}btn.disabled=false;ta.focus();});
     } else if(name==='designer'){
       var chat=document.getElementById('dz-chat'), mode='listing', ui=document.querySelector('.toolui[data-tool="designer"]'), att=wireAttach(form), curImg=null;

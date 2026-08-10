@@ -393,7 +393,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <p class="what">Личный ИИ-дизайнер для Авито: обсуждает задачу, создаёт изображение по тексту или образцу, помнит текущий вариант и вносит правки по диалогу.</p>
       <div class="pricelead">Входит в единую подписку</div>
       <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
-      <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
+      <div class="bundleline">Все 3 дополнительных инструмента без лимита генераций</div>
       <div class="gate" data-gate="designer"></div>
     </div>
     <div class="toolui" data-tool="designer" hidden>
@@ -422,7 +422,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <p class="what">Личный ИИ-копирайтер для Авито: создаёт и разбирает объявления, помнит предыдущий вариант и дорабатывает заголовок, текст, оффер и призыв в диалоге.</p>
       <div class="pricelead">Входит в единую подписку</div>
       <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
-      <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
+      <div class="bundleline">Все 3 дополнительных инструмента без лимита генераций</div>
       <div class="gate" data-gate="copywriter"></div>
     </div>
     <div class="toolui" data-tool="copywriter" hidden>
@@ -444,7 +444,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <p class="what">Полноценный помощник по Автозагрузке: создаёт объявления и XLSX с нуля, анализирует и редактирует фид, работает с текстами, городами и фото-ссылками, проверяет статистику и продвижение через Avito API.</p>
       <div class="pricelead">Входит в единую подписку</div>
       <div class="price"><b>3000 ₽</b><span>/ 30 дней</span></div>
-      <div class="bundleline">Консультант без дневного лимита + все 3 инструмента</div>
+      <div class="bundleline">Все 3 дополнительных инструмента без лимита генераций</div>
       <div class="gate" data-gate="autoload"></div>
     </div>
     <div class="toolui" data-tool="autoload" hidden>
@@ -489,7 +489,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
   <div class="mcard">
     <button class="mclose" id="mClose" aria-label="Закрыть">×</button>
     <h3 id="mTitle">Вход</h3>
-    <div class="msub" id="mSub">Доступ к инструментам Plan B. Без входа у Сократа — 5 бесплатных ответов в день; подписка снимает лимит.</div>
+    <div class="msub" id="mSub">Консультант бесплатен без дневного лимита. Вход открывает дополнительные инструменты Plan B.</div>
     <form id="mForm" autocomplete="on">
       <label id="mEmailLabel">Email</label>
       <input id="mEmail" type="email" autocomplete="email" placeholder="you@mail.ru" required>
@@ -532,11 +532,10 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 <div class="modal" id="subModal">
   <div class="mcard suboffer">
     <button class="mclose" id="subClose" aria-label="Закрыть">×</button>
-    <h3>Одна подписка — весь Сократ</h3>
-    <div class="msub">Не три отдельных тарифа: один доступ к консультанту и всем рабочим инструментам.</div>
+    <h3>Подписка на инструменты Сократа</h3>
+    <div class="msub">Консультант всегда бесплатен. Подписка открывает три рабочих инструмента без лимита.</div>
     <div class="subprice"><b>3000 ₽</b><span>за 30 дней</span></div>
     <ul class="subfeatures">
-      <li>🦉 Сократ-консультант без дневного лимита</li>
       <li>✍️ Копирайтер без лимита генераций</li>
       <li>🎨 Дизайнер без лимита генераций</li>
       <li>📦 Автозагрузка без лимита операций</li>
@@ -738,16 +737,6 @@ try{
   function copyTransferCta(chat){projectTransferCta(chat,'✍️',XFER_LABEL,XFER_COPY_PROMPT);}
   function imageTransferCta(chat){projectTransferCta(chat,'🎨',XFER_LABEL,XFER_IMAGE_PROMPT);}
   window.sokXc=copyTransferCta;window.sokXi=imageTransferCta;
-  function limitCard(message,data){
-    if(!message||!data||!data.subscribe||!data.limited)return;
-    var card=document.createElement('div');card.className='handoff';
-    var label=document.createElement('div');label.className='handofflabel';
-    label.textContent='5 бесплатных ответов на сегодня использованы';
-    var button=document.createElement('button');button.type='button';button.className='handoffbtn';
-    button.textContent='Продолжить без лимита · 3000 ₽ за 30 дней';
-    button.addEventListener('click',function(){if(window.sokOpenSubscribe)window.sokOpenSubscribe();});
-    card.append(label,button);message.querySelector('.bub').appendChild(card);
-  }
   function feedbackCard(message,data){
     if(!message||!data||!data.feedback_id||data.error||data.limited)return;
     var card=document.createElement('div');card.className='feedback';
@@ -798,7 +787,7 @@ try{
       const d=await r.json();t.remove();
       if(d&&d.error===false&&!d.limited){sokGoal('SOKRAT_CONSULT_SUCCESS');sokGoal('SOKRAT_TOOL_SUCCESS',{tool:'consult'});}
       const reply=d.reply||'Извините, не получилось ответить — попробуйте ещё раз.';
-      var answer=bubble('assistant',reply);handoffCard(answer,d.handoff);limitCard(answer,d);feedbackCard(answer,d);
+      var answer=bubble('assistant',reply);handoffCard(answer,d.handoff);feedbackCard(answer,d);
       hist.push({role:'assistant',content:reply});save();
     }catch(e){t.remove();bubble('assistant','Связь прервалась. Проверьте интернет и попробуйте ещё раз.');}
     busy=false;send.disabled=false;input.focus();
@@ -812,7 +801,7 @@ try{
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
   let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5,
     projectsEnabled:false,projects:[],activeProjectId:null}, mode='login', resetCode='', pendingSubscribe=null;
-  let subscribeTrigger='consult', subscribeBusy=false;
+  let subscribeTrigger='account', subscribeBusy=false;
   let telegramRetentionBusy=false, telegramRetentionShown=false;
   let subscriptionNudgeBusy=false, subscriptionNudgeShown=false;
   let pendingHandoff=(function(){try{return JSON.parse(sessionStorage.getItem('sok_handoff')||'null');}catch(e){return null;}})();
@@ -821,7 +810,7 @@ try{
   function trialFinishedCta(chat,icon,tool){
     if(!chat||state.subscribed||chat.querySelector('.trial-finished-cta'))return;
     var m=document.createElement('div');m.className='msg s trial-finished-cta';
-    m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Пять бесплатных генераций закончились.</strong><br>Последний результат уже ваш. Единая подписка за 3000 ₽ на 30 дней снимает дневной лимит консультанта и открывает безлимит на все три инструмента. Автосписаний нет.<div style="margin-top:13px"><button class="gbtn pay" type="button">Открыть весь Сократ · 3000 ₽</button></div></div>';
+    m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Пять бесплатных генераций закончились.</strong><br>Последний результат уже ваш. Единая подписка за 3000 ₽ на 30 дней открывает безлимит Копирайтера, Дизайнера и Автозагрузки. Консультант остаётся бесплатным. Автосписаний нет.<div style="margin-top:13px"><button class="gbtn pay" type="button">Открыть инструменты · 3000 ₽</button></div></div>';
     m.querySelector('button').onclick=function(){openSubscribe(tool);};chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
   }
   async function telegramRetentionCta(chat,icon){
@@ -873,7 +862,7 @@ try{
     if(!check.d||!check.d.show||state.subscribed)return false;
     subscriptionNudgeShown=true;
     var m=document.createElement('div');m.className='msg s subscription-nudge-cta';
-    m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Если Сократ уже приносит пользу</strong><br>В единой подписке консультант работает без дневного лимита, а Копирайтер, Дизайнер и Автозагрузка — без лимита генераций. 3000 ₽ за 30 дней, без автосписаний.<div style="margin-top:13px"><button class="gbtn" type="button">Посмотреть подписку</button></div></div>';
+    m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Если инструменты Сократа уже приносят пользу</strong><br>В единой подписке Копирайтер, Дизайнер и Автозагрузка работают без лимита генераций. Консультант остаётся бесплатным. 3000 ₽ за 30 дней, без автосписаний.<div style="margin-top:13px"><button class="gbtn" type="button">Посмотреть подписку</button></div></div>';
     m.querySelector('button').addEventListener('click',async function(){
       await api('/c/sokrat/conversion/event',{
         event:'subscription_nudge_clicked',tool:tool
@@ -1055,13 +1044,13 @@ try{
     $$('.gate').forEach(function(g){
       var html,fn;
       if(!state.auth){
-        html='<button class="gbtn">🎁 Попробовать бесплатно</button><p class="ghint">Первые '+FG+' генераций каждого инструмента — бесплатно после регистрации. Затем единая подписка: 3000 ₽ за 30 дней на весь Сократ.</p>';
+        html='<button class="gbtn">🎁 Попробовать бесплатно</button><p class="ghint">Первые '+FG+' генераций каждого инструмента — бесплатно после регистрации. Затем единая подписка: 3000 ₽ за 30 дней на три инструмента.</p>';
         fn=function(){openModal('register');};
       }else if(state.subscribed){
         html='<div class="subactive">✅ Подписка активна до '+fmtDate(state.until)+'</div><p class="ghint">Инструмент подключается — совсем скоро. Спасибо, что с нами!</p>';
         fn=function(){};
       }else{
-        html='<button class="gbtn pay">Открыть весь Сократ · 3000 ₽</button><p class="ghint">Единая подписка на 30 дней: консультант без дневного лимита + все инструменты без лимита генераций. Разовая оплата, без автосписаний.</p>';
+        html='<button class="gbtn pay">Открыть инструменты · 3000 ₽</button><p class="ghint">Единая подписка на 30 дней: Копирайтер, Дизайнер и Автозагрузка без лимита генераций. Консультант бесплатен. Разовая оплата, без автосписаний.</p>';
         var gateUi=g.closest('.panel')&&g.closest('.panel').querySelector('.toolui');
         var gateTool=gateUi?gateUi.getAttribute('data-tool'):null;
         fn=function(){openSubscribe(gateTool);};
@@ -1106,7 +1095,7 @@ try{
   }
   function openSubscribe(triggerTool){
     if(state.subscribed){toast('Подписка уже активна.');return;}
-    subscribeTrigger=['consult','copywriter','designer','autoload','account'].includes(triggerTool)?triggerTool:'consult';
+    subscribeTrigger=['copywriter','designer','autoload','account'].includes(triggerTool)?triggerTool:'account';
     subscribeBusy=false;$('#subErr').textContent='';$('#subPay').disabled=false;
     $('#subPay').textContent=state.auth
       ?'Перейти к оплате · 3000 ₽'
@@ -1132,8 +1121,8 @@ try{
     subscribeBusy=false;btn.disabled=false;btn.textContent='Перейти к оплате · 3000 ₽';
     $('#subErr').textContent=(d&&d.error)||'Не удалось создать оплату, попробуйте позже.';
   }
-  window.sokOpenSubscribe=function(){
-    openSubscribe('consult');
+  window.sokOpenSubscribe=function(triggerTool){
+    openSubscribe(triggerTool||'account');
   };
   async function doLogout(){await api('/c/sokrat/logout',{});setToken('');state={auth:false};renderAuthbox();renderGates();renderProjects();toast('Вы вышли.');}
 
@@ -1147,7 +1136,7 @@ try{
     }else{
       var t=state.trial||{},fg=state.freeGens||5;
       function tf(v){v=v||0;return v+'/'+Math.max(fg,v);}
-      el.innerHTML='Подписки нет. 🎁 Бесплатные генерации: ✍️ '+tf(t.copywriter)+' · 🎨 '+tf(t.designer)+' · 📦 '+tf(t.autoload)+'.<button class="renew" id="aRenew">Открыть весь Сократ · 3000 ₽ / 30 дней</button>';
+      el.innerHTML='Подписки нет. 🎁 Бесплатные генерации: ✍️ '+tf(t.copywriter)+' · 🎨 '+tf(t.designer)+' · 📦 '+tf(t.autoload)+'.<button class="renew" id="aRenew">Открыть инструменты · 3000 ₽ / 30 дней</button>';
     }
     var rb=$('#aRenew'); if(rb) rb.onclick=function(){ closeAcct(); openSubscribe('account'); };
   }
@@ -1186,7 +1175,7 @@ try{
       ?'Задайте новый пароль — после сохранения потребуется войти заново.'
       :(handoffTool
         ?'После входа запрос автоматически откроется в инструменте «'+handoffTool+'». Первые генерации бесплатны.'
-        :'Доступ к инструментам Plan B. Без входа у Сократа — 5 бесплатных ответов в день; подписка снимает лимит.');
+        :'Консультант бесплатен без дневного лимита. После входа доступны по 5 бесплатных генераций каждого дополнительного инструмента.');
     $('#mSubmit').textContent=reset?'Сохранить пароль':(mode==='login'?'Войти':(handoffRegister?'Зарегистрироваться и открыть':'Зарегистрироваться'));
     $('#mEmailLabel').style.display=reset?'none':'block';$('#mEmail').style.display=reset?'none':'block';$('#mEmail').required=!reset;
     $('#mPassLabel').textContent=reset?'Новый пароль':'Пароль';
@@ -1486,23 +1475,23 @@ try{
     }
   }
   var HOW=[
-    {ic:'🦉',name:'Сократ-консультант',free:true,steps:{any:'Просто напишите вопрос по Авито в чате слева. Без регистрации доступно 5 бесплатных ответов в день; подписка снимает дневной лимит.'}},
+    {ic:'🦉',name:'Сократ-консультант',free:true,steps:{any:'Просто напишите вопрос по Авито в чате слева. Консультация бесплатна без регистрации и без дневного лимита.'}},
     {ic:'🎨',name:'Дизайнер — картинки и баннеры',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху (почта + пароль). 🎁 Первые 5 генераций — бесплатно.','Откройте вкладку «Дизайнер».','Выберите режим: «Картинка для объявления» (1280×960, формат Авито 4:3) или «Баннер профиля» (ПК + моб).','Опишите картинку — получите готовое изображение точно под размеры Авито.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
-      nosub:['🎁 Первые 5 генераций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Дизайнер» → выберите режим → опишите картинку → готовое изображение.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху (почта + пароль). 🎁 Первые 5 генераций — бесплатно.','Откройте вкладку «Дизайнер».','Выберите режим: «Картинка для объявления» (1280×960, формат Авито 4:3) или «Баннер профиля» (ПК + моб).','Опишите картинку — получите готовое изображение точно под размеры Авито.','Дальше — единая подписка на три инструмента: 3000 ₽ за 30 дней.'],
+      nosub:['🎁 Первые 5 генераций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Дизайнер» → выберите режим → опишите картинку → готовое изображение.','Дальше — единая подписка на три инструмента: 3000 ₽ за 30 дней.'],
       sub:['Откройте вкладку «Дизайнер» → выберите режим (объявление / баннер профиля) → опишите картинку → получите готовое изображение под размеры Авито.']}},
     {ic:'✍️',name:'Копирайтер — тексты объявлений',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 текстов — бесплатно.','Откройте вкладку «Копирайтер».','Напишите, что продаёте — получите готовый продающий текст: заголовок + структура + ключи под поиск Авито.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
-      nosub:['🎁 Первые 5 текстов — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Копирайтер» → напишите что продаёте → готовый текст объявления.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 текстов — бесплатно.','Откройте вкладку «Копирайтер».','Напишите, что продаёте — получите готовый продающий текст: заголовок + структура + ключи под поиск Авито.','Дальше — единая подписка на три инструмента: 3000 ₽ за 30 дней.'],
+      nosub:['🎁 Первые 5 текстов — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Копирайтер» → напишите что продаёте → готовый текст объявления.','Дальше — единая подписка на три инструмента: 3000 ₽ за 30 дней.'],
       sub:['Откройте вкладку «Копирайтер» → напишите что продаёте → получите готовый текст объявления под Авито.']}},
     {ic:'📦',name:'Автозагрузка — работа с фидом',steps:{
-      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 операций — бесплатно.','Откройте вкладку «Автозагрузка».','Загрузите свой xlsx-фид (или создайте объявление с нуля командой).','Командами: «размножь по городам», «поставь цену», «перепиши заголовки по правилам» → скачайте готовый файл.','Добавите свои ключи Avito API — проверю отчёты автозагрузки с ошибками и поставлю цену за просмотр (CPV) на объявления.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
-      nosub:['🎁 Первые 5 операций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Автозагрузка» → загрузите фид → командами правьте/масштабируйте → скачайте готовый файл.','Дальше — единая подписка на весь Сократ: 3000 ₽ за 30 дней.'],
+      noauth:['Зарегистрируйтесь — кнопка «Войти» вверху. 🎁 Первые 5 операций — бесплатно.','Откройте вкладку «Автозагрузка».','Загрузите свой xlsx-фид (или создайте объявление с нуля командой).','Командами: «размножь по городам», «поставь цену», «перепиши заголовки по правилам» → скачайте готовый файл.','Добавите свои ключи Avito API — проверю отчёты автозагрузки с ошибками и поставлю цену за просмотр (CPV) на объявления.','Дальше — единая подписка на три инструмента: 3000 ₽ за 30 дней.'],
+      nosub:['🎁 Первые 5 операций — бесплатно, пробуйте прямо сейчас.','Откройте вкладку «Автозагрузка» → загрузите фид → командами правьте/масштабируйте → скачайте готовый файл.','Дальше — единая подписка на три инструмента: 3000 ₽ за 30 дней.'],
       sub:['Откройте вкладку «Автозагрузка» → загрузите xlsx или создайте с нуля → командами масштабируйте по городам / меняйте цены / правьте тексты → скачайте. С ключами Avito API — отчёты + цена за просмотр.']}}
   ];
   function renderHow(){
     var st=state.subscribed?'sub':(state.auth?'nosub':'noauth');
-    document.getElementById('hmSub').textContent = state.subscribed?'Подписка активна — консультант и все инструменты без дневного лимита. Жмите на функцию для инструкции.':(state.auth?'Вы вошли — консультант даёт 5 бесплатных ответов в день, а инструменты — по '+(state.freeGens||5)+' бесплатных генераций каждого. Дальше — подписка.':'Без входа: 5 бесплатных ответов консультанта в день. Инструменты: первые '+ (state.freeGens||5) +' генераций каждого — бесплатно после регистрации.');
+    document.getElementById('hmSub').textContent = state.subscribed?'Подписка активна — все дополнительные инструменты без лимита генераций. Консультант бесплатен.':(state.auth?'Консультант бесплатен без дневного лимита. Инструменты — по '+(state.freeGens||5)+' бесплатных генераций каждого, затем подписка.':'Консультант бесплатен без регистрации и без дневного лимита. Инструменты: первые '+ (state.freeGens||5) +' генераций каждого — бесплатно после регистрации.');
     var list=document.getElementById('hmList');
     list.innerHTML=HOW.map(function(fe){
       var body = fe.steps.any ? '<p>'+te(fe.steps.any)+'</p>' : '<ol>'+(fe.steps[st]||[]).map(function(x){return '<li>'+te(x)+'</li>';}).join('')+'</ol>';

@@ -561,6 +561,11 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
       <button class="msubmit slim" id="aVerifyBtn" type="button">Подтвердить почту</button>
       <div class="merr" id="aIdentityErr"></div>
     </div>
+    <div class="acctsec" id="aWebAccountSection" hidden>
+      <div class="accth">👤 Онлайн-кабинет</div>
+      <div class="msub" id="aWebAccountStatus"></div>
+      <button class="msubmit slim" id="aWebAccountBtn" type="button">Войти и связать аккаунты</button>
+    </div>
     <div class="acctsec account-password-only">
       <div class="accth">🔑 Сменить пароль</div>
       <input id="aOldPw" type="password" maxlength="256" autocomplete="current-password" placeholder="текущий пароль">
@@ -724,7 +729,6 @@ try{
     button.addEventListener('click',function(){if(window.sokOpenHandoff)window.sokOpenHandoff(handoff);});
     card.append(label,prompt,button);message.querySelector('.bub').appendChild(card);
   }
-  var XFER_COPY_PROMPT='Используй сохранённые заголовок и текст Копирайтера в текущем объявлении фида. Если объявления ещё нет — создай его; недостающие обязательные данные уточни одним вопросом.';
   var XFER_IMAGE_PROMPT='Добавь последнюю сохранённую картинку Дизайнера в ImageUrls текущего объявления. Если объявлений несколько и выбор неоднозначен — уточни одним вопросом, какую строку изменить.';
   var XFER_LABEL='📦 В Автозагрузку';
   function projectTransferCta(chat,icon,label,prompt){
@@ -734,9 +738,8 @@ try{
     m.querySelector('button').addEventListener('click',function(){var id='';try{id=crypto.randomUUID().replace(/-/g,'');}catch(e){id=Date.now().toString(16)+Math.random().toString(16).slice(2);id=(id+'00000000000000000000000000000000').slice(0,32);}window.sokOpenHandoff({id:id,tool:'autoload',prompt:prompt,source:'project_transfer'});});
     chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
   }
-  function copyTransferCta(chat){projectTransferCta(chat,'✍️',XFER_LABEL,XFER_COPY_PROMPT);}
   function imageTransferCta(chat){projectTransferCta(chat,'🎨',XFER_LABEL,XFER_IMAGE_PROMPT);}
-  window.sokXc=copyTransferCta;window.sokXi=imageTransferCta;
+  window.sokXi=imageTransferCta;
   function feedbackCard(message,data){
     if(!message||!data||!data.feedback_id||data.error||data.limited)return;
     var card=document.createElement('div');card.className='feedback';
@@ -802,7 +805,6 @@ try{
   let token='', state={auth:false,subscribed:false,until:null,email:'',trial:null,freeGens:5,
     projectsEnabled:false,projects:[],activeProjectId:null}, mode='login', resetCode='', pendingSubscribe=null;
   let subscribeTrigger='account', subscribeBusy=false;
-  let telegramRetentionBusy=false, telegramRetentionShown=false;
   let subscriptionNudgeBusy=false, subscriptionNudgeShown=false;
   let pendingHandoff=(function(){try{return JSON.parse(sessionStorage.getItem('sok_handoff')||'null');}catch(e){return null;}})();
   function toolAccess(tool){return state.subscribed||(state.trial&&(state.trial[tool]||0)>0);}
@@ -812,44 +814,6 @@ try{
     var m=document.createElement('div');m.className='msg s trial-finished-cta';
     m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Пять бесплатных генераций закончились.</strong><br>Последний результат уже ваш. Единая подписка за 3000 ₽ на 30 дней открывает безлимит Копирайтера, Дизайнера и Автозагрузки. Консультант остаётся бесплатным. Автосписаний нет.<div style="margin-top:13px"><button class="gbtn pay" type="button">Открыть инструменты · 3000 ₽</button></div></div>';
     m.querySelector('button').onclick=function(){openSubscribe(tool);};chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
-  }
-  async function telegramRetentionCta(chat,icon){
-    if(!chat||!state.auth||state.telegramLinked||telegramRetentionBusy||
-       telegramRetentionShown||chat.querySelector('.telegram-retention-cta'))return false;
-    telegramRetentionBusy=true;
-    var check=await api('/c/sokrat/retention/event',{
-      event:'telegram_retention_prompt_view'
-    });
-    telegramRetentionBusy=false;
-    if(!check.d||!check.d.show||state.telegramLinked)return false;
-    telegramRetentionShown=true;
-    var m=document.createElement('div');m.className='msg s telegram-retention-cta';
-    m.innerHTML='<div class="av">'+icon+'</div><div class="bub"><strong>Хотите пользоваться Сократом и в Telegram?</strong><br>Свяжите бота с этим аккаунтом — подписка, бесплатные лимиты и проекты будут общими.<div style="margin-top:13px"><button class="gbtn" type="button">Связать Telegram</button></div><div class="muted tg-retention-status" style="margin-top:8px"></div></div>';
-    var button=m.querySelector('button'),status=m.querySelector('.tg-retention-status');
-    button.addEventListener('click',async function(){
-      button.disabled=true;
-      var res=await api('/c/sokrat/account/telegram-link',{}),d=res.d||{};
-      button.disabled=false;
-      if(d.linked){
-        state.telegramLinked=true;button.remove();
-        status.textContent='Telegram уже связан с этим аккаунтом.';
-      }else if(d.url){
-        var opened=window.open(d.url,'_blank','noopener');
-        status.textContent=opened
-          ?'Открыл Telegram. Нажмите «Запустить» — ссылка действует 10 минут.'
-          :'Браузер заблокировал новое окно. Нажмите ссылку ниже.';
-        if(!opened){
-          var link=document.createElement('a');link.href=d.url;link.target='_blank';
-          link.rel='noopener';link.textContent='Открыть Сократ в Telegram';
-          link.style.cssText='display:block;color:var(--yellow);margin-top:5px';
-          status.appendChild(link);
-        }
-      }else{
-        status.textContent=d.error||'Не удалось создать ссылку. Попробуйте ещё раз.';
-      }
-    });
-    chat.appendChild(m);chat.scrollTop=chat.scrollHeight;
-    return true;
   }
   async function subscriptionNudgeCta(chat,icon,tool){
     if(!chat||!state.auth||state.subscribed||subscriptionNudgeBusy||
@@ -873,8 +837,7 @@ try{
     return true;
   }
   async function postResultCtas(chat,icon,tool){
-    var retained=await telegramRetentionCta(chat,icon);
-    if(!retained)await subscriptionNudgeCta(chat,icon,tool);
+    await subscriptionNudgeCta(chat,icon,tool);
   }
   function updateTrialBadge(tool){
     var ui=document.querySelector('.toolui[data-tool="'+tool+'"]'); if(!ui)return;
@@ -1076,11 +1039,11 @@ try{
   }
 
   async function refresh(){
-    if(!token){state={auth:false};renderAuthbox();renderGates();renderProjects();return;}
+    if(!token){state={auth:false};renderAuthbox();renderGates();renderProjects();continueAccountConnect();return;}
     const {d}=await api('/c/sokrat/me',{});
     if(d&&d.auth){state=accountState(d);await refreshProjects();if(d.renewal_notice)toast('Подписка заканчивается через '+(d.renewal_days||1)+' дн. Продлите заранее — дни не сгорят.');}
     else{const had=token;setToken('');state={auth:false};if(had)toast('Вы вошли с другого устройства — сессия здесь завершена.');}
-    renderAuthbox();renderGates();renderProjects();showNotice();activatePendingHandoff();
+    renderAuthbox();renderGates();renderProjects();showNotice();activatePendingHandoff();continueAccountConnect();
   }
 
   var _noticeShown=false;
@@ -1157,11 +1120,29 @@ try{
     document.querySelectorAll('.account-password-only').forEach(function(section){section.hidden=!state.hasPassword;});
     renderAcctSub();
     renderAcctIdentity();
+    var webSection=$('#aWebAccountSection'),webButton=$('#aWebAccountBtn'),webStatus=$('#aWebAccountStatus');
+    if(webSection){
+      var insideMax=document.body.classList.contains('max-app');webSection.hidden=!insideMax;
+      if(insideMax){
+        webButton.hidden=!!state.hasPassword;
+        webStatus.textContent=state.hasPassword
+          ?'Онлайн-кабинет уже связан: подписка, бесплатные генерации и проекты общие.'
+          :'Войдите в существующий кабинет или зарегистрируйтесь. Затем подтвердите «Связать MAX» — подписка, генерации и проекты станут общими.';
+      }
+    }
     ['aPwErr','aEmailErr','aIdentityErr','aPrivacyErr'].forEach(function(id){var e=$('#'+id);if(e){e.className='merr';e.textContent='';}});
     ['aOldPw','aNewPw','aNewEmail','aEmailPw','aDeletePw','aDeleteConfirm'].forEach(function(id){var e=$('#'+id);if(e)e.value='';});
     $('#acctModal').classList.add('on');
   }
   function closeAcct(){ $('#acctModal').classList.remove('on'); }
+  window.sokOpenAccount=openAcct;
+
+  var accountConnect=(function(){try{return !document.body.classList.contains('max-app')&&(new URLSearchParams(location.search)).get('connect')==='max';}catch(e){return false;}})();
+  function continueAccountConnect(){
+    if(!accountConnect)return;
+    if(!state.auth){openModal('login');return;}
+    openAcct();var er=$('#aIdentityErr');if(er){er.className='merr ok';er.textContent=state.maxLinked?'MAX уже связан с этим кабинетом.':'Нажмите «Связать MAX» выше. Откроется одноразовое подтверждение на 10 минут.';}
+  }
 
   /* модалка */
   function openModal(m,skipSignupTrack){mode=m;if(m==='register'&&!skipSignupTrack)sokTrack('signup_started','/signup');renderModal();$('#authModal').classList.add('on');setTimeout(function(){(m==='reset'?$('#mPass'):$('#mEmail')).focus();},50);}
@@ -1217,6 +1198,7 @@ try{
       if(submittedMode==='register')sokGoal('SOKRAT_REGISTER');
       setToken(d.token);state=accountState(d);await refreshProjects();closeModal();
       renderAuthbox();renderGates();renderProjects();activatePendingHandoff();
+      continueAccountConnect();
       toast(submittedMode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');
       if(goPay&&!state.subscribed)openSubscribe(goPay);
       else if(submittedMode==='register'&&!hasHandoff)openActivationGuide();
@@ -1299,6 +1281,11 @@ try{
     if(d&&d.linked){state.maxLinked=true;renderAcctIdentity();return;}
     if(d&&d.url){window.open(d.url,'_blank','noopener');er.className='merr ok';er.textContent='Открыл MAX. Запустите бота — ссылка действует 10 минут.';}
     else{er.textContent=(d&&d.error)||'Не удалось создать ссылку';}
+  });
+  $('#aWebAccountBtn').addEventListener('click',function(){
+    var url='https://planb-prodvizhenie.ru/sokrat?connect=max';
+    try{if(window.WebApp&&typeof window.WebApp.openLink==='function'){window.WebApp.openLink(url);return;}}catch(e){}
+    window.open(url,'_blank','noopener');
   });
   $('#aVerifyBtn').addEventListener('click',async function(){
     var er=$('#aIdentityErr');er.className='merr';er.textContent='';this.disabled=true;
@@ -1405,13 +1392,13 @@ try{
     if(name==='copywriter'){
       var chat=document.getElementById('cw-chat'), hist=[];
       var add=function(role,html,cls){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'✍️')+'</div><div class="bub'+(cls?' '+cls:'')+'">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
-      var say=function(role,text){add(role,role==='user'?te(text):fmt(text));};
+      var say=function(role,text){return add(role,role==='user'?te(text):fmt(text));};
       var copyBubble=function(field,text){var m=add('assistant','<div class="cw-field">'+te(field)+'</div><div class="cw-text"></div><div class="copyrow"><button class="copybtn">📋 Копировать</button></div>');m.querySelector('.cw-text').textContent=text;m.querySelector('.copybtn').addEventListener('click',function(){copyText(text,this);});return m;};
       say('assistant','Я ваш копирайтер по Авито. Создам или разберу объявление и продолжу править текущий вариант по коротким командам: «короче», «только заголовок», «сильнее оффер».');
       /* MAX_SKIP_START */
-      if(!document.body.classList.contains('max-app'))(async function(){try{var r=await api('/c/sokrat/tool/history',{tool:'copywriter',project_id:activeProjectId()});var ms=(r.d&&r.d.messages)||[];if(!ms.length||chat.querySelectorAll('.msg').length>1)return;chat.replaceChildren();hist.length=0;ms.forEach(function(item){if(item.role==='user'){say('user',item.content);hist.push({role:'user',content:item.content});return;}try{var d=JSON.parse(item.content),shown=false;if(d.title){copyBubble('Заголовок',d.title);shown=true;}if(d.body){copyBubble('Текст объявления',d.body);shown=true;}if(d.note)say('assistant',d.note);if(!shown&&!d.note)say('assistant',item.content);}catch(e){say('assistant',item.content);}hist.push({role:'assistant',content:item.content});});chat.scrollTop=chat.scrollHeight;}catch(e){}})();
+      if(!document.body.classList.contains('max-app'))(async function(){try{var r=await api('/c/sokrat/tool/history',{tool:'copywriter',project_id:activeProjectId()});var ms=(r.d&&r.d.messages)||[];if(!ms.length||chat.querySelectorAll('.msg').length>1)return;chat.replaceChildren();hist.length=0;ms.forEach(function(item){if(item.role==='user'){say('user',item.content);hist.push({role:'user',content:item.content});return;}try{var d=JSON.parse(item.content),shown=false;if(d.analysis){say('assistant',d.analysis);shown=true;}if(d.title){copyBubble('Заголовок',d.title);shown=true;}if(d.body){copyBubble('Текст объявления',d.body);shown=true;}if(d.note)say('assistant',d.note);if(!shown&&!d.note)say('assistant',item.content);}catch(e){say('assistant',item.content);}hist.push({role:'assistant',content:item.content});});chat.scrollTop=chat.scrollHeight;}catch(e){}})();
       /* MAX_SKIP_END */
-      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist,project_id:activeProjectId(),handoff_id:handoffId('copywriter'),handoff_source:handoffSource('copywriter')});t.remove();var d=r.d||{};if(d.help){say('assistant',d.reply||'Эта команда не требует генерации.');}else if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{var resultMessage=null;if(d.title)resultMessage=copyBubble('Заголовок',d.title);if(d.body)resultMessage=copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);if(d.title||d.body)sokGoal('SOKRAT_TOOL_SUCCESS',{tool:'copywriter'});toolFeedbackCard(resultMessage,'copywriter',d.result_id);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({title:d.title,body:d.body})});completeHandoff('copywriter');refreshProjects();window.sokXc(chat);if(d.trial_left===0)trialFinishedCta(chat,'✍️','copywriter');else postResultCtas(chat,'✍️','copywriter');}btn.disabled=false;ta.focus();});
+      form.addEventListener('submit',async function(e){e.preventDefault();var ta=form.querySelector('textarea'),v=ta.value.trim();if(!v)return;ta.value='';var btn=form.querySelector('.send');btn.disabled=true;say('user',v);hist.push({role:'user',content:v});var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');var r=await api('/c/sokrat/tool/copywriter',{message:v,history:hist,project_id:activeProjectId(),handoff_id:handoffId('copywriter'),handoff_source:handoffSource('copywriter')});t.remove();var d=r.d||{};if(d.help){say('assistant',d.reply||'Эта команда не требует генерации.');}else if(d.error){say('assistant',d.error);if(d.subscribe){setTrialLeft('copywriter',0);renderGates();}}else{var resultMessage=null;if(d.analysis)resultMessage=say('assistant',d.analysis);if(d.title)resultMessage=copyBubble('Заголовок',d.title);if(d.body)resultMessage=copyBubble('Текст объявления',d.body);if(d.note)say('assistant',d.note);if(d.analysis||d.title||d.body)sokGoal('SOKRAT_TOOL_SUCCESS',{tool:'copywriter'});toolFeedbackCard(resultMessage,'copywriter',d.result_id);setTrialLeft('copywriter',d.trial_left);hist.push({role:'assistant',content:JSON.stringify({analysis:d.analysis,title:d.title,body:d.body})});completeHandoff('copywriter');if(d.scope!=='analysis')refreshProjects();if(d.trial_left===0)trialFinishedCta(chat,'✍️','copywriter');}btn.disabled=false;ta.focus();});
     } else if(name==='autoload'){
       var chat=document.getElementById('al-chat'), att=wireAttach(form);
       var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);chat.scrollTop=chat.scrollHeight;return m;};
@@ -1442,9 +1429,9 @@ try{
         var baseImg=curImg;                          // картинка-основа ДО этого шага (её и правим); null = новая генерация
         add('user',te(promptText)+(fl?' <span style="opacity:.65">📎 '+te(fl.name)+'</span>':''));
         var t=add('assistant','<div class="typing"><i></i><i></i><i></i></div>');
-        var refFile=fl;                              // приоритет — фото, прикреплённое клиентом
-        if(!refFile&&baseImg){try{refFile=await asRefFile(baseImg);}catch(e){refFile=null;}}   // иначе правим ТЕКУЩУЮ картинку
-        var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);fd.append('visitor',SOK_VIS);if(activeProjectId()!=null)fd.append('project_id',String(activeProjectId()));if(handoffId('designer')){fd.append('handoff_id',handoffId('designer'));fd.append('handoff_source',handoffSource('designer')||'unknown');}if(refFile)fd.append('file',refFile);
+        var refFile=fl, basisSource='';               // приоритет — фото, прикреплённое клиентом
+        if(!refFile&&baseImg){try{refFile=await asRefFile(baseImg);basisSource='current';}catch(e){refFile=null;}}   // иначе правим ТЕКУЩУЮ картинку
+        var fd=new FormData();fd.append('message',promptText);fd.append('mode',mode);fd.append('visitor',SOK_VIS);if(basisSource)fd.append('basis_source',basisSource);if(activeProjectId()!=null)fd.append('project_id',String(activeProjectId()));if(handoffId('designer')){fd.append('handoff_id',handoffId('designer'));fd.append('handoff_source',handoffSource('designer')||'unknown');}if(refFile)fd.append('file',refFile);
         var h={};if(token)h['X-Auth-Token']=token;
         try{
           var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/designer',{method:'POST',headers:h,body:fd});

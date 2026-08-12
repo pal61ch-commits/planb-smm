@@ -1403,7 +1403,7 @@ try{
       var chat=document.getElementById('al-chat'), att=wireAttach(form), busy=false;
       var add=function(role,html){var m=document.createElement('div');m.className='msg '+(role==='user'?'u':'s');m.innerHTML='<div class="av">'+(role==='user'?'Вы':'📦')+'</div><div class="bub">'+html+'</div>';chat.appendChild(m);scrollToEnd(chat);return m;};
       var say=function(role,text){return add(role,role==='user'?te(text):fmt(text));};
-      say('assistant','Я помощник по объявлениям и фиду. Приложите XLSX 📎 или начните с нуля: проверю, найду, заменю, добавлю, удалю или перепишу данные.');
+      say('assistant','Я помощник по объявлениям и фиду.');
       async function alDownload(){var h={'Content-Type':'application/json'};if(token)h['X-Auth-Token']=token;try{var r=await fetch(SOK_API_BASE+'/c/sokrat/tool/autoload/download',{method:'POST',headers:h,body:JSON.stringify({project_id:activeProjectId()})});if(!r.ok){say('assistant','Файл не готов');return;}var blob=await r.blob();var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='avito_feed.xlsx';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},1000);}catch(e){say('assistant','Не скачалось');}}
       function dlBubble(url){var m=document.createElement('div');m.className='msg s';m.innerHTML='<div class="av">📦</div><div class="bub" style="background:none;border:none;padding:0"><a class="dlfile" href="'+te(url||'#')+'" download="avito_feed.xlsx">📄 avito_feed.xlsx — скачать</a></div>';var a=m.querySelector('.dlfile');a.onclick=function(e){if(url&&window.sokMaxDownload&&sokMaxDownload(url)||!url){e.preventDefault();if(!url)alDownload();}};chat.appendChild(m);scrollToEnd(chat);}
       /* MAX_SKIP_START */

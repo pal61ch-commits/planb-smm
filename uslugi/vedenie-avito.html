@@ -69,10 +69,14 @@
   .hero-copy .lead{font-size:clamp(17px,2vw,20px);line-height:1.55;color:#c7c7c1;max-width:690px}
   .hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:28px}
   .hero-actions .micro{font-size:12.5px;color:var(--muted)}
+  .contact-block{margin-top:18px}.contact-title{display:block;font:700 13px 'Manrope';color:#ededE8;margin-bottom:9px}
+  .contact-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;max-width:610px}
+  .contact-link{min-height:48px;padding:11px 12px;border-radius:13px;border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;gap:7px;text-align:center;color:#f3f3ef;font:700 13px 'Manrope';background:rgba(255,255,255,.045);transition:.2s transform,.2s border-color,.2s background}
+  .contact-link:hover{transform:translateY(-2px);border-color:var(--gb2)}.contact-link.call{border-color:rgba(245,196,0,.42);background:rgba(245,196,0,.09)}.contact-link.tg{border-color:rgba(38,165,229,.45);background:rgba(38,165,229,.11)}.contact-link.wa{border-color:rgba(37,211,102,.42);background:rgba(37,211,102,.10)}
   .hero-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.hero-points span{font-size:13px;color:#d7d7d2;padding:8px 12px;border-radius:100px;border:1px solid var(--gb);background:var(--glass)}
   .hero-panel{border-radius:28px;padding:26px;position:relative;overflow:hidden;background:radial-gradient(90% 70% at 100% 0%,rgba(245,196,0,.18),transparent 70%),var(--glass)}
   .panel-title{font:800 25px/1.2 'Manrope';margin-bottom:8px}.panel-copy{color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:18px}.panel-price{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.panel-price span{font-size:12px;color:#e4e4df;padding:7px 10px;border-radius:100px;border:1px solid var(--gb2);background:rgba(8,8,10,.45)}
-  .proofbar{display:grid;grid-template-columns:1.45fr repeat(3,.65fr);gap:12px;margin:0 0 70px}.proof{padding:20px;border-radius:18px;text-align:center}.proof b{display:block;font:800 30px/1 'Manrope';color:var(--yellow)}.proof span{display:block;color:var(--muted);font-size:12.5px;margin-top:7px}
+  .proofbar{display:grid;grid-template-columns:1.45fr repeat(4,.65fr);gap:12px;margin:0 auto 70px}.proof{padding:20px;border-radius:18px;text-align:center}.proof b{display:block;font:800 30px/1 'Manrope';color:var(--yellow)}.proof span{display:block;color:var(--muted);font-size:12.5px;margin-top:7px}
   .proof-case{display:grid;grid-template-columns:96px 1fr;gap:17px;align-items:center;text-align:left}.proof-case img{width:96px;height:82px;border-radius:13px;object-fit:cover}.proof-case strong{display:block;font:800 17px/1.25 'Manrope';color:var(--text)}.proof-case span{margin-top:5px}.proof-case em{display:block;margin-top:8px;color:var(--yellow);font:800 16px 'Manrope';font-style:normal}
   .section{padding:66px 0}.section-head{max-width:760px;margin-bottom:34px}.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);font-weight:800}.section-head h2{font-size:clamp(30px,4.5vw,48px);margin:10px 0 12px}.section-head p{font-size:17px;color:var(--muted)}
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{border-radius:20px;padding:25px}.card .num{font:800 13px 'Manrope';color:var(--yellow);letter-spacing:.1em}.card h3{font-size:21px;margin:12px 0 8px}.card p{color:var(--muted);font-size:14.5px}.card ul{list-style:none;display:grid;gap:8px;margin-top:14px}.card li{font-size:14px;color:#d9d9d3;padding-left:20px;position:relative}.card li:before{content:"✓";position:absolute;left:0;color:var(--yellow);font-weight:900}
@@ -85,9 +89,11 @@
   .price-action{display:grid;gap:12px;justify-items:start}.price-action .btn{min-width:280px}.price-action .alt{text-align:left}
   .faq{max-width:850px}.faq details{border-bottom:1px solid var(--gb);padding:18px 0}.faq summary{cursor:pointer;font:700 18px 'Manrope';list-style:none}.faq summary::-webkit-details-marker{display:none}.faq p{color:var(--muted);padding-top:12px;max-width:760px}
   .expert{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:26px;border-radius:20px}.expert h3{font-size:21px}.expert p{color:var(--muted);margin-top:7px}.expert strong{color:var(--text)}
+  .hero-panel .contact-block{padding-top:3px;border-top:1px solid var(--gb)}.hero-panel .contact-links,.price-action .contact-links{width:100%;max-width:none}.price-action{width:100%}
+  .contact-dock{display:none}
   footer .wrap{max-width:1180px}
   @media(max-width:900px){.hero-grid,.pricebox{grid-template-columns:1fr}.proofbar{grid-template-columns:1fr 1fr}.proof-case{grid-column:1/-1}.cards,.cases{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.hero-panel{max-width:640px}.hero{padding-top:24px}}
-  @media(max-width:640px){.hero-copy h1{font-size:37px}.fit,.steps{grid-template-columns:1fr}.proofbar{gap:8px}.proof{padding:16px 8px}.proof b{font-size:24px}.proof-case{padding:13px;text-align:left}.proof-case img{width:80px;height:72px}.section{padding:48px 0}.pricebox{padding:25px}.nav-links a:not(.nav-cta){display:none}.expert{grid-template-columns:1fr}.btn,.price-action .btn{width:100%;min-width:0;justify-content:center}}
+  @media(max-width:640px){body{padding-bottom:72px}.hero-copy h1{font-size:37px}.fit,.steps{grid-template-columns:1fr}.proofbar{gap:8px}.proof{padding:16px 8px}.proof b{font-size:24px}.proof-case{padding:13px;text-align:left}.proof-case img{width:80px;height:72px}.section{padding:48px 0}.pricebox{padding:25px}.nav-links a:not(.nav-cta){display:none}.expert{grid-template-columns:1fr}.btn,.price-action .btn{width:100%;min-width:0;justify-content:center}.contact-link{min-height:46px;padding:10px 7px;font-size:12px}.contact-dock{position:fixed;z-index:50;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px;border:1px solid var(--gb2);border-radius:16px;background:rgba(15,15,17,.96);box-shadow:0 12px 38px rgba(0,0,0,.58);backdrop-filter:blur(16px)}.contact-dock .contact-link{min-height:44px;border-radius:10px}}
 </style>
 </head>
 <body>
@@ -114,6 +120,14 @@
           <a class="btn btn-y" href="#audit" data-umami-event="service_hero_audit">Получить разбор аккаунта</a>
           <span class="micro">Покажем точки роста и честно скажем, подходит ли вам ведение</span>
         </div>
+        <div class="contact-block" aria-label="Способы связи">
+          <span class="contact-title">Связаться напрямую</span>
+          <div class="contact-links">
+            <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_hero">☎ Позвонить</a>
+            <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_hero">Telegram</a>
+            <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_hero">WhatsApp</a>
+          </div>
+        </div>
         <div class="hero-points"><span>Работа команды от 30 000 ₽/мес</span><span>Бюджет Авито отдельно</span><span>Без обещаний «топ‑1»</span></div>
       </div>
       <aside class="hero-panel glass" id="audit" aria-label="Форма разбора аккаунта">
@@ -127,7 +141,14 @@
           <label class="agree"><input type="checkbox" name="agree" required><span>Согласен на обработку данных по <a href="/privacy.html" target="_blank" rel="noopener">Политике конфиденциальности</a></span></label>
           <button class="btn btn-y" type="submit">Получить разбор аккаунта</button>
           <div class="lead-msg" id="serviceLeadMsg" role="status" aria-live="polite"></div>
-          <div class="alt">Или <a href="tel:+79281446617" data-umami-event="service_phone">позвоните</a> · <a href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram">напишите в Telegram</a></div>
+          <div class="contact-block" aria-label="Другие способы связи">
+            <span class="contact-title">Или свяжитесь напрямую</span>
+            <div class="contact-links">
+              <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_form">☎ Позвонить</a>
+              <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_form">Telegram</a>
+              <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_form">WhatsApp</a>
+            </div>
+          </div>
         </form>
       </aside>
     </div>
@@ -136,7 +157,8 @@
   <div class="wrap proofbar" aria-label="Факты и результаты Plan B">
     <a class="proof proof-case glass" href="/kejsy/stroy-garant"><img src="/cases/stroygarant-2.jpg" alt="Статистика строительного аккаунта Авито"><span><strong>Строительные услуги, 2 месяца</strong><span>Сначала нашли рабочую связку, затем расширили географию.</span><em>154 → 539 контактов</em></span></a>
     <div class="proof glass"><b>8 лет</b><span>работы с Авито</span></div>
-    <div class="proof glass"><b>14</b><span>кейсов со статистикой</span></div>
+    <div class="proof glass"><b>Партнёр</b><span>официальный партнёр Авито</span></div>
+    <div class="proof glass"><b>Кейсы</b><span>наши последние работы со статистикой</span></div>
     <div class="proof glass"><b>3 в 1</b><span>авитолог, текст, дизайн</span></div>
   </div>
 
@@ -187,13 +209,13 @@
   <section class="section" id="price">
     <div class="wrap pricebox glass">
       <div><span class="eyebrow">Стоимость</span><h2>Ведение командой Plan B</h2><div class="pricebig">от 30 000 ₽<small style="font-size:15px;color:var(--muted)"> / месяц</small></div><p>Тариф и продвижение внутри Авито оплачиваются отдельно. Точный объём работ и рекламный бюджет называем после разбора аккаунта.</p></div>
-      <div class="price-action"><h3>Сначала проверим, подходит ли вам ведение</h3><p>Посмотрим нишу, кабинет и текущие расходы. После этого назовём план работ и две суммы: работа команды и бюджет Авито.</p><a class="btn btn-y" href="#audit" data-umami-event="service_price_audit">Получить разбор аккаунта</a><div class="alt">Или <a href="tel:+79281446617" data-umami-event="service_phone">+7 928 144-66-17</a> · <a href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram">Telegram</a></div></div>
+      <div class="price-action"><h3>Сначала проверим, подходит ли вам ведение</h3><p>Посмотрим нишу, кабинет и текущие расходы. После этого назовём план работ и две суммы: работа команды и бюджет Авито.</p><a class="btn btn-y" href="#audit" data-umami-event="service_price_audit">Получить разбор аккаунта</a><div class="contact-block" aria-label="Способы связи"><span class="contact-title">Или свяжитесь напрямую</span><div class="contact-links"><a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_price">☎ Позвонить</a><a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_price">Telegram</a><a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_price">WhatsApp</a></div></div></div>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap">
-      <div class="expert glass"><div><span class="eyebrow">Ответственный специалист</span><h3>Константин Кислов, основатель Plan B</h3><p><strong>8 лет работы с Авито.</strong> На аудите разбираем не только оформление, но и экономику кабинета: где теряются показы, контакты и рекламный бюджет.</p></div><a class="btn btn-g" href="/kejsy/">Посмотреть 14 кейсов</a></div>
+      <div class="expert glass"><div><span class="eyebrow">Ответственный специалист</span><h3>Константин Кислов, основатель Plan B</h3><p><strong>8 лет работы с Авито.</strong> На аудите разбираем не только оформление, но и экономику кабинета: где теряются показы, контакты и рекламный бюджет.</p></div><a class="btn btn-g" href="/kejsy/">Посмотреть последние кейсы</a></div>
     </div>
   </section>
 
@@ -207,6 +229,12 @@
     </div>
   </section>
 </main>
+
+<nav class="contact-dock" aria-label="Быстрая связь">
+  <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_dock">☎ Звонок</a>
+  <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_dock">Telegram</a>
+  <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_dock">WhatsApp</a>
+</nav>
 
 <footer><div class="wrap"><img src="/logo-planb.png" alt="Plan B"><div class="fc"><a href="/">Главная</a> · <a href="/kejsy/">Кейсы</a> · <a href="/blog/">Блог</a> · <a href="/privacy.html">Политика</a></div><div class="fc">© 2026 Plan B · Продвижение</div></div></footer>
 

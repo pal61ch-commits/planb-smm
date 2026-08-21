@@ -62,19 +62,36 @@
 <script defer src="https://158-160-63-165.sslip.io/script.js" data-website-id="a01eef21-a164-429b-8dc4-60d8e7e556f5"></script>
 <script defer src="https://158-160-63-165.sslip.io/recorder.js" data-website-id="a01eef21-a164-429b-8dc4-60d8e7e556f5"></script>
 <style>
-  .wrap{max-width:1180px}.service-page{position:relative;z-index:2}
+  .wrap{max-width:1180px}.service-page{position:relative;z-index:2}.icon-sprite{position:absolute;width:0;height:0;overflow:hidden}
   .nav .wrap{max-width:1180px}.nav-links{gap:18px}
-  .hero{padding:44px 0 56px}.hero-grid{display:grid;grid-template-columns:1.06fr .94fr;gap:42px;align-items:center}
+  .bg{background:radial-gradient(50% 45% at 77% 15%,rgba(245,196,0,.055),transparent 64%),radial-gradient(38% 34% at 90% 66%,rgba(38,165,229,.04),transparent 68%),#0b0b0d}
+  .hero{padding:44px 0 72px;position:relative;isolation:isolate;overflow:hidden}
+  .hero:before{content:"";position:absolute;z-index:-2;inset:-130px -10% -100px;background:radial-gradient(circle at 76% 18%,rgba(245,196,0,.11),transparent 25%),radial-gradient(circle at 92% 65%,rgba(38,165,229,.08),transparent 21%)}
+  .hero:after{content:"";position:absolute;z-index:-1;left:-8%;right:-8%;bottom:-235px;height:520px;opacity:.14;background-image:linear-gradient(rgba(245,196,0,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(38,165,229,.11) 1px,transparent 1px);background-size:64px 64px;transform:perspective(560px) rotateX(61deg);transform-origin:center bottom;mask-image:linear-gradient(to bottom,transparent 0%,#000 27%,#000 72%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 27%,#000 72%,transparent 100%)}
+  .hero-grid{display:grid;grid-template-columns:1.06fr .94fr;gap:42px;align-items:center;position:relative;z-index:2}
+  .hero-grid:before{display:none}.hero-copy{position:relative}
+  .hero-marketplace{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  .market-card{position:absolute;width:255px;height:172px;border-radius:22px;border:1px solid rgba(255,255,255,.13);background:linear-gradient(145deg,rgba(27,28,32,.7),rgba(10,11,14,.46));box-shadow:0 26px 70px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(5px);padding:16px;opacity:.26}
+  .market-card.one{left:47%;top:75px;transform:rotate(-8deg)}.market-card.two{right:-36px;top:350px;transform:rotate(9deg);opacity:.20}.market-card.three{left:38%;bottom:52px;transform:rotate(5deg);opacity:.15}
+  .market-head{display:flex;align-items:center;gap:8px;color:#fff;font:800 15px 'Manrope'}.market-dots{display:flex;gap:3px}.market-dots i{width:8px;height:8px;border-radius:50%;display:block}.market-dots i:nth-child(1){background:#00aaff}.market-dots i:nth-child(2){background:#ff4053}.market-dots i:nth-child(3){background:#a169f7}.market-dots i:nth-child(4){background:#00d170}
+  .market-body{display:grid;grid-template-columns:78px 1fr;gap:12px;margin-top:14px}.market-photo{height:76px;border-radius:12px;background:linear-gradient(145deg,rgba(245,196,0,.38),rgba(38,165,229,.16))}.market-lines{display:grid;align-content:center;gap:8px}.market-lines i{display:block;height:7px;border-radius:9px;background:rgba(255,255,255,.22)}.market-lines i:nth-child(2){width:78%}.market-lines i:nth-child(3){width:53%;background:rgba(245,196,0,.32)}
+  .market-foot{height:10px;margin-top:12px;border-radius:10px;background:linear-gradient(90deg,rgba(37,211,102,.48) 0 34%,rgba(255,255,255,.10) 34%)}
   .hero-copy h1{font-size:clamp(38px,6vw,68px);line-height:1.02;margin:16px 0 20px;max-width:780px}
   .hero-copy .lead{font-size:clamp(17px,2vw,20px);line-height:1.55;color:#c7c7c1;max-width:690px}
   .hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:28px}
   .hero-actions .micro{font-size:12.5px;color:var(--muted)}
   .contact-block{margin-top:18px}.contact-title{display:block;font:700 13px 'Manrope';color:#ededE8;margin-bottom:9px}
   .contact-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;max-width:610px}
-  .contact-link{min-height:48px;padding:11px 12px;border-radius:13px;border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;gap:7px;text-align:center;color:#f3f3ef;font:700 13px 'Manrope';background:rgba(255,255,255,.045);transition:.2s transform,.2s border-color,.2s background}
-  .contact-link:hover{transform:translateY(-2px);border-color:var(--gb2)}.contact-link.call{border-color:rgba(245,196,0,.42);background:rgba(245,196,0,.09)}.contact-link.tg{border-color:rgba(38,165,229,.45);background:rgba(38,165,229,.11)}.contact-link.wa{border-color:rgba(37,211,102,.42);background:rgba(37,211,102,.10)}
+  .contact-link{min-height:52px;padding:8px 11px;border-radius:14px;border:1px solid var(--gb);display:flex;align-items:center;justify-content:flex-start;gap:8px;text-align:left;color:#f7f7f4;font:800 13px 'Manrope';position:relative;overflow:hidden;isolation:isolate;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 10px 24px -18px rgba(0,0,0,.8);transition:.2s transform,.2s border-color,.2s background,.2s box-shadow}
+  .contact-link:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.09),transparent 52%);opacity:.55;transition:.2s opacity}
+  .contact-icon{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:0 0 auto;background:rgba(5,5,7,.48);box-shadow:inset 0 0 0 1px rgba(255,255,255,.09)}
+  .contact-link svg{width:20px;height:20px;display:block}.contact-link:hover{transform:translateY(-2px);box-shadow:0 14px 28px -18px rgba(0,0,0,.95)}.contact-link:hover:after{opacity:1}
+  .contact-link.call{border-color:rgba(245,196,0,.56);background:linear-gradient(135deg,rgba(245,196,0,.22),rgba(245,196,0,.07))}.contact-link.call svg{color:#ffd22e}.contact-link.call:hover{border-color:rgba(245,196,0,.9);box-shadow:0 12px 28px -15px rgba(245,196,0,.7)}
+  .contact-link.tg{border-color:rgba(38,165,229,.58);background:linear-gradient(135deg,rgba(38,165,229,.24),rgba(38,165,229,.07))}.contact-link.tg svg{color:#35b6f4}.contact-link.tg:hover{border-color:rgba(38,165,229,.95);box-shadow:0 12px 28px -15px rgba(38,165,229,.72)}
+  .contact-link.wa{border-color:rgba(37,211,102,.54);background:linear-gradient(135deg,rgba(37,211,102,.22),rgba(37,211,102,.065))}.contact-link.wa svg{color:#32e879}.contact-link.wa:hover{border-color:rgba(37,211,102,.92);box-shadow:0 12px 28px -15px rgba(37,211,102,.7)}
   .hero-points{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.hero-points span{font-size:13px;color:#d7d7d2;padding:8px 12px;border-radius:100px;border:1px solid var(--gb);background:var(--glass)}
-  .hero-panel{border-radius:28px;padding:26px;position:relative;overflow:hidden;background:radial-gradient(90% 70% at 100% 0%,rgba(245,196,0,.18),transparent 70%),var(--glass)}
+  .hero-panel{border-radius:28px;padding:27px;position:relative;overflow:hidden;background:radial-gradient(100% 74% at 100% 0%,rgba(245,196,0,.22),transparent 62%),linear-gradient(145deg,rgba(30,29,22,.93),rgba(13,13,16,.96));border-color:rgba(245,196,0,.25);box-shadow:0 34px 85px -34px rgba(0,0,0,.95),0 0 54px -36px rgba(245,196,0,.72),inset 0 1px 0 rgba(255,255,255,.08)}
+  .hero-panel:before{content:"";position:absolute;left:10%;right:10%;top:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,216,74,.8),transparent);box-shadow:0 0 24px rgba(245,196,0,.75)}.hero-panel:after{content:"";position:absolute;width:180px;height:180px;right:-96px;bottom:-94px;border-radius:50%;border:1px solid rgba(38,165,229,.22);box-shadow:0 0 55px rgba(38,165,229,.12)}.hero-panel>*{position:relative;z-index:1}
   .panel-title{font:800 25px/1.2 'Manrope';margin-bottom:8px}.panel-copy{color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:18px}.panel-price{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.panel-price span{font-size:12px;color:#e4e4df;padding:7px 10px;border-radius:100px;border:1px solid var(--gb2);background:rgba(8,8,10,.45)}
   .proofbar{display:grid;grid-template-columns:1.45fr repeat(4,.65fr);gap:12px;margin:0 auto 70px}.proof{padding:20px;border-radius:18px;text-align:center}.proof b{display:block;font:800 30px/1 'Manrope';color:var(--yellow)}.proof span{display:block;color:var(--muted);font-size:12.5px;margin-top:7px}
   .proof-case{display:grid;grid-template-columns:96px 1fr;gap:17px;align-items:center;text-align:left}.proof-case img{width:96px;height:82px;border-radius:13px;object-fit:cover}.proof-case strong{display:block;font:800 17px/1.25 'Manrope';color:var(--text)}.proof-case span{margin-top:5px}.proof-case em{display:block;margin-top:8px;color:var(--yellow);font:800 16px 'Manrope';font-style:normal}
@@ -89,15 +106,20 @@
   .price-action{display:grid;gap:12px;justify-items:start}.price-action .btn{min-width:280px}.price-action .alt{text-align:left}
   .faq{max-width:850px}.faq details{border-bottom:1px solid var(--gb);padding:18px 0}.faq summary{cursor:pointer;font:700 18px 'Manrope';list-style:none}.faq summary::-webkit-details-marker{display:none}.faq p{color:var(--muted);padding-top:12px;max-width:760px}
   .expert{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:26px;border-radius:20px}.expert h3{font-size:21px}.expert p{color:var(--muted);margin-top:7px}.expert strong{color:var(--text)}
-  .hero-panel .contact-block{padding-top:3px;border-top:1px solid var(--gb)}.hero-panel .contact-links,.price-action .contact-links{width:100%;max-width:none}.price-action{width:100%}
+  .price-action .contact-links{width:100%;max-width:none}.price-action{width:100%}
   .contact-dock{display:none}
   footer .wrap{max-width:1180px}
-  @media(max-width:900px){.hero-grid,.pricebox{grid-template-columns:1fr}.proofbar{grid-template-columns:1fr 1fr}.proof-case{grid-column:1/-1}.cards,.cases{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.hero-panel{max-width:640px}.hero{padding-top:24px}}
-  @media(max-width:640px){body{padding-bottom:72px}.hero-copy h1{font-size:37px}.fit,.steps{grid-template-columns:1fr}.proofbar{gap:8px}.proof{padding:16px 8px}.proof b{font-size:24px}.proof-case{padding:13px;text-align:left}.proof-case img{width:80px;height:72px}.section{padding:48px 0}.pricebox{padding:25px}.nav-links a:not(.nav-cta){display:none}.expert{grid-template-columns:1fr}.btn,.price-action .btn{width:100%;min-width:0;justify-content:center}.contact-link{min-height:46px;padding:10px 7px;font-size:12px}.contact-dock{position:fixed;z-index:50;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px;border:1px solid var(--gb2);border-radius:16px;background:rgba(15,15,17,.96);box-shadow:0 12px 38px rgba(0,0,0,.58);backdrop-filter:blur(16px)}.contact-dock .contact-link{min-height:44px;border-radius:10px}}
+  @media(max-width:900px){.hero-grid,.pricebox{grid-template-columns:1fr}.proofbar{grid-template-columns:1fr 1fr}.proof-case{grid-column:1/-1}.cards,.cases{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.hero-panel{max-width:640px}.hero{padding-top:24px}.market-card.one{left:auto;right:-45px;top:210px}.market-card.two{left:-70px;right:auto;top:980px}.market-card.three{display:none}}
+  @media(max-width:640px){body{padding-bottom:72px}.hero{padding-bottom:58px}.hero:before{inset:-100px -80% -40px;background:radial-gradient(circle at 76% 22%,rgba(245,196,0,.11),transparent 28%),radial-gradient(circle at 82% 70%,rgba(38,165,229,.08),transparent 23%)}.hero:after{bottom:-285px;opacity:.12}.market-card{width:210px;height:142px;padding:13px;border-radius:18px;opacity:.13}.market-card.one{right:-62px;top:270px}.market-card.two{left:-80px;top:1070px;opacity:.11}.market-body{grid-template-columns:62px 1fr;gap:9px;margin-top:10px}.market-photo{height:59px}.market-lines{gap:6px}.market-lines i{height:5px}.market-foot{height:7px;margin-top:9px}.market-head{font-size:12px}.hero-copy h1{font-size:37px}.hero-copy>.contact-block,.price-action>.contact-block{display:none}.fit,.steps{grid-template-columns:1fr}.proofbar{gap:8px}.proof{padding:16px 8px}.proof b{font-size:24px}.proof-case{padding:13px;text-align:left}.proof-case img{width:80px;height:72px}.section{padding:48px 0}.pricebox{padding:25px}.nav-links a:not(.nav-cta){display:none}.expert{grid-template-columns:1fr}.btn,.price-action .btn{width:100%;min-width:0;justify-content:center}.contact-link{min-height:48px;padding:7px 5px;gap:6px;font-size:11.5px}.contact-icon{width:28px;height:28px;border-radius:9px}.contact-link svg{width:18px;height:18px}.contact-dock{position:fixed;z-index:50;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px;border:1px solid var(--gb2);border-radius:16px;background:rgba(15,15,17,.96);box-shadow:0 12px 38px rgba(0,0,0,.58);backdrop-filter:blur(16px)}.contact-dock .contact-link{min-height:44px;border-radius:10px}.contact-dock .contact-icon{width:25px;height:25px}.contact-dock .contact-link svg{width:16px;height:16px}}
 </style>
 </head>
 <body>
 <noscript><div><img src="https://mc.yandex.ru/watch/110884885" style="position:absolute;left:-9999px" alt=""></div></noscript>
+<svg class="icon-sprite" aria-hidden="true" focusable="false">
+  <symbol id="contact-icon-call" viewBox="0 0 24 24"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.18z"/></symbol>
+  <symbol id="contact-icon-telegram" viewBox="0 0 24 24"><path fill="currentColor" d="M21.94 4.5L2.9 11.84c-1.3.52-1.29 1.25-.24 1.57l4.88 1.52 1.88 5.78c.23.63.11.88.77.88.51 0 .73-.23 1.02-.5l2.46-2.39 5.12 3.78c.94.52 1.62.25 1.85-.87l3.36-15.8c.34-1.38-.52-2-1.5-1.59z"/></symbol>
+  <symbol id="contact-icon-whatsapp" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.97L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.18c-.24.68-1.42 1.31-1.96 1.36-.5.05-1.13.07-1.83-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-2.99s.75-2.12 1.01-2.41c.26-.29.57-.36.76-.36l.55.01c.18.01.42-.07.65.5.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.69-.81.87-1.09.18-.28.36-.23.61-.14.25.09 1.6.76 1.87.9.28.14.46.21.53.33.07.12.07.68-.17 1.36z"/></symbol>
+</svg>
 <div class="bg"></div>
 <header class="nav">
   <div class="wrap glass">
@@ -123,9 +145,9 @@
         <div class="contact-block" aria-label="Способы связи">
           <span class="contact-title">Связаться напрямую</span>
           <div class="contact-links">
-            <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_hero">☎ Позвонить</a>
-            <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_hero">Telegram</a>
-            <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_hero">WhatsApp</a>
+            <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_hero"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-call"/></svg></span><span>Позвонить</span></a>
+            <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_hero"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-telegram"/></svg></span><span>Telegram</span></a>
+            <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_hero"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-whatsapp"/></svg></span><span>WhatsApp</span></a>
           </div>
         </div>
         <div class="hero-points"><span>Работа команды от 30 000 ₽/мес</span><span>Бюджет Авито отдельно</span><span>Без обещаний «топ‑1»</span></div>
@@ -141,16 +163,25 @@
           <label class="agree"><input type="checkbox" name="agree" required><span>Согласен на обработку данных по <a href="/privacy.html" target="_blank" rel="noopener">Политике конфиденциальности</a></span></label>
           <button class="btn btn-y" type="submit">Получить разбор аккаунта</button>
           <div class="lead-msg" id="serviceLeadMsg" role="status" aria-live="polite"></div>
-          <div class="contact-block" aria-label="Другие способы связи">
-            <span class="contact-title">Или свяжитесь напрямую</span>
-            <div class="contact-links">
-              <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_form">☎ Позвонить</a>
-              <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_form">Telegram</a>
-              <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_form">WhatsApp</a>
-            </div>
-          </div>
         </form>
       </aside>
+    </div>
+    <div class="hero-marketplace" aria-hidden="true">
+      <div class="market-card one">
+        <div class="market-head"><span class="market-dots"><i></i><i></i><i></i><i></i></span>Avito</div>
+        <div class="market-body"><span class="market-photo"></span><span class="market-lines"><i></i><i></i><i></i></span></div>
+        <div class="market-foot"></div>
+      </div>
+      <div class="market-card two">
+        <div class="market-head"><span class="market-dots"><i></i><i></i><i></i><i></i></span>Объявление</div>
+        <div class="market-body"><span class="market-photo"></span><span class="market-lines"><i></i><i></i><i></i></span></div>
+        <div class="market-foot"></div>
+      </div>
+      <div class="market-card three">
+        <div class="market-head"><span class="market-dots"><i></i><i></i><i></i><i></i></span>Новые заявки</div>
+        <div class="market-body"><span class="market-photo"></span><span class="market-lines"><i></i><i></i><i></i></span></div>
+        <div class="market-foot"></div>
+      </div>
     </div>
   </section>
 
@@ -209,7 +240,19 @@
   <section class="section" id="price">
     <div class="wrap pricebox glass">
       <div><span class="eyebrow">Стоимость</span><h2>Ведение командой Plan B</h2><div class="pricebig">от 30 000 ₽<small style="font-size:15px;color:var(--muted)"> / месяц</small></div><p>Тариф и продвижение внутри Авито оплачиваются отдельно. Точный объём работ и рекламный бюджет называем после разбора аккаунта.</p></div>
-      <div class="price-action"><h3>Сначала проверим, подходит ли вам ведение</h3><p>Посмотрим нишу, кабинет и текущие расходы. После этого назовём план работ и две суммы: работа команды и бюджет Авито.</p><a class="btn btn-y" href="#audit" data-umami-event="service_price_audit">Получить разбор аккаунта</a><div class="contact-block" aria-label="Способы связи"><span class="contact-title">Или свяжитесь напрямую</span><div class="contact-links"><a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_price">☎ Позвонить</a><a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_price">Telegram</a><a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_price">WhatsApp</a></div></div></div>
+      <div class="price-action">
+        <h3>Сначала проверим, подходит ли вам ведение</h3>
+        <p>Посмотрим нишу, кабинет и текущие расходы. После этого назовём план работ и две суммы: работа команды и бюджет Авито.</p>
+        <a class="btn btn-y" href="#audit" data-umami-event="service_price_audit">Получить разбор аккаунта</a>
+        <div class="contact-block" aria-label="Способы связи">
+          <span class="contact-title">Или свяжитесь напрямую</span>
+          <div class="contact-links">
+            <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_price"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-call"/></svg></span><span>Позвонить</span></a>
+            <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_price"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-telegram"/></svg></span><span>Telegram</span></a>
+            <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_price"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-whatsapp"/></svg></span><span>WhatsApp</span></a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -231,9 +274,9 @@
 </main>
 
 <nav class="contact-dock" aria-label="Быстрая связь">
-  <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_dock">☎ Звонок</a>
-  <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_dock">Telegram</a>
-  <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_dock">WhatsApp</a>
+  <a class="contact-link call" href="tel:+79281446617" data-umami-event="service_call_dock"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-call"/></svg></span><span>Звонок</span></a>
+  <a class="contact-link tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-umami-event="service_telegram_dock"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-telegram"/></svg></span><span>Telegram</span></a>
+  <a class="contact-link wa" href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20ведение%20аккаунта%20Авито." target="_blank" rel="noopener" data-umami-event="service_whatsapp_dock"><span class="contact-icon"><svg aria-hidden="true"><use href="#contact-icon-whatsapp"/></svg></span><span>WhatsApp</span></a>
 </nav>
 
 <footer><div class="wrap"><img src="/logo-planb.png" alt="Plan B"><div class="fc"><a href="/">Главная</a> · <a href="/kejsy/">Кейсы</a> · <a href="/blog/">Блог</a> · <a href="/privacy.html">Политика</a></div><div class="fc">© 2026 Plan B · Продвижение</div></div></footer>

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -29,9 +30,6 @@
 {"@context":"https://schema.org","@graph":[{"@type":["Organization","ProfessionalService"],"@id":"https://planb-prodvizhenie.ru/#business","name":"Plan B — продвижение на Авито","alternateName":"Plan B","url":"https://planb-prodvizhenie.ru/","logo":{"@type":"ImageObject","url":"https://planb-prodvizhenie.ru/logo-planb.png"},"image":"https://planb-prodvizhenie.ru/og-image.jpg","description":"Агентство Plan B помогает бизнесу запускать и вести аккаунты Авито: аудит, стратегия, объявления, дизайн, публикации, продвижение и аналитика.","slogan":"Когда план А не сработал","telephone":"+7-928-144-66-17","email":"kislovkosta@yandex.ru","priceRange":"от 10 000 ₽","areaServed":{"@type":"Country","name":"Россия"},"address":{"@type":"PostalAddress","addressCountry":"RU"},"sameAs":["https://vk.ru/planb_avitolog","https://www.instagram.com/avitolog_planb_prodvizenie/","https://t.me/planB_prodvizhenie"],"founder":{"@id":"https://planb-prodvizhenie.ru/#konstantin-kislov"},"contactPoint":{"@type":"ContactPoint","telephone":"+7-928-144-66-17","contactType":"sales","availableLanguage":"Russian"},"makesOffer":[{"@type":"Offer","url":"https://planb-prodvizhenie.ru/uslugi/vedenie-avito","price":"30000","priceCurrency":"RUB","itemOffered":{"@type":"Service","name":"Ведение аккаунта Авито"}},{"@type":"Offer","url":"https://planb-prodvizhenie.ru/uslugi/razovaya-nastroyka-avito","price":"10000","priceCurrency":"RUB","itemOffered":{"@type":"Service","name":"Разовая настройка аккаунта Авито"}}]},{"@type":"Person","@id":"https://planb-prodvizhenie.ru/#konstantin-kislov","name":"Константин Кислов","jobTitle":"Основатель Plan B","worksFor":{"@id":"https://planb-prodvizhenie.ru/#business"}}]}
 </script>
 <script src="/assets/analytics-consent.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b0b0d;--yellow:#F5C400;--yellow2:#ffd84a;
@@ -299,7 +297,7 @@ a{color:inherit;text-decoration:none}
 
 /* продукты Plan B */
 .ai-sec{padding:12px 0 74px}
-.product-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:18px;align-items:stretch}
+.product-grid{display:grid;grid-template-columns:1fr;gap:18px;align-items:stretch;max-width:920px;margin:0 auto}
 .ai-cta{display:flex;align-items:center;gap:34px;border-radius:26px;padding:40px 46px;border:1px solid var(--gb2)!important;background:linear-gradient(120deg,rgba(245,196,0,.13),var(--glass));transition:transform .3s var(--ease),border-color .3s;position:relative;overflow:hidden}
 .ai-cta:hover{transform:translateY(-4px);border-color:#3ad07a!important}
 .ai-cta-txt{flex:1;min-width:0}
@@ -411,39 +409,39 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
     <div class="hero-text">
       <div class="partner glass"><b></b>Агентство продвижения на Авито · работаем по всей России</div>
       <h1>Продвижение на Авито для бизнеса:<br><span class="yel">услуги и продукты Plan B</span></h1>
-      <p class="lead">Берём аккаунт на регулярное ведение, разово собираем систему для самостоятельной работы или предлагаем отдельный продукт под конкретную задачу. Начнём с бесплатного разбора кабинета.</p>
+      <p class="lead">Берём аккаунт на регулярное ведение, разово собираем систему для самостоятельной работы или предлагаем отдельный ИИ-продукт под конкретную задачу. Начнём с бесплатного разбора кабинета.</p>
 
       <!-- быстрая заявка прямо в первом экране: сюда доходят все, до нижней формы — 11% -->
-      <form class="quick" id="quickForm" novalidate>
+      <form class="quick ym-disable-submit" id="quickForm" novalidate>
         <input type="hidden" name="form_id" value="quickForm">
         <input type="hidden" name="pd_consent_version" value="planb-pd-2026-08-30-v1">
         <input type="hidden" name="marketing_consent_version" value="planb-ads-2026-08-30-v1">
-        <input type="hidden" name="privacy_version" value="planb-privacy-2026-08-30-v1">
-        <input class="fld" type="tel" name="phone" inputmode="tel" placeholder="+7 ваш номер" autocomplete="tel" aria-label="Телефон">
+        <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-02-v2">
+        <input class="fld ym-disable-keys" type="tel" name="phone" inputmode="tel" placeholder="+7 ваш номер" autocomplete="tel" aria-label="Телефон">
         <!-- согласие ДО кнопки: когда оно стояло под кнопкой и ниже мессенджеров,
              человек 4 раза упёрся в «отметьте согласие» и ушёл в мессенджеры (21.07, визор) -->
         <label class="agree agree-sm">
           <input type="checkbox" name="pd_consent" required>
-          <span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a></span>
+          <span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span>
         </label>
         <label class="agree agree-sm agree-optional">
           <input type="checkbox" name="marketing_consent">
-          <span>Хочу получать новости и предложения Plan B. Это необязательно. <a href="/consent-advertising.html" target="_blank" rel="noopener">Условия</a></span>
+          <span>Хочу получать новости и предложения Plan B. Это необязательно. <a href="/consent-advertising.html" target="_blank" rel="noopener noreferrer">Условия</a></span>
         </label>
-        <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener">Политика обработки персональных данных</a>.</p>
+        <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>.</p>
         <button class="btn btn-y" type="submit" id="quickBtn">Подобрать формат работы</button>
         <div class="lead-msg" id="quickMsg" role="status" aria-live="polite"></div>
         <p class="quick-note">На первом разговоре доступ к кабинету не нужен · перезвоним в рабочее время</p>
         <div class="quick-alt">
           <span>Не хотите звонка?</span>
-          <a href="https://wa.me/79281446617" target="_blank" rel="noopener" data-alt="wa">WhatsApp</a>
-          <a href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-alt="tg">Telegram</a>
+          <a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer" data-alt="wa">WhatsApp</a>
+          <a href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer" data-alt="tg">Telegram</a>
         </div>
       </form>
       <div class="trust">
         <span>👥 <b>Ведение командой</b></span>
         <span>🧭 <b>Разовая настройка</b></span>
-        <span>⚙️ <b>Собственные продукты</b></span>
+        <span>⚙️ <b>Собственный ИИ-продукт</b></span>
       </div>
     </div>
     <div class="hv">
@@ -452,7 +450,6 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
         <div class="ochip glass"><span class="v">Ведение</span><span class="k">регулярная работа</span></div>
         <div class="ochip glass"><span class="v">Настройка</span><span class="k">разовый проект</span></div>
         <div class="ochip glass"><span class="v">Сократ</span><span class="k">ИИ-инструменты</span></div>
-        <div class="ochip glass"><span class="v">Пифагор</span><span class="k">отдельный сервис</span></div>
       </div>
     </div>
   </div>
@@ -496,7 +493,7 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 <!-- PRODUCTS -->
 <section class="ai-sec" id="products">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="kick">Продукты Plan B</span><h2>Инструменты для отдельных задач</h2><p>Это самостоятельные продукты со своими условиями и воронками. Они не заменяют работу команды, если нужен полный цикл ведения.</p></div>
+    <div class="sec-head reveal"><span class="kick">Продукт Plan B</span><h2>ИИ-инструменты для самостоятельной работы</h2><p>Сократ — отдельный продукт со своими условиями и воронкой. Он не заменяет работу команды, если нужен полный цикл ведения.</p></div>
     <div class="product-grid">
       <article class="ai-cta glass reveal">
         <div class="ai-cta-txt">
@@ -516,18 +513,6 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
         </div>
         <img class="ai-owl" src="logos/owl-v4-cut.png" alt="Сократ — ИИ-авитолог" loading="lazy">
       </article>
-      <article class="pf-card glass reveal d1">
-        <div class="pf-mark" aria-hidden="true">π</div>
-        <span class="product-label">Отдельный сервис</span>
-        <h2>Пифагор</h2>
-        <p>Продукт для точечных задач продвижения отдельного объявления или профиля.</p>
-        <ul class="pf-list">
-          <li>подключение по ссылке</li>
-          <li>доступ к кабинету Авито не нужен</li>
-          <li>условия и ограничения на странице продукта</li>
-        </ul>
-        <a href="https://pifagor-pf.ru" target="_blank" rel="noopener" class="btn" data-umami-event="home_pifagor_open">Открыть Пифагор</a>
-      </article>
     </div>
   </div>
 </section>
@@ -538,8 +523,8 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
     <div class="about-strip glass reveal">
       <div>
         <span class="kick">Plan B</span>
-        <h2>Одна команда, два формата работы и отдельные продукты</h2>
-        <p>Сначала разбираем задачу и экономику кабинета. Затем предлагаем подходящий контур: разовую настройку, регулярное ведение или самостоятельный продукт. У каждого направления — свои условия, метрики и ответственность.</p>
+        <h2>Одна команда, два формата работы и отдельный ИИ-продукт</h2>
+        <p>Сначала разбираем задачу и экономику кабинета. Затем предлагаем подходящий контур: разовую настройку, регулярное ведение или самостоятельную работу с Сократом. У каждого направления — свои условия, метрики и ответственность.</p>
       </div>
       <a href="/o-kompanii" class="btn btn-g" data-magnet>О компании и подходе</a>
     </div>
@@ -554,7 +539,7 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
       <div class="wcard glass reveal"><div class="ic">₽</div><h4>Два бюджета</h4><p>Работа команды отдельно от расходов внутри Авито</p></div>
       <div class="wcard glass reveal d1"><div class="ic">👥</div><h4>Команда по ролям</h4><p>Авитолог, тексты и дизайн в одном рабочем цикле</p></div>
       <div class="wcard glass reveal d2"><div class="ic">📊</div><h4>Решения по данным</h4><p>План, тесты, расходы, обращения и выполненные работы</p></div>
-      <div class="wcard glass reveal d3"><div class="ic">◎</div><h4>Честные границы</h4><p>Не обещаем место в выдаче или фиксированное число заявок</p></div>
+      <div class="wcard glass reveal d3"><div class="ic">◎</div><h4>Честные границы</h4><p>Не обещаем место в выдаче или фиксированное число Контактов</p></div>
     </div>
   </div>
 </section>
@@ -575,33 +560,14 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
 <!-- CASES -->
 <section class="section" id="cases">
   <div class="wrap">
-    <div class="sec-head reveal"><span class="kick">Кейсы</span><h2>Задачи и результаты проектов</h2><p>Показываем ход работы и скриншоты статистики из кабинета Авито. Цифры относятся к конкретному периоду и проекту и не являются прогнозом для другой ниши.</p></div>
-    <div class="cases-wrap reveal">
-      <div class="cases" id="casesTrack">
-        <figure class="ccard glass" data-case="autosteklo" role="button" tabindex="0" aria-label="Кейс: автостёкла MasterProfi — смотреть статистику"><div class="ccover"><img src="cases/autosteklo-0.jpg" alt="Кейс Авито: автостёкла MasterProfi — рост заявок в 73 раза" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="tnvd" role="button" tabindex="0" aria-label="Кейс: ТНВД-насосы — смотреть статистику"><div class="ccover"><img src="cases/tnvd-0.jpg" alt="Кейс Авито: ТНВД-насосы — доход вырос в 8,5 раза" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="kosmetolog" role="button" tabindex="0" aria-label="Кейс: врач-косметолог — смотреть статистику"><div class="ccover"><img src="cases/kosmetolog-0.jpg" alt="Кейс Авито: врач-косметолог, Нижний Новгород — 110 обращений с нуля" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass shot" data-case="buh" role="button" tabindex="0" aria-label="Кейс: бухгалтерские услуги — смотреть статистику"><div class="ccover"><img src="cases/buh-0.jpg" alt="Кейс Авито: бухгалтерские услуги, вся РФ — 135 контактов в месяц" loading="lazy"></div><div class="cstat-bar">📊 Кейс и статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="andrey" role="button" tabindex="0" aria-label="Кейс: стройуслуги Андрей — смотреть статистику"><div class="ccover"><img src="cases/andrey-0.jpg" alt="Кейс Авито: строительные услуги — заявок в 6 раз больше год к году" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass shot" data-case="volosy" role="button" tabindex="0" aria-label="Кейс: наращивание волос — смотреть статистику"><div class="ccover"><img src="cases/volosy-0.jpg" alt="Кейс Авито: наращивание волос, Москва — 618 просмотров и 332 в избранное за неделю" loading="lazy"></div><div class="cstat-bar">📊 Кейс и статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="doma" role="button" tabindex="0" aria-label="Кейс: дома под ключ — смотреть статистику"><div class="ccover"><img src="cases/doma-0.jpg" alt="Кейс Авито: строительство домов под ключ — 325 заявок за месяц" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass shot" data-case="massage" role="button" tabindex="0" aria-label="Кейс: услуги массажа — смотреть статистику"><div class="ccover"><img src="cases/massage-0.jpg" alt="Кейс Авито: услуги массажа, Москва — 17 обращений" loading="lazy"></div><div class="cstat-bar">📊 Кейс и статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="stroygarant" role="button" tabindex="0" aria-label="Кейс: строительство — с нуля до 539 заявок за 2 месяца, смотреть статистику"><div class="ccover"><img src="cases/stroygarant-0.jpg" alt="Кейс Авито: строительство — просмотры ×4 за 2 месяца, 154 → 539 контактов, цена обращения −59%" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass shot" data-case="metall" role="button" tabindex="0" aria-label="Кейс: металлопрокат — смотреть статистику"><div class="ccover"><img src="cases/metall-0.jpg" alt="Кейс Авито: металлопрокат, Москва — 46 контактов при смене алгоритмов" loading="lazy"></div><div class="cstat-bar">📊 Кейс и статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="woodcoat" role="button" tabindex="0" aria-label="Кейс: WoodCoat Химки — смотреть статистику"><div class="ccover"><img src="cases/woodcoat-0.jpg" alt="Кейс Авито: WoodCoat, Химки — цена заявки вдвое ниже" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="stroymestr" role="button" tabindex="0" aria-label="Кейс: Строймест — смотреть статистику"><div class="ccover"><img src="cases/stroymestr-0.jpg" alt="Кейс Авито: строительство (Строймест) — 245 контактов за 28 дней с нуля" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="reg7" role="button" tabindex="0" aria-label="Кейс: строитель 7 регионов — смотреть статистику"><div class="ccover"><img src="cases/reg7-0.jpg" alt="Кейс Авито: строитель по 7 регионам — 266 заявок за 2 недели" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-        <figure class="ccard glass" data-case="rekord" role="button" tabindex="0" aria-label="Кейс: рекорд 47 заявок за день — смотреть статистику"><div class="ccover"><img src="cases/rekord-0.jpg" alt="Кейс Авито: рекорд — 47 обращений за один день" loading="lazy"></div><div class="cstat-bar">📊 Реальная статистика <span class="arr">→</span></div></figure>
-      </div>
-      <div class="cases-nav">
-        <button class="cnav" id="casesPrev" type="button" aria-label="Предыдущий кейс">‹</button>
-        <span class="cases-hint">Листайте · тап = статистика</span>
-        <button class="cnav" id="casesNext" type="button" aria-label="Следующий кейс">›</button>
-      </div>
-      <div style="text-align:center;margin-top:20px">
-        <a href="/kejsy/" class="btn btn-g" data-magnet>Все 14 кейсов подробно →</a>
-      </div>
+    <div class="sec-head reveal"><span class="kick">Сценарии</span><h2>Как строим работу в разных нишах</h2><p>Клиентские имена, материалы и показатели не публикуем без подтверждённых разрешений и доказательной базы.</p></div>
+    <div class="why">
+      <a class="wcard glass reveal" href="/kejsy/doma-pod-klyuch"><div class="ic">01</div><h4>Строительные услуги</h4><p>Проекты, комплектации, география и условия работы</p></a>
+      <a class="wcard glass reveal d1" href="/kejsy/buhgalterskie-uslugi"><div class="ic">02</div><h4>Бухгалтерские услуги</h4><p>Сегментация направлений и понятный состав услуги</p></a>
+      <a class="wcard glass reveal d2" href="/kejsy/avtostekla"><div class="ic">03</div><h4>Автоуслуги</h4><p>Структура объявлений по услугам, маркам и географии</p></a>
+      <a class="wcard glass reveal d3" href="/kejsy/odin-den-stroitelnogo-proekta"><div class="ic">04</div><h4>Рабочий день проекта</h4><p>Статусы, расходы, обращения и журнал решений</p></a>
     </div>
+    <div class="glass" style="margin-top:18px;padding:18px;color:var(--muted);font-size:14px;line-height:1.65"><strong style="color:var(--text)">Что показывают эти страницы.</strong> Это нейтральные сценарии работ, а не отзывы, клиентские результаты или обещания. Конкретный план формируем после разбора аккаунта и задачи.</div>
   </div>
 </section>
 
@@ -618,19 +584,6 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
   </div>
 </section>
 
-<!-- VIDEO -->
-<section class="section" id="video">
-  <div class="wrap">
-    <div class="sec-head reveal"><span class="kick">Видеоотзывы</span><h2>Клиенты — вживую</h2><p>Реальные отзывы наших клиентов на видео.</p></div>
-    <div class="vids">
-      <div class="vcard glass reveal"><video src="video1.mp4" poster="poster1.jpg" controls preload="none" playsinline></video></div>
-      <div class="vcard glass reveal d1"><video src="video2.mp4" poster="poster2.jpg" controls preload="none" playsinline></video></div>
-      <div class="vcard glass reveal d2"><video src="video3.mp4" poster="poster3.jpg" controls preload="none" playsinline></video></div>
-      <div class="vcard glass reveal d3"><video src="video4.mp4" poster="poster4.jpg" controls preload="none" playsinline></video></div>
-    </div>
-  </div>
-</section>
-
 <!-- CONTACT -->
 <section class="section" id="contact">
   <div class="wrap">
@@ -639,32 +592,32 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
       <p>Напишите или позвоните. Уточним нишу и состояние кабинета, предложим подходящий формат и отдельно обозначим стоимость работ и расходы внутри Авито.</p>
       <div class="chs">
         <a href="tel:+79281446617" class="ch" data-magnet><span class="e">📞</span> +7 928 144-66-17</a>
-        <a href="https://wa.me/79281446617" target="_blank" rel="noopener" class="ch" data-magnet><span class="e">🟢</span> WhatsApp</a>
-        <a href="https://t.me/kislovkosta" target="_blank" rel="noopener" class="ch" data-magnet><span class="e">✈️</span> Telegram</a>
-        <a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener" class="ch" data-magnet><span class="e">🅥</span> ВКонтакте</a>
+        <a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer" class="ch" data-magnet><span class="e">🟢</span> WhatsApp</a>
+        <a href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer" class="ch" data-magnet><span class="e">✈️</span> Telegram</a>
+        <a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener noreferrer" class="ch" data-magnet><span class="e">🅥</span> ВКонтакте</a>
       </div>
 
       <div class="or"><span>или оставьте заявку — перезвоним</span></div>
 
-      <form class="lead" id="leadForm" novalidate>
+      <form class="lead ym-disable-submit" id="leadForm" novalidate>
         <input type="hidden" name="form_id" value="leadForm">
         <input type="hidden" name="pd_consent_version" value="planb-pd-2026-08-30-v1">
         <input type="hidden" name="marketing_consent_version" value="planb-ads-2026-08-30-v1">
-        <input type="hidden" name="privacy_version" value="planb-privacy-2026-08-30-v1">
+        <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-02-v2">
         <div class="lead-row">
-          <input class="fld" type="text" name="name" placeholder="Имя (необязательно)" autocomplete="name">
-          <input class="fld" type="tel" name="phone" placeholder="Телефон" autocomplete="tel" required>
+          <input class="fld ym-disable-keys" type="text" name="name" placeholder="Имя (необязательно)" autocomplete="name">
+          <input class="fld ym-disable-keys" type="tel" name="phone" placeholder="Телефон" autocomplete="tel" required>
         </div>
-        <input class="fld" type="text" name="niche" placeholder="Что продаёте на Авито (необязательно)" autocomplete="off">
+        <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Что продаёте на Авито (необязательно)" autocomplete="off">
         <label class="agree">
           <input type="checkbox" name="pd_consent" required>
-          <span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a></span>
+          <span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span>
         </label>
         <label class="agree agree-optional">
           <input type="checkbox" name="marketing_consent">
-          <span>Хочу получать новости и предложения Plan B. Это необязательно. <a href="/consent-advertising.html" target="_blank" rel="noopener">Условия</a></span>
+          <span>Хочу получать новости и предложения Plan B. Это необязательно. <a href="/consent-advertising.html" target="_blank" rel="noopener noreferrer">Условия</a></span>
         </label>
-        <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener">Политика обработки персональных данных</a>.</p>
+        <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>.</p>
         <button class="btn btn-y lead-btn" type="submit">Оставить заявку</button>
         <div class="lead-msg" id="leadMsg" role="status" aria-live="polite"></div>
       </form>
@@ -672,28 +625,10 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
   </div>
 </section>
 
-<!-- LIGHTBOX кейсов -->
-<div id="lbox" class="lbox" hidden role="dialog" aria-modal="true" aria-label="Кейс">
-  <div class="lbox-bg" data-close></div>
-  <div class="lbox-panel">
-    <button class="lbox-x" type="button" data-close aria-label="Закрыть">✕</button>
-    <div class="lbox-media">
-      <button class="lbox-prev" type="button" aria-label="Предыдущий скриншот">‹</button>
-      <img class="lbox-img" src="" alt="Скриншот статистики Авито">
-      <button class="lbox-next" type="button" aria-label="Следующий скриншот">›</button>
-      <div class="lbox-count"></div>
-    </div>
-    <div class="lbox-info">
-      <h3 class="lbox-title"></h3>
-      <div class="lbox-desc"></div>
-    </div>
-  </div>
-</div>
-
 <!-- FAB -->
 <div class="fab">
-  <a class="wa" href="https://wa.me/79281446617" target="_blank" rel="noopener" data-tip="Написать в WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.97L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.18c-.24.68-1.42 1.31-1.96 1.36-.5.05-1.13.07-1.83-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-2.99s.75-2.12 1.01-2.41c.26-.29.57-.36.76-.36l.55.01c.18.01.42-.07.65.5.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.69-.81.87-1.09.18-.28.36-.23.61-.14.25.09 1.6.76 1.87.9.28.14.46.21.53.33.07.12.07.68-.17 1.36z"/></svg></a>
-  <a class="tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-tip="Написать в Telegram" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.5L2.9 11.84c-1.3.52-1.29 1.25-.24 1.57l4.88 1.52 1.88 5.78c.23.63.11.88.77.88.51 0 .73-.23 1.02-.5l2.46-2.39 5.12 3.78c.94.52 1.62.25 1.85-.87l3.36-15.8c.34-1.38-.52-2-1.5-1.59z"/></svg></a>
+  <a class="wa" href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer" data-tip="Написать в WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.97L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.18c-.24.68-1.42 1.31-1.96 1.36-.5.05-1.13.07-1.83-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-2.99s.75-2.12 1.01-2.41c.26-.29.57-.36.76-.36l.55.01c.18.01.42-.07.65.5.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.69-.81.87-1.09.18-.28.36-.23.61-.14.25.09 1.6.76 1.87.9.28.14.46.21.53.33.07.12.07.68-.17 1.36z"/></svg></a>
+  <a class="tg" href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer" data-tip="Написать в Telegram" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.5L2.9 11.84c-1.3.52-1.29 1.25-.24 1.57l4.88 1.52 1.88 5.78c.23.63.11.88.77.88.51 0 .73-.23 1.02-.5l2.46-2.39 5.12 3.78c.94.52 1.62.25 1.85-.87l3.36-15.8c.34-1.38-.52-2-1.5-1.59z"/></svg></a>
   <a class="ph" href="tel:+79281446617" data-tip="Позвонить +7 928 144-66-17" aria-label="Позвонить"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.18z"/></svg></a>
 </div>
 
@@ -701,13 +636,13 @@ footer img{height:26px;opacity:.85;margin-bottom:14px}
   <div class="wrap">
     <img src="logo-planb.png" alt="Plan B">
     <div class="socs">
-      <a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener" class="soc vk"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.79 16.95h.98s.3-.03.45-.2c.14-.15.13-.43.13-.43s-.02-1.32.59-1.51c.6-.19 1.38 1.27 2.2 1.83.62.43 1.09.33 1.09.33l2.19-.03s1.15-.07.6-.97c-.04-.07-.32-.67-1.65-1.9-1.39-1.29-1.2-1.08.47-3.31 1.02-1.36 1.43-2.19 1.3-2.54-.12-.34-.86-.25-.86-.25l-2.46.02s-.18-.03-.32.05c-.13.08-.22.27-.22.27s-.39 1.06-.92 1.96c-1.11 1.9-1.55 2-1.74 1.89-.42-.27-.31-1.1-.31-1.69 0-1.83.28-2.6-.54-2.8-.27-.06-.47-.11-1.17-.12-.9-.01-1.65 0-2.08.21-.29.15-.51.47-.38.49.17.02.55.1.75.37.26.35.25 1.14.25 1.14s.15 2.19-.35 2.46c-.34.19-.81-.19-1.8-1.92-.51-.88-.89-1.86-.89-1.86s-.07-.18-.21-.27c-.16-.12-.39-.15-.39-.15l-2.34.02s-.35.01-.48.16c-.11.14-.01.42-.01.42s1.83 4.29 3.91 6.45c1.9 1.98 4.06 1.85 4.06 1.85z"/></svg> ВКонтакте</a>
-      <a href="https://www.instagram.com/avitolog_planb_prodvizenie/" target="_blank" rel="noopener" class="soc ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg> Instagram</a>
-      <a href="https://t.me/planB_prodvizhenie" target="_blank" rel="noopener" class="soc tg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.5L2.9 11.84c-1.3.52-1.29 1.25-.24 1.57l4.88 1.52 1.88 5.78c.23.63.11.88.77.88.51 0 .73-.23 1.02-.5l2.46-2.39 5.12 3.78c.94.52 1.62.25 1.85-.87l3.36-15.8c.34-1.38-.52-2-1.5-1.59z"/></svg> Telegram</a>
+      <a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener noreferrer" class="soc vk"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.79 16.95h.98s.3-.03.45-.2c.14-.15.13-.43.13-.43s-.02-1.32.59-1.51c.6-.19 1.38 1.27 2.2 1.83.62.43 1.09.33 1.09.33l2.19-.03s1.15-.07.6-.97c-.04-.07-.32-.67-1.65-1.9-1.39-1.29-1.2-1.08.47-3.31 1.02-1.36 1.43-2.19 1.3-2.54-.12-.34-.86-.25-.86-.25l-2.46.02s-.18-.03-.32.05c-.13.08-.22.27-.22.27s-.39 1.06-.92 1.96c-1.11 1.9-1.55 2-1.74 1.89-.42-.27-.31-1.1-.31-1.69 0-1.83.28-2.6-.54-2.8-.27-.06-.47-.11-1.17-.12-.9-.01-1.65 0-2.08.21-.29.15-.51.47-.38.49.17.02.55.1.75.37.26.35.25 1.14.25 1.14s.15 2.19-.35 2.46c-.34.19-.81-.19-1.8-1.92-.51-.88-.89-1.86-.89-1.86s-.07-.18-.21-.27c-.16-.12-.39-.15-.39-.15l-2.34.02s-.35.01-.48.16c-.11.14-.01.42-.01.42s1.83 4.29 3.91 6.45c1.9 1.98 4.06 1.85 4.06 1.85z"/></svg> ВКонтакте</a>
+      <a href="https://www.instagram.com/avitolog_planb_prodvizenie/" target="_blank" rel="noopener noreferrer" class="soc ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg> Instagram</a>
+      <a href="https://t.me/planB_prodvizhenie" target="_blank" rel="noopener noreferrer" class="soc tg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.5L2.9 11.84c-1.3.52-1.29 1.25-.24 1.57l4.88 1.52 1.88 5.78c.23.63.11.88.77.88.51 0 .73-.23 1.02-.5l2.46-2.39 5.12 3.78c.94.52 1.62.25 1.85-.87l3.36-15.8c.34-1.38-.52-2-1.5-1.59z"/></svg> Telegram</a>
     </div>
     <div class="fc" style="margin-bottom:8px"><a href="/uslugi/vedenie-avito" style="color:var(--muted)">Ведение Авито</a> &nbsp;·&nbsp; <a href="/uslugi/razovaya-nastroyka-avito" style="color:var(--muted)">Разовая настройка</a> &nbsp;·&nbsp; <a href="/o-kompanii" style="color:var(--muted)">О Plan B</a> &nbsp;·&nbsp; <a href="/kejsy/" style="color:var(--muted)">Кейсы</a> &nbsp;·&nbsp; <a href="/blog/" style="color:var(--muted)">Блог</a></div>
-    <div class="fc" style="margin-bottom:8px"><a href="/sokrat" style="color:var(--muted)">Сократ</a> &nbsp;·&nbsp; <a href="https://pifagor-pf.ru" target="_blank" rel="noopener" style="color:var(--muted)">Пифагор</a></div>
-    <div class="fc" style="margin-bottom:10px"><a href="/oferta.html" style="color:var(--muted)">Договор оферты</a> &nbsp;·&nbsp; <a href="/privacy.html" style="color:var(--muted)">Политика обработки ПД</a> &nbsp;·&nbsp; <a href="/consent-personal-data.html" style="color:var(--muted)">Согласие на обработку ПД</a> &nbsp;·&nbsp; <a href="/consent-advertising.html" style="color:var(--muted)">Согласие на рекламу</a></div>
+    <div class="fc" style="margin-bottom:8px"><a href="/sokrat" style="color:var(--muted)">Сократ</a></div>
+    <div class="fc" style="margin-bottom:10px"><a href="/oferta.html" style="color:var(--muted)">Договор оферты</a> &nbsp;·&nbsp; <a href="/rekvizity.html">Реквизиты</a> · <a href="/privacy.html" style="color:var(--muted)">Политика обработки ПД</a> &nbsp;·&nbsp; <a href="/consent-personal-data.html" style="color:var(--muted)">Согласие на обработку ПД</a> &nbsp;·&nbsp; <a href="/consent-advertising.html" style="color:var(--muted)">Согласие на рекламу</a></div>
     <div class="fc">© 2026 <b style="color:var(--yellow)">Plan B</b> · ИП Кислов Константин Павлович · ИНН 610702818209 · ОГРНИП 325619600071134 · <a href="mailto:kislovkosta@yandex.ru" style="color:var(--muted)">kislovkosta@yandex.ru</a></div>
   </div>
 </footer>
@@ -727,7 +662,7 @@ if(!RM){
     b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.2}px,${(e.clientY-r.top-r.height/2)*.3}px)`;});
     b.addEventListener('mouseleave',()=>b.style.transform='');});
 }
-/* hero — 4 chips orbit the planet on one simple tilted ring, passing in front / behind */
+/* hero — chips orbit the planet on one simple tilted ring, passing in front / behind */
 (function(){
   const sys=document.getElementById('orbit'); if(!sys) return;
   const chips=[...sys.querySelectorAll('.ochip')];
@@ -770,7 +705,6 @@ if(!RM){
       e.preventDefault();
       f.scrollIntoView({block:'center',behavior:'instant'});
       f.phone.focus();
-      if(window.umami)umami.track('quick_focus');
     });
   });
 
@@ -793,11 +727,6 @@ if(!RM){
     e.preventDefault();
     f.phone.focus();
     msg.className='lead-msg'; msg.textContent='Введите номер — мы перезвоним';
-    if(window.umami)umami.track('quick_empty_tap');
-  });
-
-  document.querySelectorAll('.quick-alt a').forEach(a=>{
-    a.addEventListener('click',()=>{ if(window.umami)umami.track('alt_contact',{via:a.dataset.alt}); });
   });
 
   f.addEventListener('submit',async e=>{
@@ -805,14 +734,12 @@ if(!RM){
     if(!valid()){
       f.phone.focus();
       msg.className='lead-msg'; msg.textContent='Введите номер — мы перезвоним';
-      if(window.umami)umami.track('form_error',{missing:'phone',where:'quick'});
       return;
     }
     if(!f.pd_consent.checked){
       f.querySelector('.agree').classList.add('err');
       msg.className='lead-msg bad'; msg.textContent='Отметьте галочку согласия — она прямо над кнопкой';
       f.pd_consent.focus({preventScroll:true});   /* ведём к галочке, а не просто ругаемся */
-      if(window.umami)umami.track('form_error',{missing:'pd_consent',where:'quick'});
       return;
     }
     btn.disabled=true; msg.className='lead-msg'; msg.textContent='Отправляю…';
@@ -831,7 +758,6 @@ if(!RM){
       f.reset(); f.querySelector('.agree').classList.remove('err'); sync();
       msg.className='lead-msg ok'; msg.textContent='Заявка принята! Перезвоним в ближайшее время.';
       if(window.ym) ym(110884885,'reachGoal','LEAD_FORM',{product:'planb_agency',route:'agency_hub',landing_variant:'home_agency_v1'});
-      if(window.umami) umami.track('lead_submit',{where:'quick',product:'planb_agency',route:'agency_hub'});
     }catch(err){
       msg.className='lead-msg bad';
       msg.innerHTML='Не отправилось. Позвоните: <a href="tel:+79281446617" style="color:var(--yellow)">+7 928 144-66-17</a>';
@@ -859,7 +785,6 @@ if(!RM){
       /* сначала фокус (открывает клавиатуру), потом мгновенный доскролл — smooth сбивал фокус */
       try{firstErr.focus({preventScroll:true})}catch(_){}
       firstErr.scrollIntoView({block:'center',behavior:'instant'});
-      if(window.umami)umami.track('form_error',{missing:!phoneOk?'phone':'pd_consent'});
       return;
     }
     btn.disabled=true; msg.className='lead-msg'; msg.textContent='Отправляю…';
@@ -876,46 +801,11 @@ if(!RM){
       f.reset();
       msg.className='lead-msg ok'; msg.textContent='Заявка отправлена! Перезвоним в ближайшее время.';
       if(window.ym) ym(110884885,'reachGoal','LEAD_FORM',{product:'planb_agency',route:'agency_hub',landing_variant:'home_agency_v1'});
-      if(window.umami) umami.track('lead_submit',{where:'contact',product:'planb_agency',route:'agency_hub'});
     }catch(err){
       msg.className='lead-msg bad';
       msg.innerHTML='Не отправилось. Позвоните: <a href="tel:+79281446617" style="color:var(--yellow)">+7 928 144-66-17</a> или <a href="https://wa.me/79281446617" style="color:var(--yellow)">напишите в WhatsApp</a>';
     }finally{btn.disabled=false}
   });
-})();
-/* cases — лайтбокс: тап по кейсу → реальные скрины статистики (было→стало) */
-(function(){
-  const CASES={
-    autosteklo:{title:'Автостёкла MasterProfi — заявки ×73',shots:['autosteklo-1.jpg','autosteklo-2.jpg'],desc:'<b>Устранение сколов и полировка автостёкол.</b> Полгода клиент вёл аккаунт сам — 11 объявлений, 68 контактов по 593 ₽. Что сделали: собрали 17 продающих объявлений с нуля (тексты, ключевые слова, инфографика по 3 услугам), прокачали аккаунт через Пифагор, анализ конкурентов, платное продвижение, вывели в топ. <b>Результат (дек 2025 → июнь 2026):</b> просмотры 326 → 13 893, контакты 68 → 5 010 (×73), обращение 593 → 51 ₽ — дешевле в 11,7 раза.<span class="did">Авитолог проекта — Екатерина Погорелова</span>'},
-    tnvd:{title:'ТНВД-насосы, вся Россия — доход ×8,5',shots:['tnvd-1.jpg','tnvd-2.jpg'],desc:'<b>Продажа ТНВД-насосов по всей России.</b> Ведём аккаунт с декабря 2025. Что делаем: регулярно перепубликуем объявления, анализ конкурентов, платное продвижение, удерживаем топ. <b>Результат (месяц до старта → последний месяц):</b> просмотры 1 581 → 7 021 (×4,4), контакты 68 → 222 (×3,3), доход в кабинете 67 275 → 574 275 ₽/мес (×8,5). И это только то, что видно в кабинете — реальных продаж в разы больше.<span class="did">Авитолог проекта — Карина Зинченко</span>'},
-    kosmetolog:{title:'Врач-косметолог, Н. Новгород — 110 обращений с нуля',shots:['kosmetolog-1.jpg'],desc:'<b>Кабинет врача-косметолога, заход с нуля</b> — аккаунт был пустой, ноль объявлений. Что сделали: запустили аккаунт, собрали и оформили объявления, анализ конкурентов, платное продвижение, вывели в топ. <b>Результат за 3 недели:</b> 3 120 просмотров, 110 обращений, 552 в избранное, обращение 131 ₽. Клиент подтвердил — заявки живые.<span class="did">Авитолог проекта — Карина Зинченко</span>'},
-    andrey:{title:'Строительные услуги (Андрей) — заявок ×6 год к году',shots:['andrey-1.jpg','andrey-2.jpg'],desc:'<b>Строительные услуги.</b> Сравниваем май прошлого года и май этого. Что сделали: нарастили базу с 81 до 854 объявлений (+640 новых), анализ конкурентов, платное продвижение, топ. <b>Результат:</b> просмотры 2 899 (+170%), контакты 78 → 480 (+515%), обращение 1 039 → 524 ₽ — вдвое дешевле. Тот же бизнес и ниша — другая система ведения.<span class="did">Авитолог проекта — Екатерина Погорелова</span>'},
-    doma:{title:'Дома под ключ — 325 заявок за месяц',shots:['doma-1.jpg'],desc:'<b>Строительство домов под ключ</b> — одна из самых конкурентных ниш на Авито. Что сделали: опубликовали 67 новых объявлений по направлениям и городам, анализ конкурентов, платное продвижение на каждое, вывели в топ. <b>Результат за месяц:</b> 23 109 просмотров, 325 контактов, 1 650 сохранений, цена лида ~210 ₽. 1 650 сохранений — это люди, которые возвращаются сравнивать подрядчиков.<span class="did">Авитолог проекта — Надежда Чернейкина</span>'},
-    stroygarant:{title:'Строительство — с нуля до 539 заявок за 2 месяца',shots:['stroygarant-1.jpg','stroygarant-2.jpg'],desc:'<b>Строительные услуги, запуск с нуля.</b> Месяц 1: собрали 149 объявлений в одном регионе и месяц искали рабочую связку — 1 025 просмотров, 154 контакта по 382 ₽. Месяц 2: масштабировали найденное — география с 1 до 4 регионов, база до 593 объявлений. <b>Результат:</b> просмотры ×4 (4 370), контакты 154 → 539 (+250%), избранное 73 → 516 (+607%), обращение 382 → 155 ₽ (−59%) — и это при росте расходов всего на 42%.<span class="did">Авитолог проекта — Екатерина Кутузова</span>'},
-    woodcoat:{title:'WoodCoat, Химки — цена заявки вдвое ниже',shots:['woodcoat-1.jpg','woodcoat-2.jpg'],desc:'<b>WoodCoat, Химки.</b> Пришёл с проблемой: дорого и почти без контактов — 13 обращений по 1 136 ₽. Что сделали: разместили 1 700+ объявлений по Москве и МО (заняли 80%+ выдачи), анализ конкурентов, точечное продвижение, вывели в топ. <b>Результат:</b> просмотры 1 776 (+285%), контакты 54 (+315%), обращение 595 ₽ — вдвое дешевле.<span class="did">Авитолог проекта — Екатерина Погорелова</span>'},
-    reg7:{title:'Строитель, 7 регионов — 266 заявок за 2 недели',shots:['reg7-1.jpg'],desc:'<b>Строительные услуги сразу по 7 областям.</b> Объявления висели без толку. Что сделали: подняли активную базу до 732 объявлений по 7 регионам, анализ конкурентов, продвижение на ключевые позиции, топ. <b>Результат за 2 недели:</b> просмотры 1 631 (+206%), контакты 266 (+156%), избранное +262%, обращение 433 ₽.<span class="did">Авитолог проекта — Екатерина Кутузова</span>'},
-    rekord:{title:'Строительство — рекорд: 47 заявок за день',shots:['rekord-1.jpg'],desc:'<b>Строительство.</b> Рекорд месяца — 47 обращений с одного кабинета Авито за ОДИН день (16 июня). Воронка дня: 510 просмотров, 76 в избранном, 47 контактов — конверсия просмотр → контакт 9,2%. Никаких накруток, только ежедневное ведение.<span class="did">Авитолог проекта — Екатерина Кутузова</span>'},
-    buh:{title:'Бухгалтерские услуги, РФ — 135 контактов/мес',shots:['buh-1.jpg','buh-0.jpg'],desc:'<b>Бухгалтерские услуги, вся Россия.</b> Ранее клиент работал с другим авитологом — мало лидов и высокая цена контакта. Что сделали: оформление аккаунта, продающие объявления, регулярная публикация, продвижение. <b>Стало:</b> 1 175 просмотров, 135 контактов (+14%). На скринах: первый — было (у прошлого авитолога), второй — стало.'},
-    volosy:{title:'Наращивание волос, Москва — кратный рост охватов',shots:['volosy-0.jpg','volosy-1.jpg'],desc:'<b>Капсульное наращивание волос, Москва.</b> Ниша сверхконкурентная — в топ за адекватные деньги не пробиться. Что сделали: подключили двойной поведенческий фактор (40 ПФ в сутки) + продвижение от Авито. <b>Результат:</b> 618 просмотров за неделю и 332 добавления в избранное — охваты впечатляют.'},
-    massage:{title:'Массаж, Москва — 17 обращений',shots:['massage-0.jpg','massage-1.jpg'],desc:'<b>Услуги массажа, Москва.</b> Бороться за топ с оплатой за просмотры невозможно — конкуренция бешеная. Что сделали: улучшение вовлечённости (4 000 ₽/мес) + продвижение от Авито (350 ₽/день). <b>Результат:</b> стабильно за сотню просмотров (наших ~20 в день) и 17 обращений.'},
-    metall:{title:'Металлопрокат, Москва и МО — стабильный поток',shots:['metall-1.jpg','metall-0.jpg'],desc:'<b>Продажа стали и металлопроката, Москва и МО.</b> Сотрудничаем более полугода. После смены алгоритмов Авито (привязка к адресам) кардинально сменили стратегию: регулярная публикация по закреплённому адресу, настройка географии публикации и продвижения. <b>Результат:</b> 680 просмотров, 46 контактов, 266 активных объявлений.'},
-    stroymestr:{title:'Строительство (Строймест) — 245 контактов с нуля',shots:['stroymestr-0.jpg','stroymestr-1.jpg'],desc:'<b>Строительство.</b> За 28 дней аккаунт ожил с нуля. Что сделали: опубликовали 717 объявлений (было 0), продвижение, вывели в топ. <b>Результат:</b> просмотры +20 137% (1 619), 245 контактов (142 написали в чат, 94 посмотрели телефон), 194 в избранном, контакт 244 ₽. Для строительной ниши — отлично.'}
-  };
-  const lb=document.getElementById('lbox'); const track=document.getElementById('casesTrack'); if(!lb||!track) return;
-  const img=lb.querySelector('.lbox-img'),titleEl=lb.querySelector('.lbox-title'),descEl=lb.querySelector('.lbox-desc'),cnt=lb.querySelector('.lbox-count'),bprev=lb.querySelector('.lbox-prev'),bnext=lb.querySelector('.lbox-next');
-  let cur=null,i=0;
-  function render(){const s=cur.shots;img.src='cases/'+s[i];img.alt=cur.title+' — скриншот '+(i+1);titleEl.textContent=cur.title;descEl.innerHTML=cur.desc;const multi=s.length>1;cnt.textContent=multi?(i+1)+' / '+s.length:'';const info=lb.querySelector('.lbox-info');if(info)info.scrollTop=0;bprev.style.display=bnext.style.display=multi?'':'none';}
-  function open(k){cur=CASES[k];if(!cur)return;i=0;render();lb.hidden=false;document.body.style.overflow='hidden';}
-  function close(){lb.hidden=true;img.removeAttribute('src');document.body.style.overflow='';}
-  function go(d){const n=cur.shots.length;i=(i+d+n)%n;render();}
-  track.addEventListener('click',e=>{const c=e.target.closest('.ccard[data-case]');if(c)open(c.dataset.case);});
-  track.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const c=e.target.closest('.ccard[data-case]');if(c){e.preventDefault();open(c.dataset.case);}}});
-  bprev.addEventListener('click',()=>go(-1));bnext.addEventListener('click',()=>go(1));
-  lb.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',close));
-  addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape')close();else if(e.key==='ArrowLeft')go(-1);else if(e.key==='ArrowRight')go(1);});
-  let sx=null;
-  img.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
-  img.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(cur.shots.length>1&&Math.abs(dx)>40)go(dx<0?1:-1);sx=null;},{passive:true});
 })();
 /* мобильная липкая CTA: показать после первого экрана, спрятать у формы */
 function initMcta(){
@@ -945,8 +835,8 @@ function initMcta(){
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',initMcta):initMcta();
 </script>
 <div class="mcta" id="mcta" aria-hidden="true">
-  <a class="mcta-call" href="tel:+79281446617" data-umami-event="mcta_call">📞 Позвонить</a>
-  <a class="mcta-lead" href="#contact" data-umami-event="mcta_lead">Оставить заявку</a>
+  <a class="mcta-call" href="tel:+79281446617">📞 Позвонить</a>
+  <a class="mcta-lead" href="#contact">Оставить заявку</a>
 </div>
 </body>
 </html>

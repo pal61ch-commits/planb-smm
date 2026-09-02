@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Разовая настройка Авито для бизнеса от 10 000 ₽ | Plan B</title>
 <meta name="description" content="Разовая настройка аккаунта Авито для бизнеса: аудит, структура, тексты, визуалы и согласованный план передачи. Стоимость от 10 000 ₽, объём и срок — после аудита.">
 <link rel="canonical" href="https://planb-prodvizhenie.ru/uslugi/razovaya-nastroyka-avito">
@@ -83,7 +84,7 @@
         },
         {
           "@type":"Question",
-          "name":"Гарантирует ли настройка заявки или место в выдаче?",
+          "name":"Можно ли заранее обещать число Контактов или место в выдаче?",
           "acceptedAnswer":{"@type":"Answer","text":"Нет. Plan B отвечает за согласованный комплект работ, материалов и настроек, но спрос, позиции и количество обращений зависят от рынка, конкуренции, бюджета и алгоритмов площадки."}
         },
         {
@@ -97,9 +98,6 @@
 }
 </script>
 <script src="/assets/analytics-consent.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/page.css">
 <style>
   .wrap{max-width:1180px}.setup-page{position:relative;z-index:2}
@@ -152,30 +150,30 @@
         <h1>Разовая настройка <span class="yel">аккаунта Авито для бизнеса</span></h1>
         <p class="lead">Разберём задачу, согласуем объём и подготовим комплект материалов и настроек, с которым ваша команда сможет работать дальше самостоятельно.</p>
         <div class="hero-actions">
-          <a class="btn btn-y" href="#audit" data-umami-event="setup_hero_audit">Обсудить настройку</a>
+          <a class="btn btn-y" href="#audit">Обсудить настройку</a>
           <span class="micro">От 10 000 ₽. Точные состав, стоимость и срок фиксируем после аудита.</span>
         </div>
         <div class="hero-points" aria-label="Принципы услуги">
           <span>Фиксируем состав до старта</span>
           <span>Передаём материалы и план</span>
-          <span>Без обещаний заявок и «топа»</span>
+          <span>Без обещаний числа Контактов и «топа»</span>
         </div>
       </div>
       <aside class="hero-panel glass" id="audit" aria-label="Форма заявки на разовую настройку">
         <div class="panel-title">Проверим задачу до расчёта</div>
         <p class="panel-copy">Укажите телефон и кратко опишите нишу или пришлите ссылку на профиль. После разбора предложим состав проекта или честно скажем, если лучше выбрать другой формат.</p>
         <div class="panel-price"><span>Разовая работа от 10 000 ₽</span><span>Россия</span></div>
-        <form class="leadform" id="setupLead" novalidate>
+        <form class="leadform ym-disable-submit" id="setupLead" novalidate>
           <input type="hidden" name="name" value="Заявка на разовую настройку Авито">
           <input type="hidden" name="form_id" value="serviceLead">
           <input type="hidden" name="pd_consent_version" value="planb-pd-2026-08-30-v1">
           <input type="hidden" name="marketing_consent_version" value="planb-ads-2026-08-30-v1">
-          <input type="hidden" name="privacy_version" value="planb-privacy-2026-08-30-v1">
-          <input class="fld" id="setupLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="setupLeadMsg" required>
-          <input class="fld" type="text" name="niche" placeholder="Ниша или ссылка на профиль — необязательно" autocomplete="off">
-          <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a></span></label>
-          <label class="agree agree-optional"><input type="checkbox" name="marketing_consent"><span>Хочу получать новости и предложения Plan B. Это необязательно. <a href="/consent-advertising.html" target="_blank" rel="noopener">Условия</a></span></label>
-          <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener">Политика обработки персональных данных</a>.</p>
+          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-02-v2">
+          <input class="fld ym-disable-keys" id="setupLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="setupLeadMsg" required>
+          <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ниша или ссылка на профиль — необязательно" autocomplete="off">
+          <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
+          <label class="agree agree-optional"><input type="checkbox" name="marketing_consent"><span>Хочу получать новости и предложения Plan B. Это необязательно. <a href="/consent-advertising.html" target="_blank" rel="noopener noreferrer">Условия</a></span></label>
+          <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>.</p>
           <button class="btn btn-y" type="submit">Получить расчёт проекта</button>
           <div class="lead-msg" id="setupLeadMsg" role="status" aria-live="polite"></div>
         </form>
@@ -276,18 +274,18 @@
         <ul class="boundary">
           <li>бюджет на платное продвижение внутри Авито не входит в стоимость работ</li>
           <li>дополнительные задачи согласуются до выполнения</li>
-          <li>позиции, число заявок и продажи не гарантируются</li>
+          <li>место в выдаче, число Контактов и коммерческий результат заранее не обещаются</li>
         </ul>
       </div>
       <div>
         <span class="eyebrow">Что получите</span>
         <h3 style="font-size:25px;margin:10px 0 12px">Проверяемый результат проекта</h3>
-        <p>Результат — не обещание будущих заявок, а согласованный комплект материалов и настроек, перечень выполненного и план передачи для дальнейшей работы.</p>
-        <a class="btn btn-y" href="#audit" data-umami-event="setup_price_audit" style="margin-top:20px">Обсудить состав и стоимость</a>
+        <p>Результат проекта — согласованный комплект материалов и настроек, перечень выполненного и план передачи для дальнейшей работы. Будущие Контакты и сделки зависят также от спроса, предложения и обработки обращений.</p>
+        <a class="btn btn-y" href="#audit" style="margin-top:20px">Обсудить состав и стоимость</a>
         <div class="contact-row" aria-label="Прямая связь">
           <a href="tel:+79281446617" data-contact="phone">Позвонить</a>
-          <a href="https://t.me/kislovkosta" target="_blank" rel="noopener" data-contact="telegram">Telegram</a>
-          <a href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20разовую%20настройку%20аккаунта%20Авито." target="_blank" rel="noopener" data-contact="whatsapp">WhatsApp</a>
+          <a href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer" data-contact="telegram">Telegram</a>
+          <a href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20разовую%20настройку%20аккаунта%20Авито." target="_blank" rel="noopener noreferrer" data-contact="whatsapp">WhatsApp</a>
         </div>
       </div>
     </div>
@@ -299,7 +297,7 @@
       <details><summary>Что именно входит в разовую настройку?</summary><p>Состав определяем после аудита. В проект могут войти структура аккаунта, тексты, визуалы, рекомендации по размещению и продвижению, а также план передачи. До старта фиксируем конкретный перечень работ.</p></details>
       <details><summary>Сколько стоит работа и сколько занимает времени?</summary><p>Стоимость начинается от 10 000 ₽. Точные сумма, объём и срок зависят от ниши, географии, количества направлений и состояния аккаунта — называем их после аудита.</p></details>
       <details><summary>Кто работает с аккаунтом после передачи?</summary><p>При разовой настройке дальнейшая регулярная работа остаётся у вашей команды. Если нужен постоянный контроль публикаций, расходов и тестов, лучше рассмотреть <a href="/uslugi/vedenie-avito" style="color:var(--yellow)">ведение аккаунта</a>.</p></details>
-      <details><summary>Можно ли гарантировать заявки или место в выдаче?</summary><p>Нет. Мы отвечаем за согласованный объём работ, материалы, настройки и передачу. Спрос, позиции и количество обращений зависят от рынка, конкуренции, бюджета и алгоритмов площадки.</p></details>
+      <details><summary>Можно ли заранее обещать число Контактов или место в выдаче?</summary><p>Нет. Plan B отвечает за согласованный объём работ, материалы, настройки и передачу. Спрос, позиции и количество обращений зависят также от рынка, конкуренции, бюджета и алгоритмов площадки.</p></details>
     </div>
   </section>
 
@@ -320,7 +318,7 @@
   <div class="wrap">
     <img src="/logo-planb.png" alt="Plan B">
     <div class="fc"><a href="/">Главная</a> · <a href="/uslugi/vedenie-avito">Ведение</a> · <a href="/kejsy/">Кейсы</a> · <a href="/blog/">Блог</a> · <a href="/o-kompanii">О компании</a></div>
-    <div class="fc"><a href="/oferta.html">Оферта</a> · <a href="/privacy.html">Политика обработки ПД</a> · <a href="/consent-personal-data.html">Согласие на обработку ПД</a> · <a href="/consent-advertising.html">Согласие на рекламу</a></div>
+    <div class="fc"><a href="/oferta.html">Оферта</a> · <a href="/rekvizity.html">Реквизиты</a> · <a href="/privacy.html">Политика обработки ПД</a> · <a href="/consent-personal-data.html">Согласие на обработку ПД</a> · <a href="/consent-advertising.html">Согласие на рекламу</a></div>
     <div class="fc">© 2026 Plan B · ИП Кислов Константин Павлович · ИНН 610702818209 · ОГРНИП 325619600071134 · <a href="mailto:kislovkosta@yandex.ru">kislovkosta@yandex.ru</a></div>
   </div>
 </footer>
@@ -387,7 +385,6 @@
       msg.className='lead-msg ok';
       msg.textContent='Заявка принята. Свяжемся с вами, чтобы уточнить задачу.';
       if(window.ym)ym(110884885,'reachGoal','LEAD_FORM',{product:'planb_setup',route:'razovaya_nastroyka',landing_variant:'service_setup_v1'});
-      if(window.umami)umami.track('lead_submit',{where:'service_setup_avito',product:'planb_setup',route:'razovaya_nastroyka'});
     }catch(_){
       msg.className='lead-msg bad';
       msg.innerHTML='Не отправилось. Напишите в <a href="https://t.me/kislovkosta">Telegram</a>.';
@@ -404,7 +401,6 @@
   if(form)form.addEventListener('focusin',function(){
     if(started)return;
     started=true;
-    if(window.umami)umami.track('form_started',{where:'service_setup_avito',product:'planb_setup'});
   });
   document.querySelectorAll('a[href="#audit"]').forEach(function(link){
     link.addEventListener('click',function(){
@@ -428,7 +424,6 @@
         yclid:params.get('yclid')||''
       };
       if(window.ym&&goalByContact[channel])ym(110884885,'reachGoal',goalByContact[channel],payload);
-      if(window.umami)umami.track('contact_click',{where:'service_setup_avito',channel,product:'planb_setup'});
     });
   });
 })();

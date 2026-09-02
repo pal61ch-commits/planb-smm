@@ -754,7 +754,7 @@ if(!RM){
 })();
 /* быстрая заявка в первом экране — телефон и всё */
 (function(){
-  const LEAD_ENDPOINT='https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg';
+  const LEAD_ENDPOINT='https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg?tag=stable';
   const f=document.getElementById('quickForm');
   if(!f) return;
   const msg=document.getElementById('quickMsg'), btn=document.getElementById('quickBtn');
@@ -841,7 +841,7 @@ if(!RM){
 
 /* форма заявки → YC-функция (РФ) + цель в Метрику */
 (function(){
-  const LEAD_ENDPOINT='https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg';
+  const LEAD_ENDPOINT='https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg?tag=stable';
   const f=document.getElementById('leadForm'); if(!f) return;
   const msg=document.getElementById('leadMsg'), btn=f.querySelector('.lead-btn');
   const digits=s=>(s||'').replace(/\D/g,'');

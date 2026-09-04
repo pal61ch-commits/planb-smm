@@ -4,8 +4,8 @@
   const STORAGE_KEY='planb_analytics_consent_v2';
   const LEGACY_KEY='planb_analytics_consent_v1';
   const CONSENT_VERSION='planb-analytics-2026-09-02-v2';
-  const PRIVACY_VERSION='planb-privacy-2026-09-02-v2';
-  const PRIVACY_SHA256='d1e75b5c22ceacf4591661e4d1466e575e7619d23d6d387a8ec8951fc1631c75';
+  const PRIVACY_VERSION='planb-privacy-2026-09-04-v3';
+  const PRIVACY_SHA256='5cf6b80085eab30dc1d0a3f0c3dbafbf530ad271e5e1d33250c1a0e25b5508c8';
   const NOTICE_SHA256='c8445b179e648ea1867d3f1ac00aac22d8266c0f14839b620f6648b0ca25e275';
   const TTL_MS=180*24*60*60*1000;
   const METRIKA_ID=110884885;

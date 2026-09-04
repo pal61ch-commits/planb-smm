@@ -120,7 +120,7 @@
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.step{border-radius:18px;padding:23px}.step b{font:800 30px 'Manrope';color:var(--yellow)}.step h3{font-size:17px;margin:10px 0 7px}.step p{font-size:13.5px;color:var(--muted)}
   .pricebox{display:grid;grid-template-columns:.92fr 1.08fr;gap:38px;align-items:start;padding:38px;border-radius:26px;background:linear-gradient(120deg,rgba(245,196,0,.13),var(--glass));border:1px solid var(--gb2)}
   .pricebox h2{font-size:clamp(30px,4vw,44px)}.pricebig{font:800 clamp(42px,6vw,68px)/1 'Manrope';color:var(--yellow);margin:16px 0}.pricebox p{color:var(--muted)}.boundary{list-style:none;display:grid;gap:10px;margin-top:22px}.boundary li{position:relative;padding-left:23px;color:#d9d9d3;font-size:14px}.boundary li:before{content:"—";position:absolute;left:0;color:var(--yellow);font-weight:900}
-  .leadform{display:grid;gap:11px}.fld{width:100%;padding:14px 15px;border-radius:12px;border:1px solid var(--gb);background:rgba(8,8,10,.7);color:var(--text);font:500 16px 'Inter'}.fld:focus{outline:0;border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,196,0,.13)}.fld[aria-invalid="true"]{border-color:#ff8a7d;box-shadow:0 0 0 3px rgba(255,138,125,.11)}.agree{display:flex;gap:10px;align-items:flex-start;color:#aaa9a4;font-size:12px;line-height:1.45}.agree input{margin-top:3px}.agree a,.privacy-note a{color:var(--yellow);text-decoration:underline}.agree-optional{margin-top:-3px}.privacy-note{margin:-4px 0 0;color:#8f8e89;font-size:11.5px;line-height:1.45}.lead-msg{min-height:21px;font-size:13px}.lead-msg.ok{color:var(--green)}.lead-msg.bad{color:#ff8a7d}.lead-msg a{color:var(--yellow);text-decoration:underline}.btn:disabled{opacity:.65;cursor:wait;transform:none}
+  .leadform{display:grid;gap:11px}.fld{width:100%;padding:14px 15px;border-radius:12px;border:1px solid var(--gb);background:rgba(8,8,10,.7);color:var(--text);font:500 16px 'Inter'}.fld:focus{outline:0;border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,196,0,.13)}.fld[aria-invalid="true"]{border-color:#ff8a7d;box-shadow:0 0 0 3px rgba(255,138,125,.11)}.agree{display:flex;gap:10px;align-items:flex-start;color:#aaa9a4;font-size:12px;line-height:1.45}.agree input{margin-top:3px}.agree a,.privacy-note a{color:var(--yellow);text-decoration:underline}.privacy-note{margin:-4px 0 0;color:#8f8e89;font-size:11.5px;line-height:1.45}.lead-msg{min-height:21px;font-size:13px}.lead-msg.ok{color:var(--green)}.lead-msg.bad{color:#ff8a7d}.lead-msg a{color:var(--yellow);text-decoration:underline}.btn:disabled{opacity:.65;cursor:wait;transform:none}
   .faq{max-width:900px}.faq details{border-bottom:1px solid var(--gb);padding:18px 0}.faq summary{cursor:pointer;font:700 18px 'Manrope';list-style:none}.faq summary::-webkit-details-marker{display:none}.faq p{color:var(--muted);padding-top:12px;max-width:800px}
   .more-grid{grid-template-columns:repeat(4,1fr)}.contact-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.contact-row a{padding:10px 13px;border:1px solid var(--gb);border-radius:11px;color:#e5e5df;font:700 13px 'Manrope'}.contact-row a:hover{border-color:var(--gb2);color:var(--yellow)}
   footer .wrap{max-width:1180px}.fc+.fc{margin-top:6px}
@@ -166,14 +166,12 @@
         <form class="leadform ym-disable-submit" id="setupLead" novalidate>
           <input type="hidden" name="name" value="Заявка на разовую настройку Авито">
           <input type="hidden" name="form_id" value="serviceLead">
-          <input type="hidden" name="pd_consent_version" value="planb-pd-2026-08-30-v1">
-          <input type="hidden" name="marketing_consent_version" value="planb-ads-2026-08-30-v1">
-          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-02-v2">
+          <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
+          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-04-v3">
           <input class="fld ym-disable-keys" id="setupLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="setupLeadMsg" required>
           <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ниша или ссылка на профиль — необязательно" autocomplete="off">
           <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
-          <label class="agree agree-optional"><input type="checkbox" name="marketing_consent"><span>Хочу получать новости и предложения Plan B. Это необязательно. <a href="/consent-advertising.html" target="_blank" rel="noopener noreferrer">Условия</a></span></label>
-          <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>.</p>
+          <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>. Форма предназначена для лиц старше 18 лет. Не указывайте паспортные, платёжные, медицинские и другие чувствительные сведения.</p>
           <button class="btn btn-y" type="submit">Получить расчёт проекта</button>
           <div class="lead-msg" id="setupLeadMsg" role="status" aria-live="polite"></div>
         </form>
@@ -318,7 +316,7 @@
   <div class="wrap">
     <img src="/logo-planb.png" alt="Plan B">
     <div class="fc"><a href="/">Главная</a> · <a href="/uslugi/vedenie-avito">Ведение</a> · <a href="/kejsy/">Кейсы</a> · <a href="/blog/">Блог</a> · <a href="/o-kompanii">О компании</a></div>
-    <div class="fc"><a href="/oferta.html">Оферта</a> · <a href="/rekvizity.html">Реквизиты</a> · <a href="/privacy.html">Политика обработки ПД</a> · <a href="/consent-personal-data.html">Согласие на обработку ПД</a> · <a href="/consent-advertising.html">Согласие на рекламу</a></div>
+    <div class="fc"><a href="/oferta.html">Оферта</a> · <a href="/rekvizity.html">Реквизиты</a> · <a href="/privacy.html">Политика обработки ПД</a> · <a href="/consent-personal-data.html">Согласие на обработку ПД</a></div>
     <div class="fc">© 2026 Plan B · ИП Кислов Константин Павлович · ИНН 610702818209 · ОГРНИП 325619600071134 · <a href="mailto:kislovkosta@yandex.ru">kislovkosta@yandex.ru</a></div>
   </div>
 </footer>
@@ -348,7 +346,6 @@
     try{
       const params=new URLSearchParams(location.search);
       const acceptedAt=new Date().toISOString();
-      const marketingConsent=form.marketing_consent.checked;
       const response=await fetch(endpoint,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -363,9 +360,6 @@
           pd_consent:true,
           pd_consent_version:form.pd_consent_version.value,
           pd_consent_client_at:acceptedAt,
-          marketing_consent:marketingConsent,
-          marketing_consent_version:marketingConsent?form.marketing_consent_version.value:'',
-          marketing_consent_client_at:marketingConsent?acceptedAt:'',
           privacy_version:form.privacy_version.value,
           utm_source:params.get('utm_source')||'',
           utm_medium:params.get('utm_medium')||'',

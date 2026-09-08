@@ -147,8 +147,10 @@
     .contact-strip{background:var(--ink);color:var(--white)}
     .contact-strip-row{min-height:34px;display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:12px;line-height:1}
     .contact-strip-label{color:rgba(255,255,255,.62);font-weight:700}
-    .contact-strip-links{display:flex;align-items:center;gap:22px;font-weight:780}
-    .contact-strip-links a{transition:color .2s var(--ease)}
+    .contact-strip-links{min-width:0;display:flex;align-items:center;gap:22px;font-weight:780}
+    .contact-strip-links a{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:color .2s var(--ease)}
+    .contact-strip-icon{width:15px;height:15px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+    .contact-strip-icon-brand{fill:currentColor;stroke:none}
     .contact-strip-links a:hover{color:var(--yellow)}
     .header-row{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}
     .brand{display:inline-flex;align-items:center;flex:0 0 auto}
@@ -348,7 +350,9 @@
       .brand img{width:132px}
       .contact-strip-row{min-height:34px;font-size:11px}
       .contact-strip-label{display:none}
-      .contact-strip-links{width:100%;justify-content:space-between;gap:12px}
+      .contact-strip-links{width:100%;justify-content:space-between;gap:8px}
+      .contact-strip-links a{gap:5px}
+      .contact-strip-icon{width:14px;height:14px}
       #mainNav{inset:103px 0 auto}
       .hero{padding:36px 0 62px}
       .hero-grid{gap:34px}
@@ -427,9 +431,9 @@
       <div class="container contact-strip-row">
         <span class="contact-strip-label">Обсудить продвижение на Avito</span>
         <div class="contact-strip-links" aria-label="Прямые контакты отдела продаж">
-          <a href="tel:+79281446617">+7 928 144-66-17</a>
-          <a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-          <a href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer">Telegram</a>
+          <a href="tel:+79281446617"><svg class="contact-strip-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.8a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.33 1.85.56 2.81.69A2 2 0 0 1 22 16.92z"/></svg>+7 928 144-66-17</a>
+          <a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer"><svg class="contact-strip-icon contact-strip-icon-brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.009-.371-.011-.57-.011-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884a9.82 9.82 0 0 1 6.988 2.895 9.83 9.83 0 0 1 2.9 6.988c-.003 5.45-4.437 9.884-9.892 9.884m8.413-18.297A11.82 11.82 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.144 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 0 0 5.683 1.448h.005c6.553 0 11.888-5.335 11.891-11.893a11.82 11.82 0 0 0-3.477-8.413"/></svg>WhatsApp</a>
+          <a href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer"><svg class="contact-strip-icon contact-strip-icon-brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.91 3.79 20.3 20.84c-.27 1.2-.98 1.49-1.98.93l-5.5-4.05-2.65 2.55c-.29.29-.54.54-1.1.54l.39-5.6L19.65 6c.44-.39-.1-.61-.68-.22L6.37 13.72.94 12.02c-1.18-.37-1.2-1.18.25-1.75L22.4 2.09c.98-.36 1.84.24 1.51 1.7z"/></svg>Telegram</a>
         </div>
       </div>
     </div>

@@ -110,7 +110,12 @@
   function updateSettingsLabel(){
     const control=document.getElementById('planb-analytics-settings');
     const state=readState();
-    if(control)control.textContent=state&&state.choice==='granted'?'Аналитика: разрешена':'Настройки аналитики';
+    if(control){
+      const label=state&&state.choice==='granted'?'Аналитика: разрешена':'Настройки аналитики';
+      control.textContent=label;
+      control.setAttribute('aria-label',label);
+      control.title=label;
+    }
   }
 
   function setChoice(choice){

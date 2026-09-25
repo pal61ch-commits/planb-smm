@@ -4,3 +4,5 @@ orb1.png
 orb2.png
 LEGAL-CHECKLIST.md
 .DS_Store
+node_modules/
+scrollcraft/lab/

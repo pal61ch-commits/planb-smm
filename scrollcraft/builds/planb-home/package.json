@@ -1,0 +1,14 @@
+{
+  "name": "planb-home-scrollcraft",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local QA harness for the Plan B Scrollcraft homepage candidate",
+  "scripts": {
+    "qa": "node qa.mjs"
+  },
+  "license": "UNLICENSED",
+  "type": "module",
+  "devDependencies": {
+    "playwright-core": "1.58.2"
+  }
+}

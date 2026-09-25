@@ -403,23 +403,10 @@
       setTimeout(function(){document.getElementById('setupLeadPhone')?.focus({preventScroll:true})},350);
     });
   });
-  const goalByContact={phone:'CONTACT_PHONE',telegram:'CONTACT_TELEGRAM',whatsapp:'CONTACT_WHATSAPP'};
   document.querySelectorAll('[data-contact]').forEach(function(link){
     link.addEventListener('click',function(){
       const channel=link.dataset.contact;
-      const params=new URLSearchParams(location.search);
-      const payload={
-        product:'planb_setup',
-        route:'razovaya_nastroyka',
-        landing_variant:'service_setup_v1',
-        utm_source:params.get('utm_source')||'',
-        utm_medium:params.get('utm_medium')||'',
-        utm_campaign:params.get('utm_campaign')||'',
-        utm_content:params.get('utm_content')||'',
-        utm_term:params.get('utm_term')||'',
-        yclid:params.get('yclid')||''
-      };
-      if(window.ym&&goalByContact[channel])ym(110884885,'reachGoal',goalByContact[channel],payload);
+      if(window.PlanBAnalyticsConsent)window.PlanBAnalyticsConsent.track(channel);
     });
   });
 })();

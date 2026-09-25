@@ -10,6 +10,19 @@
   const TTL_MS=180*24*60*60*1000;
   const METRIKA_ID=110884885;
   const SCRIPT_MARKER='planb-metrika';
+  const GOAL_DEDUPE_MS=1500;
+  const GOALS={
+    phone:'CONTACT_PHONE',
+    telegram:'CONTACT_TELEGRAM',
+    whatsapp:'CONTACT_WHATSAPP',
+    content_cta_click:'CONTENT_CTA',
+    video_play:'VIDEO_PLAY',
+    lead_success:'LEAD_FORM'
+  };
+  const TRACKED_GOALS=new Set(Object.keys(GOALS).map(function(key){return GOALS[key]}));
+  const recentGoals=new Map();
+  let playedVideos=new WeakSet();
+  let goalEventsBound=false;
 
   function readState(){
     try{
@@ -48,6 +61,188 @@
       try{localStorage.removeItem(STORAGE_KEY)}catch(_){}
       return null;
     }
+  }
+
+  function hasAnalyticsConsent(){
+    const state=readState();
+    return Boolean(state&&state.choice==='granted');
+  }
+
+  function routeValue(){
+    let route='/';
+    try{route=location.pathname||'/'}catch(_){}
+    route=route.replace(/\/{2,}/g,'/');
+    if(route.length>1&&route.endsWith('/'))route=route.slice(0,-1);
+    return route.slice(0,180)||'/';
+  }
+
+  function safeToken(value,limit){
+    return String(value||'')
+      .trim()
+      .toLowerCase()
+      .replace(/\.html?$/,'')
+      .replace(/[^a-z0-9_-]+/g,'_')
+      .replace(/^_+|_+$/g,'')
+      .slice(0,limit||80);
+  }
+
+  function safeHost(value){
+    let host=String(value||'').trim().toLowerCase();
+    if(!host)return '';
+    try{
+      if(host.includes('://'))host=new URL(host).hostname;
+    }catch(_){return ''}
+    host=host.replace(/^www\./,'').replace(/:\d+$/,'');
+    return /^[a-z0-9.-]{1,120}$/.test(host)?host:'';
+  }
+
+  function contentIdFromPath(pathname){
+    const match=String(pathname||'').match(/^\/(blog|kejsy|video)(?:\/([^/?#]+))?\/?$/i);
+    if(!match)return '';
+    return safeToken(match[1]+'_'+(match[2]||'index'),80);
+  }
+
+  function currentContentId(){
+    const declared=document.body&&document.body.dataset?document.body.dataset.contentId:'';
+    return safeToken(declared,80)||contentIdFromPath(routeValue());
+  }
+
+  function canonicalGoal(value){
+    const raw=String(value||'').trim();
+    if(TRACKED_GOALS.has(raw))return raw;
+    const name=raw.toLowerCase();
+    if(GOALS[name])return GOALS[name];
+    if(name==='phone_click'||name==='contact_phone')return GOALS.phone;
+    if(name==='telegram_click'||name==='contact_telegram')return GOALS.telegram;
+    if(name==='whatsapp_click'||name==='contact_whatsapp')return GOALS.whatsapp;
+    if(name==='content_cta')return GOALS.content_cta_click;
+    if(name==='lead_form')return GOALS.lead_success;
+    return '';
+  }
+
+  function safeGoalPayload(goal,detail){
+    const source=detail&&typeof detail==='object'?detail:{};
+    const payload={route:routeValue()};
+    const contentId=safeToken(source.content_id,80)||currentContentId();
+    if(contentId)payload.content_id=contentId;
+
+    let targetType=safeToken(source.target_type,32);
+    if(goal===GOALS.phone)targetType='phone';
+    if(goal===GOALS.telegram)targetType='telegram';
+    if(goal===GOALS.whatsapp)targetType='whatsapp';
+    if(goal===GOALS.video_play)targetType='video';
+    if(goal===GOALS.lead_success)targetType='form';
+    if(targetType)payload.target_type=targetType;
+
+    let targetHost=safeHost(source.target_host);
+    if(!targetHost&&goal===GOALS.telegram)targetHost='t.me';
+    if(!targetHost&&goal===GOALS.whatsapp)targetHost='wa.me';
+    if(targetHost)payload.target_host=targetHost;
+    return payload;
+  }
+
+  function isDuplicateGoal(goal,payload){
+    const now=Date.now();
+    recentGoals.forEach(function(timestamp,key){
+      if(now-timestamp>GOAL_DEDUPE_MS)recentGoals.delete(key);
+    });
+    const fingerprint=goal+'|'+JSON.stringify(payload);
+    const previous=recentGoals.get(fingerprint)||0;
+    if(now-previous<=GOAL_DEDUPE_MS)return true;
+    recentGoals.set(fingerprint,now);
+    return false;
+  }
+
+  function trackEvent(name,detail){
+    const goal=canonicalGoal(name);
+    if(!goal||!hasAnalyticsConsent()||typeof window.ym!=='function')return false;
+    const payload=safeGoalPayload(goal,detail);
+    if(isDuplicateGoal(goal,payload))return false;
+    try{
+      window.ym(METRIKA_ID,'reachGoal',goal,payload);
+      return true;
+    }catch(_){return false}
+  }
+
+  function linkUrl(link){
+    try{return new URL(link.getAttribute('href')||'',location.href)}catch(_){return null}
+  }
+
+  function contactTarget(link){
+    const href=String(link.getAttribute('href')||'').trim();
+    if(/^tel:/i.test(href))return {event:'phone',target_type:'phone'};
+    if(/^whatsapp:/i.test(href))return {event:'whatsapp',target_type:'whatsapp',target_host:'whatsapp'};
+    if(/^tg:/i.test(href))return {event:'telegram',target_type:'telegram',target_host:'telegram'};
+    const url=linkUrl(link);
+    if(!url)return null;
+    const host=safeHost(url.hostname);
+    if(host==='t.me'||host==='telegram.me'||host==='telegram.dog')return {event:'telegram',target_type:'telegram',target_host:host};
+    if(host==='wa.me'||host==='api.whatsapp.com'||host==='web.whatsapp.com')return {event:'whatsapp',target_type:'whatsapp',target_host:host};
+    return null;
+  }
+
+  function hasLegacyContactHandler(link){
+    return link.matches('[data-contact],[data-channel],.contact-link.call,.contact-link.tg,.contact-link.wa');
+  }
+
+  function contentCtaTarget(link){
+    const url=linkUrl(link);
+    if(!url||!/^https?:$/.test(url.protocol))return null;
+    const explicit=link.matches('[data-content-cta],[data-analytics-event="content_cta_click"],[data-analytics-goal="CONTENT_CTA"]');
+    const sameOrigin=url.origin===location.origin;
+    const sourceId=currentContentId();
+    const styledCta=link.matches('.more-card,.blog-card,.scenario-card,.nav-cta,.btn');
+    if(!explicit&&!styledCta)return null;
+
+    let targetType='external';
+    if(sameOrigin){
+      if(/^#?(contact|audit)$/i.test(url.hash.replace(/^#/,'')))targetType='lead_form';
+      else if(/^\/blog(?:\/|$)/.test(url.pathname))targetType='blog';
+      else if(/^\/kejsy(?:\/|$)/.test(url.pathname))targetType='case';
+      else if(/^\/video(?:\/|$)/.test(url.pathname))targetType='video';
+      else if(/^\/uslugi(?:\/|$)/.test(url.pathname))targetType='service';
+      else targetType='internal';
+    }
+    return {
+      content_id:sourceId,
+      target_type:targetType,
+      target_host:safeHost(url.hostname)
+    };
+  }
+
+  function videoContentId(video){
+    const declared=video.dataset?video.dataset.contentId:'';
+    if(declared)return safeToken(declared,80);
+    const source=video.currentSrc||((video.querySelector('source[src]')||{}).getAttribute&&video.querySelector('source[src]').getAttribute('src'))||'';
+    if(source){
+      try{
+        const filename=new URL(source,location.href).pathname.split('/').pop()||'';
+        const fromSource=safeToken(filename.replace(/\.[^.]+$/,''),80);
+        if(fromSource)return fromSource;
+      }catch(_){}
+    }
+    return safeToken(video.getAttribute('aria-labelledby')||video.id,80)||currentContentId();
+  }
+
+  function bindGoalEvents(){
+    if(goalEventsBound)return;
+    goalEventsBound=true;
+    document.addEventListener('click',function(event){
+      const target=event.target&&event.target.closest?event.target.closest('a[href]'):null;
+      if(!target)return;
+      const contact=contactTarget(target);
+      if(contact){
+        if(!hasLegacyContactHandler(target))trackEvent(contact.event,contact);
+        return;
+      }
+      const contentTarget=contentCtaTarget(target);
+      if(contentTarget)trackEvent('content_cta_click',contentTarget);
+    });
+    document.addEventListener('play',function(event){
+      const video=event.target;
+      if(!video||video.tagName!=='VIDEO'||playedVideos.has(video))return;
+      if(trackEvent('video_play',{content_id:videoContentId(video),target_type:'video'}))playedVideos.add(video);
+    },true);
   }
 
   function loadAnalytics(){
@@ -91,6 +286,8 @@
     try{if(typeof window.ym==='function')window.ym(METRIKA_ID,'destruct')}catch(_){}
     document.querySelectorAll('script[data-planb-analytics]').forEach(function(script){script.remove()});
     clearFirstPartyAnalyticsData();
+    recentGoals.clear();
+    playedVideos=new WeakSet();
     window.__planbAnalyticsLoaded=false;
   }
 
@@ -180,6 +377,7 @@
 
   function init(){
     try{localStorage.removeItem(LEGACY_KEY)}catch(_){}
+    bindGoalEvents();
     mountSettingsControl();
     const state=readState();
     if(state&&state.choice==='granted')loadAnalytics();
@@ -189,6 +387,7 @@
   window.PlanBAnalyticsConsent={
     version:CONSENT_VERSION,
     state:readState,
+    track:trackEvent,
     grant:function(){setChoice('granted')},
     deny:function(){setChoice('denied')},
     open:function(){mountDialog(true)},

@@ -23,12 +23,13 @@
   "@context":"https://schema.org",
   "@graph":[
     {
-      "@type":"Organization",
-      "@id":"https://planb-prodvizhenie.ru/#organization",
+      "@type":["Organization","ProfessionalService"],
+      "@id":"https://planb-prodvizhenie.ru/#business",
       "name":"Plan B",
       "legalName":"ИП Кислов Константин Павлович",
       "url":"https://planb-prodvizhenie.ru/",
       "logo":{"@type":"ImageObject","url":"https://planb-prodvizhenie.ru/logo-planb.png"},
+      "description":"Услуги ведения и разовой настройки аккаунтов Авито для бизнеса по России.",
       "email":"kislovkosta@yandex.ru",
       "telephone":"+7-928-144-66-17",
       "taxID":"610702818209",
@@ -39,19 +40,7 @@
         "https://vk.ru/planb_avitolog",
         "https://www.instagram.com/avitolog_planb_prodvizenie/",
         "https://t.me/planB_prodvizhenie"
-      ]
-    },
-    {
-      "@type":"ProfessionalService",
-      "@id":"https://planb-prodvizhenie.ru/o-kompanii#business",
-      "name":"Plan B — агентство продвижения на Авито",
-      "url":"https://planb-prodvizhenie.ru/o-kompanii",
-      "description":"Услуги ведения и разовой настройки аккаунтов Авито для бизнеса по России.",
-      "email":"kislovkosta@yandex.ru",
-      "telephone":"+7-928-144-66-17",
-      "parentOrganization":{"@id":"https://planb-prodvizhenie.ru/#organization"},
-      "founder":{"@id":"https://planb-prodvizhenie.ru/#konstantin-kislov"},
-      "areaServed":{"@type":"Country","name":"Россия"},
+      ],
       "hasOfferCatalog":{
         "@type":"OfferCatalog",
         "name":"Услуги Plan B",
@@ -80,7 +69,8 @@
       "@id":"https://planb-prodvizhenie.ru/#konstantin-kislov",
       "name":"Константин Кислов",
       "jobTitle":"Основатель Plan B",
-      "worksFor":{"@id":"https://planb-prodvizhenie.ru/#organization"}
+      "url":"https://planb-prodvizhenie.ru/o-kompanii#konstantin",
+      "worksFor":{"@id":"https://planb-prodvizhenie.ru/#business"}
     },
     {
       "@type":"BreadcrumbList",
@@ -227,7 +217,7 @@
         <h2>Ответственность начинается с понятных границ</h2>
       </div>
       <div class="approach-grid">
-        <article class="founder-card glass">
+        <article class="founder-card glass" id="konstantin">
           <span class="eyebrow">Основатель</span>
           <h3>Константин Кислов</h3>
           <p>Руководит Plan B и участвует в разборе бизнес-задач. На входе команда определяет, какой формат соответствует текущей ситуации и не создаёт лишних работ.</p>

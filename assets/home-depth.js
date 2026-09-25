@@ -23,6 +23,8 @@
       ".ecosystem-card",
       ".deliverable-copy",
       ".blog-card",
+      ".social-intro",
+      ".social-card",
       ".step",
       ".legal-panel",
       ".faq",
@@ -34,7 +36,7 @@
       element.setAttribute("data-sc-in", "");
     });
 
-    document.querySelectorAll(".stage-grid,.outcome-grid,.scenario-grid,.flow,.ecosystem-grid,.blog-grid,.steps").forEach(function (group) {
+    document.querySelectorAll(".stage-grid,.outcome-grid,.scenario-grid,.flow,.ecosystem-grid,.blog-grid,.social-grid,.steps").forEach(function (group) {
       group.setAttribute("data-sc-stagger", "70");
     });
   }

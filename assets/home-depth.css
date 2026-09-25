@@ -919,6 +919,45 @@ header .brand img {
   background: #121419;
 }
 
+.social-presence {
+  position: relative;
+  background: #090a0c;
+}
+
+.social-panel {
+  isolation: isolate;
+  border-color: rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(75% 150% at 100% 0%, rgba(255, 210, 31, 0.1), transparent 58%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.018));
+  box-shadow: 0 28px 80px -58px rgba(0, 0, 0, 0.95);
+}
+
+.social-panel::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 300px;
+  aspect-ratio: 1;
+  right: -145px;
+  bottom: -210px;
+  border: 1px solid rgba(255, 210, 31, 0.12);
+  border-radius: 50%;
+  box-shadow: 0 0 0 46px rgba(255, 210, 31, 0.018), 0 0 0 92px rgba(255, 210, 31, 0.01);
+  pointer-events: none;
+}
+
+.social-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(10, 11, 14, 0.62);
+}
+
+.social-card:hover,
+.social-card:focus-visible {
+  border-color: rgba(255, 210, 31, 0.5);
+  background: rgba(255, 210, 31, 0.07);
+}
+
 .yellow-section {
   background: var(--warm);
   color: #111214;
@@ -1456,6 +1495,12 @@ footer {
   }
 
   .signal-stage {
+    transform: none !important;
+  }
+
+  .social-card:hover,
+  .social-card:focus-visible,
+  .social-card:hover .social-arrow {
     transform: none !important;
   }
 }

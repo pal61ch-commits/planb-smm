@@ -254,7 +254,20 @@ async function staticAudit() {
       if (route !== "/blog/") {
         try {
           const actualJson = JSON.stringify(normalizeJson(values));
-          const baselineJson = JSON.stringify(normalizeJson(jsonLdValues(baselineHtml)));
+          const baselineValues = jsonLdValues(baselineHtml);
+          if (route === "/") {
+            const organization = baselineValues
+              .flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value])
+              .find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/#business");
+            if (organization) {
+              organization.sameAs = [
+                "https://www.instagram.com/avitolog_planb_prodvizenie/",
+                "https://vk.ru/planb_avitolog",
+                "https://t.me/planB_prodvizhenie"
+              ];
+            }
+          }
+          const baselineJson = JSON.stringify(normalizeJson(baselineValues));
           check(actualJson === baselineJson, "seo.jsonld-drift", route);
         } catch (error) {
           check(false, "seo.jsonld-baseline", `${route}: ${error.message}`);
@@ -263,6 +276,18 @@ async function staticAudit() {
     }
 
     const types = jsonLdTypes(values);
+    if (route === "/") {
+      const socialCards = html.match(/<a\b[^>]*class="[^"]*\bsocial-card\b[^"]*"[^>]*>/gi) || [];
+      const socialURLs = [
+        "https://www.instagram.com/avitolog_planb_prodvizenie/",
+        "https://t.me/planB_prodvizhenie",
+        "https://vk.ru/planb_avitolog"
+      ];
+      check(socialCards.length === 3, "home.social-card-count", `expected 3, got ${socialCards.length}`);
+      for (const socialURL of socialURLs) {
+        check(socialCards.some(tag => tag.includes(`href="${socialURL}"`)), "home.social-card-link", socialURL);
+      }
+    }
     if (NEW_CONTENT_ROUTES.includes(route) && route.startsWith("/blog/")) {
       for (const type of ["BlogPosting", "FAQPage", "BreadcrumbList"]) {
         check(types.includes(type), "seo.article-schema", `${route}: missing ${type}`);

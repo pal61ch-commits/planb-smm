@@ -15,6 +15,7 @@
 - GitHub Pages-like extensionless route server.
 - Static SEO, JSON-LD, assets, sitemap, internal links, and fragment contracts.
 - BlogPosting, FAQPage, BreadcrumbList, CollectionPage, ItemList, and VideoObject contracts for the new content routes.
+- Homepage social-presence block with exact Instagram, Telegram, and VK destinations.
 - Two self-hosted MP4 files, posters and WebVTT captions; local server MIME and byte-range delivery checked separately.
 - All-route desktop/mobile rendering.
 - Representative laptop/tablet/compact/minimum rendering.
@@ -35,7 +36,7 @@
 
 ## Latest run
 
-- Completed: 2026-09-25 10:43:50 UTC.
+- Completed: 2026-09-25 11:18:39 UTC.
 - Verdict: **PASS**.
 - Active routes: 47 of 47.
 - Browser runs: 154.

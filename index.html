@@ -42,6 +42,7 @@
         "areaServed": {"@type": "Country", "name": "Россия"},
         "address": {"@type": "PostalAddress", "addressCountry": "RU"},
         "sameAs": [
+          "https://www.instagram.com/avitolog_planb_prodvizenie/",
           "https://vk.ru/planb_avitolog",
           "https://t.me/planB_prodvizhenie"
         ],
@@ -250,6 +251,22 @@
     .blog-card p{margin-bottom:28px;color:rgba(255,255,255,.64);font-size:14px}
     .blog-card .text-link{margin-top:auto;align-self:flex-start;color:var(--white);font-size:13px}
     .blog-more{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+    .social-presence{padding:0 0 clamp(72px,8vw,108px);background:#090a0c;color:var(--white)}
+    .social-panel{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(240px,.72fr) minmax(0,1.45fr);gap:32px;align-items:center;padding:30px;border:1px solid var(--line-dark);border-radius:28px;background:#111317}
+    .social-panel::before{content:"";position:absolute;top:0;left:30px;width:72px;height:2px;background:var(--yellow);box-shadow:0 0 18px rgba(255,210,31,.55)}
+    .social-intro{position:relative;z-index:1}
+    .social-intro .eyebrow{color:var(--yellow)}
+    .social-intro h2{margin-bottom:12px;color:var(--white);font-size:clamp(30px,3.4vw,46px);line-height:1.02}
+    .social-intro>p:last-child{max-width:420px;margin:0;color:rgba(255,255,255,.68);font-size:15px}
+    .social-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .social-card{position:relative;min-height:154px;display:flex;flex-direction:column;padding:20px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.035);transition:transform .22s var(--ease),border-color .22s ease,background-color .22s ease,box-shadow .22s ease}
+    .social-card:hover{transform:translateY(-4px);border-color:rgba(255,210,31,.48);background:rgba(255,210,31,.06);box-shadow:0 22px 48px -34px rgba(255,210,31,.82)}
+    .social-card:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
+    .social-index{color:var(--yellow);font-size:10px;font-weight:850;letter-spacing:.14em}
+    .social-card strong{display:block;margin-top:auto;color:var(--white);font-size:17px;line-height:1.15}
+    .social-card small{display:block;margin-top:7px;color:rgba(255,255,255,.68);font-size:12px;line-height:1.4}
+    .social-arrow{position:absolute;top:17px;right:18px;color:var(--yellow);font-size:18px;transition:transform .22s var(--ease)}
+    .social-card:hover .social-arrow{transform:translate(3px,-3px)}
     .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:steps}
     .step{min-height:250px;padding:26px;border-top:5px solid var(--ink);background:rgba(255,255,255,.25)}
     .step::before{counter-increment:steps;content:"0" counter(steps);display:block;margin-bottom:55px;font-size:13px;font-weight:850;letter-spacing:.12em}
@@ -333,7 +350,7 @@
       .container{width:min(100% - 32px,var(--container))}
       .section{padding:78px 0}
       .hero{padding:48px 0 76px}
-      .hero-grid,.service-feature,.deliverable,.legal-panel,.contact-shell{grid-template-columns:1fr}
+      .hero-grid,.service-feature,.deliverable,.legal-panel,.contact-shell,.social-panel{grid-template-columns:1fr}
       .route-board{max-width:620px}
       .stage-grid{grid-template-columns:1fr}
       .stage-card{min-height:0}
@@ -342,6 +359,7 @@
       .one-off-service{grid-template-columns:1fr;align-items:start}
       .service-side{min-height:330px}
       .ecosystem-grid{grid-template-columns:1fr}
+      .social-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .legal-links{grid-template-columns:1fr 1fr}
       .footer-grid{grid-template-columns:1fr 1fr}
     }
@@ -404,6 +422,10 @@
       .blog-grid{grid-template-columns:1fr}
       .blog-more .btn{width:100%;justify-content:center}
       .blog-card{min-height:240px;padding:24px}
+      .social-presence{padding-bottom:66px}
+      .social-panel{gap:24px;padding:24px;border-radius:24px}
+      .social-grid{grid-template-columns:1fr}
+      .social-card{min-height:118px}
       .steps{grid-template-columns:1fr}
       .step{min-height:0;padding:24px 18px}
       .step::before{margin-bottom:34px}
@@ -615,6 +637,28 @@
         <div class="blog-more reveal"><a class="btn btn-yellow" href="/blog/">Все материалы блога</a><a class="btn btn-outline" href="/video/">Смотреть видео</a></div>
       </div>
     </section>
+    <section class="social-presence" id="socials" aria-labelledby="social-presence-title">
+      <div class="container">
+        <div class="social-panel">
+          <div class="social-intro reveal">
+            <p class="eyebrow">Plan B в соцсетях</p>
+            <h2 id="social-presence-title">Мы там, где вам удобно</h2>
+            <p>Кейсы, короткие видео и рабочие разборы — выбирайте свою площадку.</p>
+          </div>
+          <div class="social-grid" aria-label="Социальные сети Plan B">
+            <a class="social-card reveal" href="https://www.instagram.com/avitolog_planb_prodvizenie/" target="_blank" rel="noopener noreferrer">
+              <span class="social-index">01</span><strong>Мы в Instagram</strong><small>Рилсы и короткие разборы</small><span class="social-arrow" aria-hidden="true">↗</span>
+            </a>
+            <a class="social-card reveal" href="https://t.me/planB_prodvizhenie" target="_blank" rel="noopener noreferrer">
+              <span class="social-index">02</span><strong>Мы в Telegram</strong><small>Новые материалы и кейсы</small><span class="social-arrow" aria-hidden="true">↗</span>
+            </a>
+            <a class="social-card reveal" href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener noreferrer">
+              <span class="social-index">03</span><strong>Мы во ВКонтакте</strong><small>Публикации и новости Plan B</small><span class="social-arrow" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
     <section class="section yellow-section">
       <div class="container">
         <div class="section-head reveal"><p class="eyebrow">Старт проекта</p><h2>От первого разговора до запуска</h2></div>
@@ -684,7 +728,7 @@
         <div class="footer-column"><h3>Услуги</h3><a href="/uslugi/vedenie-avito">Ведение Avito</a><a href="/uslugi/razovaya-nastroyka-avito">Разовая настройка</a><a href="#contact">Получить план</a></div>
         <div class="footer-column"><h3>Продукты</h3><a href="/sokrat">Сократ</a><a href="https://pifagor-pf.ru/" target="_blank" rel="noopener noreferrer">Пифагор ↗</a></div>
         <div class="footer-column"><h3>Материалы</h3><a href="/kejsy/">Кейсы и сценарии</a><a href="/blog/">Блог</a><a href="/o-kompanii">О Plan B</a></div>
-        <div class="footer-column"><h3>Контакты</h3><a href="tel:+79281446617">+7 928 144-66-17</a><a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="https://t.me/planB_prodvizhenie" target="_blank" rel="noopener noreferrer">Telegram Plan B</a><a href="mailto:kislovkosta@yandex.ru">kislovkosta@yandex.ru</a></div>
+        <div class="footer-column"><h3>Контакты</h3><a href="tel:+79281446617">+7 928 144-66-17</a><a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="https://www.instagram.com/avitolog_planb_prodvizenie/" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://t.me/planB_prodvizhenie" target="_blank" rel="noopener noreferrer">Telegram Plan B</a><a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener noreferrer">ВКонтакте</a><a href="mailto:kislovkosta@yandex.ru">kislovkosta@yandex.ru</a></div>
       </div>
       <div class="footer-legal"><a href="/rekvizity.html">Реквизиты</a><a href="/oferta.html">Договор оферты</a><a href="/privacy.html">Политика обработки персональных данных</a><a href="/consent-personal-data.html">Согласие на обработку данных</a></div>
       <div class="footer-bottom">© 2026 Plan B · ИП Кислов Константин Павлович · ИНН 610702818209 · ОГРНИП 325619600071134 · <a href="mailto:kislovkosta@yandex.ru">kislovkosta@yandex.ru</a></div>

@@ -14,6 +14,8 @@
 - SHA-256 comparison with the baseline worktree.
 - GitHub Pages-like extensionless route server.
 - Static SEO, JSON-LD, assets, sitemap, internal links, and fragment contracts.
+- BlogPosting, FAQPage, BreadcrumbList, CollectionPage, ItemList, and VideoObject contracts for the new content routes.
+- Two self-hosted MP4 files, posters and WebVTT captions; local server MIME and byte-range delivery checked separately.
 - All-route desktop/mobile rendering.
 - Representative laptop/tablet/compact/minimum rendering.
 - Representative reduced-motion and no-JS rendering.
@@ -33,16 +35,19 @@
 
 ## Latest run
 
-- Completed: 2026-09-25 09:24:00 UTC.
+- Completed: 2026-09-25 10:43:50 UTC.
 - Verdict: **PASS**.
-- Active routes: 43 of 43.
-- Browser runs: 134.
+- Active routes: 47 of 47.
+- Browser runs: 154.
 - Form runs: 6, covering local success and failure responses for all three forms.
 - Redirect runs: 4 of 4.
 - Immutable baseline comparisons: 19 of 19 unchanged.
 - Failures: 0.
 - Warnings: 0.
-- Representative screenshots: 16.
+- Representative screenshots: 20.
+- New content: 3 articles and 1 two-video library route.
+- Content OS: 17 of 17 unit tests passed; all three article drafts retain Telegram provenance and both videos retain local-master provenance while remaining unapproved.
+- Video delivery: both files are H.264/AAC at 720 × 1280; MP4 MIME, `Accept-Ranges`, and a 100-byte `206 Partial Content` request passed.
 - Consent: fresh, deny, grant, revoke, and tampered/expired paths passed.
 - External forms and analytics were intercepted; no live lead or analytics side
   effect was produced.

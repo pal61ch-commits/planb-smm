@@ -5,13 +5,14 @@
 1. Verify the route counts and that there are no duplicate entries.
 2. Resolve every active route to its source file.
 3. Compare every immutable file with the baseline worktree using SHA-256.
-4. Preserve title, description, canonical, and JSON-LD values from the baseline for all active routes.
+4. Preserve title, description, canonical, and JSON-LD values from the baseline for pre-existing routes. Validate complete metadata and structured data for each new content route.
 5. Check the exact shared-asset contract:
    - homepage: Scrollcraft plus `home-depth` assets;
    - other marketing routes: Scrollcraft plus `site-depth` assets;
    - current legal routes: `legal-depth.css` only.
 6. Resolve all internal links and fragments, including extensionless routes.
-7. Verify the sitemap remains the known 41-URL set.
+7. Verify the sitemap contains the expected 45-URL set.
+8. Verify the video library has exactly two playable video elements, captions, posters, VideoObject markup, no autoplay, and all six local media assets.
 
 ## 2. Local route server
 
@@ -26,7 +27,7 @@ This is required because Python's basic HTTP server does not resolve the site's 
 
 ## 3. Full-route render sweep
 
-Render all 43 active routes at:
+Render all 47 active routes at:
 
 - 1440 × 900;
 - 390 × 844.
@@ -35,7 +36,7 @@ Check HTTP and resource status, console exceptions, horizontal overflow, metadat
 
 ## 4. Representative responsive sweep
 
-Render one representative of every page family at:
+Render ten representatives covering every page family, including the video library and a new article, at:
 
 - 1280 × 720;
 - 768 × 1024;

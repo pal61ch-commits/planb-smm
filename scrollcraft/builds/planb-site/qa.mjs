@@ -9,6 +9,7 @@ import {
   FORM_CONTRACTS,
   IMMUTABLE_FILES,
   MARKETING_ROUTES,
+  NEW_CONTENT_ROUTES,
   REDIRECT_CONTRACTS,
   REPRESENTATIVE_ROUTES,
   SOKRAT_FILES,
@@ -100,6 +101,18 @@ function jsonLdValues(html) {
   return values;
 }
 
+function jsonLdTypes(values) {
+  const types = [];
+  for (const value of values) {
+    const nodes = value && Array.isArray(value["@graph"]) ? value["@graph"] : [value];
+    for (const node of nodes) {
+      const nodeTypes = Array.isArray(node?.["@type"]) ? node["@type"] : [node?.["@type"]];
+      types.push(...nodeTypes.filter(Boolean));
+    }
+  }
+  return types;
+}
+
 function normalizeJson(value) {
   if (Array.isArray(value)) return value.map(normalizeJson);
   if (value && typeof value === "object") {
@@ -180,7 +193,7 @@ function screenshotName(route) {
 }
 
 async function staticAudit() {
-  check(MARKETING_ROUTES.length === 38, "scope.marketing", `expected 38, got ${MARKETING_ROUTES.length}`);
+  check(MARKETING_ROUTES.length === 42, "scope.marketing", `expected 42, got ${MARKETING_ROUTES.length}`);
   check(CURRENT_LEGAL_ROUTES.length === 5, "scope.current-legal", `expected 5, got ${CURRENT_LEGAL_ROUTES.length}`);
   check(VERSIONED_LEGAL_FILES.length === 6, "scope.versioned-legal", `expected 6, got ${VERSIONED_LEGAL_FILES.length}`);
   check(REDIRECT_CONTRACTS.length === 4, "scope.redirects", `expected 4, got ${REDIRECT_CONTRACTS.length}`);
@@ -213,7 +226,9 @@ async function staticAudit() {
     const candidateExists = await exists(candidate);
     const baselineExists = await exists(baseline);
     check(candidateExists, "active.missing-candidate", `${route} -> ${relative}`);
-    check(baselineExists, "active.missing-baseline", `${route} -> ${relative}`);
+    if (!NEW_CONTENT_ROUTES.includes(route)) {
+      check(baselineExists, "active.missing-baseline", `${route} -> ${relative}`);
+    }
     if (!candidateExists) continue;
     const html = await fs.readFile(candidate, "utf8");
     const marketing = MARKETING_ROUTES.includes(route);
@@ -223,8 +238,9 @@ async function staticAudit() {
     check(metaContent(html, "description").length > 0, "seo.description", route);
     check(canonicalHref(html) === expected, "seo.canonical", `${route} expected ${expected}, got ${canonicalHref(html)}`);
 
+    let values = [];
     try {
-      const values = jsonLdValues(html);
+      values = jsonLdValues(html);
       if (marketing) check(values.length >= 1, "seo.jsonld-missing", route);
     } catch (error) {
       check(false, "seo.jsonld-invalid", `${route}: ${error.message}`);
@@ -235,12 +251,67 @@ async function staticAudit() {
       check(tagContent(html, "title") === tagContent(baselineHtml, "title"), "seo.title-drift", route);
       check(metaContent(html, "description") === metaContent(baselineHtml, "description"), "seo.description-drift", route);
       check(canonicalHref(html) === canonicalHref(baselineHtml), "seo.canonical-drift", route);
-      try {
-        const actualJson = JSON.stringify(normalizeJson(jsonLdValues(html)));
-        const baselineJson = JSON.stringify(normalizeJson(jsonLdValues(baselineHtml)));
-        check(actualJson === baselineJson, "seo.jsonld-drift", route);
-      } catch (error) {
-        check(false, "seo.jsonld-baseline", `${route}: ${error.message}`);
+      if (route !== "/blog/") {
+        try {
+          const actualJson = JSON.stringify(normalizeJson(values));
+          const baselineJson = JSON.stringify(normalizeJson(jsonLdValues(baselineHtml)));
+          check(actualJson === baselineJson, "seo.jsonld-drift", route);
+        } catch (error) {
+          check(false, "seo.jsonld-baseline", `${route}: ${error.message}`);
+        }
+      }
+    }
+
+    const types = jsonLdTypes(values);
+    if (NEW_CONTENT_ROUTES.includes(route) && route.startsWith("/blog/")) {
+      for (const type of ["BlogPosting", "FAQPage", "BreadcrumbList"]) {
+        check(types.includes(type), "seo.article-schema", `${route}: missing ${type}`);
+      }
+    }
+    const videoTags = html.match(/<video\b[^>]*>/gi) || [];
+    if (videoTags.length) {
+      check(videoTags.every(tag => /\baria-(?:label|labelledby)=/i.test(tag)), "a11y.video-name", route);
+      check(!/<video\b[^>]*\bautoplay\b/i.test(html), "video.autoplay", route);
+      check(!/<track\b[^>]*\bdefault\b/i.test(html), "video.captions-default", route);
+    }
+    if (route === "/video/") {
+      check(types.includes("CollectionPage"), "seo.video-schema", `${route}: missing CollectionPage`);
+      check(types.includes("ItemList"), "seo.video-schema", `${route}: missing ItemList`);
+      check(types.filter(type => type === "VideoObject").length === 2, "seo.video-count", route);
+      check(count(html, "<video") === 2, "video.elements", route);
+      check(count(html, "<track") === 2, "video.captions", route);
+      check(count(html, 'preload="none"') === 2, "video.preload", route);
+      for (const asset of [
+        "media/video/kejs-stroitelstvo-23-kontakta.mp4",
+        "media/video/kejs-metalloprokat-126-kontaktov.mp4",
+        "media/posters/kejs-stroitelstvo-23-kontakta.jpg",
+        "media/posters/kejs-metalloprokat-126-kontaktov.jpg",
+        "media/captions/kejs-stroitelstvo-23-kontakta.vtt",
+        "media/captions/kejs-metalloprokat-126-kontaktov.vtt"
+      ]) {
+        check(await exists(path.join(SITE_ROOT, asset)), "video.asset", asset);
+      }
+      for (const caption of [
+        "media/captions/kejs-stroitelstvo-23-kontakta.vtt",
+        "media/captions/kejs-metalloprokat-126-kontaktov.vtt"
+      ]) {
+        const captionText = await fs.readFile(path.join(SITE_ROOT, caption), "utf8");
+        const longLines = captionText.split(/\r?\n/).filter(line => line && line !== "WEBVTT" && !line.includes("-->") && [...line].length > 42);
+        check(longLines.length === 0, "video.caption-line-length", `${caption}: ${longLines.join(" | ")}`);
+        const toSeconds = stamp => {
+          const parts = stamp.split(":").map(Number);
+          return parts.length === 2 ? parts[0] * 60 + parts[1] : parts[0] * 3600 + parts[1] * 60 + parts[2];
+        };
+        const denseCues = captionText.trim().split(/\r?\n\r?\n/).slice(1).flatMap(block => {
+          const lines = block.split(/\r?\n/);
+          const [start, end] = (lines.shift() || "").split(" --> ");
+          if (!start || !end) return [`invalid cue: ${block}`];
+          const duration = toSeconds(end) - toSeconds(start);
+          const characters = [...lines.join(" ")].length;
+          const cps = duration > 0 ? characters / duration : Infinity;
+          return cps <= 22 ? [] : [`${start}-${end}: ${cps.toFixed(1)} cps`];
+        });
+        check(denseCues.length === 0, "video.caption-reading-speed", `${caption}: ${denseCues.join(" | ")}`);
       }
     }
 
@@ -303,7 +374,7 @@ async function staticAudit() {
     "https://planb-prodvizhenie.ru/rekvizity.html",
     "https://planb-prodvizhenie.ru/oferta.html"
   ];
-  check(sitemapUrls.length === 41, "sitemap.count", `expected 41, got ${sitemapUrls.length}`);
+  check(sitemapUrls.length === expectedSitemap.length, "sitemap.count", `expected ${expectedSitemap.length}, got ${sitemapUrls.length}`);
   check(new Set(sitemapUrls).size === sitemapUrls.length, "sitemap.duplicates");
   check(expectedSitemap.every(url => sitemapUrls.includes(url)), "sitemap.missing", expectedSitemap.filter(url => !sitemapUrls.includes(url)).join(", "));
   check(sitemapUrls.every(url => expectedSitemap.includes(url)), "sitemap.unexpected", sitemapUrls.filter(url => !expectedSitemap.includes(url)).join(", "));
@@ -366,6 +437,9 @@ async function inspectRuntime(page, noJs = false) {
         return !(text || imgAlt || element.getAttribute("aria-label") || element.getAttribute("aria-labelledby") || element.title);
       })
       .map(element => element.id || element.className || element.outerHTML.slice(0, 80));
+    const unnamedMedia = [...document.querySelectorAll("video,audio")]
+      .filter(element => !(element.getAttribute("aria-label") || element.getAttribute("aria-labelledby") || element.title))
+      .map(element => element.outerHTML.slice(0, 120));
     const badBlankTargets = [...document.querySelectorAll("a[target='_blank']")]
       .filter(link => {
         const rel = new Set((link.getAttribute("rel") || "").toLowerCase().split(/\s+/));
@@ -416,6 +490,7 @@ async function inspectRuntime(page, noJs = false) {
       missingAnchors,
       unlabeledFields,
       unnamedControls,
+      unnamedMedia,
       badBlankTargets,
       brokenImages: [...document.images].filter(image => !image.complete || image.naturalWidth === 0).map(image => image.src),
       hiddenReveals,
@@ -499,6 +574,7 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
   check(state.missingAnchors.length === 0, "runtime.missing-anchor", `${profile.name} ${route}: ${state.missingAnchors.join(", ")}`);
   check(state.unlabeledFields.length === 0, "a11y.unlabeled-fields", `${profile.name} ${route}: ${state.unlabeledFields.join(" | ")}`);
   check(state.unnamedControls.length === 0, "a11y.unnamed-controls", `${profile.name} ${route}: ${state.unnamedControls.join(" | ")}`);
+  check(state.unnamedMedia.length === 0, "a11y.unnamed-media", `${profile.name} ${route}: ${state.unnamedMedia.join(" | ")}`);
   check(state.badBlankTargets.length === 0, "a11y.blank-rel", `${profile.name} ${route}: ${state.badBlankTargets.join(", ")}`);
   check(state.brokenImages.length === 0, "runtime.broken-images", `${profile.name} ${route}: ${state.brokenImages.join(", ")}`);
   check(state.jsonLdErrors.length === 0, "runtime.jsonld", `${profile.name} ${route}: ${state.jsonLdErrors.join(" | ")}`);

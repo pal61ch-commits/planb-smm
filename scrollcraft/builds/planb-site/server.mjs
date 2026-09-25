@@ -1,4 +1,5 @@
 import http from "node:http";
+import { createReadStream } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -14,9 +15,12 @@ const MIME = new Map([
   [".jpg", "image/jpeg"],
   [".js", "text/javascript; charset=utf-8"],
   [".json", "application/json; charset=utf-8"],
+  [".mp4", "video/mp4"],
   [".png", "image/png"],
   [".svg", "image/svg+xml"],
   [".txt", "text/plain; charset=utf-8"],
+  [".vtt", "text/vtt; charset=utf-8"],
+  [".webm", "video/webm"],
   [".webp", "image/webp"],
   [".xml", "application/xml; charset=utf-8"]
 ]);
@@ -75,10 +79,41 @@ export async function startServer({ root = DEFAULT_ROOT, host = "127.0.0.1", por
         response.end("Not found\n");
         return;
       }
+      const extension = path.extname(file).toLowerCase();
+      const contentType = MIME.get(extension) || "application/octet-stream";
+      const media = extension === ".mp4" || extension === ".webm";
+      const range = media ? request.headers.range : null;
+      if (range) {
+        const stat = await fs.stat(file);
+        const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+        const suffixLength = match && !match[1] && match[2] ? Number(match[2]) : null;
+        const start = suffixLength == null
+          ? (match && match[1] ? Number(match[1]) : 0)
+          : Math.max(0, stat.size - suffixLength);
+        const end = suffixLength == null
+          ? (match && match[2] ? Number(match[2]) : stat.size - 1)
+          : stat.size - 1;
+        if (!match || start < 0 || end < start || end >= stat.size) {
+          response.writeHead(416, { "Content-Range": `bytes */${stat.size}` });
+          response.end();
+          return;
+        }
+        response.writeHead(206, {
+          "Accept-Ranges": "bytes",
+          "Content-Range": `bytes ${start}-${end}/${stat.size}`,
+          "Content-Type": contentType,
+          "Content-Length": String(end - start + 1),
+          "Cache-Control": "no-store"
+        });
+        if (request.method === "HEAD") response.end();
+        else createReadStream(file, { start, end }).pipe(response);
+        return;
+      }
       const body = await fs.readFile(file);
       response.writeHead(200, {
-        "Content-Type": MIME.get(path.extname(file).toLowerCase()) || "application/octet-stream",
+        "Content-Type": contentType,
         "Content-Length": String(body.length),
+        ...(media ? { "Accept-Ranges": "bytes" } : {}),
         "Cache-Control": "no-store"
       });
       if (request.method === "HEAD") response.end();

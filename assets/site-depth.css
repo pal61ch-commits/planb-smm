@@ -506,6 +506,89 @@ main:not([class]) .wrap {
   border-radius: 20px;
 }
 
+/* Video library */
+.video-card,
+.article-video {
+  position: relative;
+  border-color: rgba(255, 255, 255, 0.11);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.062), rgba(255, 255, 255, 0.018)),
+    rgba(8, 9, 11, 0.82);
+  transition: transform 260ms var(--ease), border-color 260ms ease, box-shadow 260ms ease;
+}
+
+.video-card::before,
+.article-video::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 22px;
+  width: 54px;
+  height: 2px;
+  background: var(--yellow);
+  box-shadow: 0 0 18px rgba(255, 210, 31, 0.7);
+}
+
+.video-card:hover,
+.video-card:focus-within,
+.article-video:focus-within {
+  border-color: rgba(255, 210, 31, 0.32);
+  box-shadow: 0 30px 80px -42px rgba(255, 210, 31, 0.36);
+  transform: translateY(-4px);
+}
+
+.video-frame {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.085);
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255, 210, 31, 0.09), transparent 44%),
+    #030405;
+}
+
+.video-frame video {
+  color-scheme: dark;
+}
+
+.video-copy h2,
+.video-copy h3 {
+  color: var(--text);
+  letter-spacing: -0.035em;
+}
+
+.video-copy p,
+.video-transcript p {
+  color: rgba(244, 242, 233, 0.65);
+}
+
+.video-transcript summary {
+  color: rgba(244, 242, 233, 0.86);
+}
+
+.video-transcript summary:hover,
+.video-links a:hover {
+  color: var(--yellow);
+}
+
+.video-promo {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(255, 210, 31, 0.22);
+  background:
+    radial-gradient(70% 160% at 0% 0%, rgba(255, 210, 31, 0.13), transparent 70%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.video-promo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  width: 62px;
+  height: 2px;
+  background: var(--yellow);
+  box-shadow: 0 0 18px rgba(255, 210, 31, 0.68);
+}
+
 /* Conversion block */
 .cta {
   position: relative;
@@ -1201,6 +1284,8 @@ footer img {
   .fit-card,
   .direction-card,
   .evidence-item,
+  .video-card,
+  .article-video,
   .btn {
     transition-duration: 0.01ms;
   }
@@ -1213,6 +1298,8 @@ footer img {
   .fit-card:hover,
   .direction-card:hover,
   .evidence-item:hover,
+  .video-card:hover,
+  .article-video:hover,
   .btn:hover,
   #planb-analytics-settings:hover,
   #planb-analytics-settings:focus-visible {

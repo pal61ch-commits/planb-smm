@@ -30,10 +30,11 @@
   }
 
   function decorate() {
-    markEach(".phead, main:not([class]) > .hero .wrap, .section-head, .cta, .more > h2, .notice, .pricebox, .choice, .contact-cta, .expert", "data-sc-in");
-    var groups = ".kpis, .post-grid, .grid, .more-grid, .cards, .cases, .steps, .direction-grid, .evidence, .method-list";
+    markEach(".phead, main:not([class]) > .hero .wrap, .section-head, .cta, .more > h2, .notice, .pricebox, .choice, .contact-cta, .expert, .video-promo", "data-sc-in");
+    var groups = ".kpis, .post-grid, .grid, .more-grid, .cards, .cases, .steps, .direction-grid, .evidence, .method-list, .video-grid";
     markEach(groups, "data-sc-in");
     markEach(groups, "data-sc-stagger", "65");
+    markEach(".article-video", "data-sc-in");
 
     var entity = document.querySelector(".entity-card");
     if (entity) {

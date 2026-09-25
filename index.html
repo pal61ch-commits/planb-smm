@@ -140,6 +140,8 @@
     .btn-primary:hover{background:#30302b}
     .btn-yellow{background:var(--yellow);color:var(--ink)}
     .btn-yellow:hover{background:var(--yellow-strong)}
+    .btn-outline{border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.04);color:var(--white)}
+    .btn-outline:hover{border-color:var(--yellow);color:var(--yellow)}
     .text-link{display:inline-flex;align-items:center;gap:8px;font-weight:760;border-bottom:1px solid currentColor;padding:8px 0 5px}
     .text-link::after{content:"→";transition:transform .2s var(--ease)}
     .text-link:hover::after{transform:translateX(4px)}
@@ -247,7 +249,7 @@
     .blog-card h3{color:var(--white);font-size:22px}
     .blog-card p{margin-bottom:28px;color:rgba(255,255,255,.64);font-size:14px}
     .blog-card .text-link{margin-top:auto;align-self:flex-start;color:var(--white);font-size:13px}
-    .blog-more{margin-top:30px}
+    .blog-more{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
     .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:steps}
     .step{min-height:250px;padding:26px;border-top:5px solid var(--ink);background:rgba(255,255,255,.25)}
     .step::before{counter-increment:steps;content:"0" counter(steps);display:block;margin-bottom:55px;font-size:13px;font-weight:850;letter-spacing:.12em}
@@ -400,6 +402,7 @@
       .scenario-card{min-height:210px}
       .scenario-actions{align-items:flex-start;flex-direction:column}
       .blog-grid{grid-template-columns:1fr}
+      .blog-more .btn{width:100%;justify-content:center}
       .blog-card{min-height:240px;padding:24px}
       .steps{grid-template-columns:1fr}
       .step{min-height:0;padding:24px 18px}
@@ -464,6 +467,7 @@
         <a href="#products">Продукты</a>
         <a href="#cases">Кейсы</a>
         <a href="/blog/">Блог</a>
+        <a href="/video/">Видео</a>
         <a href="#faq">Вопросы</a>
         <a class="nav-cta" href="#contact">Получить план</a>
       </nav>
@@ -608,7 +612,7 @@
           <a class="blog-card reveal" href="/blog/pochemu-ne-rabotaet-prodvizhenie-avito"><span class="tag">Диагностика</span><h3>Почему продвижение не увеличивает обращения</h3><p>Что проверить в предложении, объявлении и расходах до следующего запуска.</p><span class="text-link">Читать статью</span></a>
           <a class="blog-card reveal" href="/blog/skolko-stoit-prodvizhenie-avito"><span class="tag">Экономика</span><h3>Как собрать бюджет продвижения</h3><p>Из каких частей складываются расходы и как оценивать тест по данным кабинета.</p><span class="text-link">Читать статью</span></a>
         </div>
-        <div class="blog-more reveal"><a class="btn btn-yellow" href="/blog/">Все материалы блога</a></div>
+        <div class="blog-more reveal"><a class="btn btn-yellow" href="/blog/">Все материалы блога</a><a class="btn btn-outline" href="/video/">Смотреть видео</a></div>
       </div>
     </section>
     <section class="section yellow-section">

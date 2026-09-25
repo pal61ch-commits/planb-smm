@@ -19,6 +19,8 @@ export const MARKETING_ROUTES = [
   "/kejsy/vrach-kosmetolog",
   "/kejsy/zapusk-stroitelnogo-akkaunta",
   "/blog/",
+  "/video/",
+  "/blog/audit-akkaunta-avito-pered-prodvizheniem",
   "/blog/avtozagruzka-avito",
   "/blog/cheklist-zapuska-avito-s-nulya",
   "/blog/infografika-dlya-avito",
@@ -34,6 +36,8 @@ export const MARKETING_ROUTES = [
   "/blog/prodvizhenie-avito-dlya-stroitelnyh-uslug",
   "/blog/skolko-obyavleniy-nuzhno-na-avito",
   "/blog/skolko-stoit-prodvizhenie-avito",
+  "/blog/statistika-avito-crm-sdelki",
+  "/blog/stoimost-kontakta-na-avito",
   "/blog/tarify-avito-2026",
   "/blog/uroven-servisa-avito",
   "/blog/vedenie-akkaunta-avito"
@@ -49,6 +53,13 @@ export const CURRENT_LEGAL_ROUTES = [
 
 export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
+export const NEW_CONTENT_ROUTES = [
+  "/video/",
+  "/blog/audit-akkaunta-avito-pered-prodvizheniem",
+  "/blog/statistika-avito-crm-sdelki",
+  "/blog/stoimost-kontakta-na-avito"
+];
+
 export const REPRESENTATIVE_ROUTES = [
   "/",
   "/uslugi/vedenie-avito",
@@ -56,6 +67,8 @@ export const REPRESENTATIVE_ROUTES = [
   "/kejsy/",
   "/kejsy/metalloprokat",
   "/blog/",
+  "/video/",
+  "/blog/audit-akkaunta-avito-pered-prodvizheniem",
   "/blog/vedenie-akkaunta-avito",
   "/privacy.html"
 ];

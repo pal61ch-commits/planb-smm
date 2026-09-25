@@ -426,7 +426,16 @@
   </style>
   <link rel="stylesheet" href="/assets/scrollcraft.css">
   <link rel="stylesheet" href="/assets/home-depth.css">
-  <noscript><style>[data-sc-in],.reveal{opacity:1!important;transform:none!important}</style></noscript>
+  <noscript><style>
+    [data-sc-in],.reveal{opacity:1!important;transform:none!important}
+    @media(max-width:1120px){
+      .menu-btn{display:none!important}
+      .header-row{align-items:flex-start!important;flex-wrap:wrap!important}
+      #mainNav{position:static!important;display:flex!important;flex:1 0 100%!important;flex-direction:row!important;flex-wrap:wrap!important;gap:4px!important;padding:8px 0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+      #mainNav a{padding:8px!important;font-size:12px!important}
+      #mainNav a.nav-cta{margin-top:0!important}
+    }
+  </style></noscript>
 </head>
 <body>
   <div class="home-atmosphere" aria-hidden="true">

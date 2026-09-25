@@ -98,6 +98,7 @@
 }
 </script>
 <script src="/assets/analytics-consent.js"></script>
+<link rel="stylesheet" href="/assets/scrollcraft.css">
 <link rel="stylesheet" href="/assets/page.css">
 <style>
   .wrap{max-width:1180px}.setup-page{position:relative;z-index:2}
@@ -127,6 +128,7 @@
   @media(max-width:900px){.hero-grid,.pricebox{grid-template-columns:minmax(0,1fr)}.proofbar{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.more-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-panel{max-width:680px}.hero{padding-top:26px}}
   @media(max-width:640px){.hero{padding-bottom:56px}.hero-copy h1{font-size:37px}.fit,.steps,.more-grid{grid-template-columns:minmax(0,1fr)}.proofbar{gap:8px}.proof{padding:16px 8px}.proof b{font-size:21px}.section{padding:48px 0}.pricebox{padding:25px}.nav-links a:not(.nav-cta){display:none}.btn{width:100%;justify-content:center}.hero-actions .micro{font-size:12px}.contact-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.contact-row a{text-align:center}}
 </style>
+<link rel="stylesheet" href="/assets/site-depth.css">
 </head>
 <body>
 <div class="bg"></div>
@@ -168,8 +170,8 @@
           <input type="hidden" name="form_id" value="serviceLead">
           <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
           <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-04-v3">
-          <input class="fld ym-disable-keys" id="setupLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="setupLeadMsg" required>
-          <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ниша или ссылка на профиль — необязательно" autocomplete="off">
+          <input class="fld ym-disable-keys" id="setupLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" aria-label="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="setupLeadMsg" required>
+          <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ниша или ссылка на профиль — необязательно" aria-label="Ниша или ссылка на профиль" autocomplete="off">
           <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
           <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>. Форма предназначена для лиц старше 18 лет. Не указывайте паспортные, платёжные, медицинские и другие чувствительные сведения.</p>
           <button class="btn btn-y" type="submit">Получить расчёт проекта</button>
@@ -422,5 +424,7 @@
   });
 })();
 </script>
+<script src="/assets/scrollcraft.js"></script>
+<script src="/assets/site-depth.js"></script>
 </body>
 </html>

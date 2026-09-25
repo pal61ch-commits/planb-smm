@@ -1,0 +1,15 @@
+{
+  "name": "planb-site-scrollcraft-qa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local, side-effect-free QA harness for the complete Plan B marketing site",
+  "scripts": {
+    "serve": "node server.mjs",
+    "qa": "node qa.mjs"
+  },
+  "license": "UNLICENSED",
+  "type": "module",
+  "devDependencies": {
+    "playwright-core": "1.58.2"
+  }
+}

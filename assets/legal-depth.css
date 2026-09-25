@@ -1,0 +1,256 @@
+:root {
+  --legal-canvas: #070809;
+  --legal-paper: #101216;
+  --legal-ink: #f4f2e9;
+  --legal-soft: #b1b0aa;
+  --legal-yellow: #ffd21f;
+  color-scheme: dark;
+}
+
+html {
+  min-height: 100%;
+  background: var(--legal-canvas);
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  max-width: 900px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: clamp(34px, 7vw, 72px) clamp(20px, 5vw, 48px) 80px;
+  background: transparent;
+  color: var(--legal-soft);
+  font-family: Onest, Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.78;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(72% 54% at 78% -8%, rgba(255, 210, 31, 0.12), transparent 62%),
+    radial-gradient(52% 48% at -8% 34%, rgba(100, 112, 143, 0.1), transparent 68%),
+    linear-gradient(180deg, #090a0c, #070809 56%, #0b0c0f);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+::selection {
+  background: var(--legal-yellow);
+  color: #111106;
+}
+
+:focus-visible {
+  outline: 2px solid var(--legal-yellow);
+  outline-offset: 4px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  margin-bottom: clamp(34px, 6vw, 60px);
+  padding: 9px 15px;
+  border: 1px solid rgba(255, 210, 31, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 210, 31, 0.065);
+  color: var(--legal-yellow);
+  text-decoration: none;
+}
+
+.back:hover {
+  border-color: rgba(255, 210, 31, 0.62);
+  background: rgba(255, 210, 31, 0.11);
+}
+
+h1,
+h2,
+h3 {
+  color: var(--legal-ink);
+  font-family: Manrope, Onest, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+h1 {
+  max-width: 760px;
+  margin: 0 0 16px;
+  font-size: clamp(35px, 6vw, 58px);
+  line-height: 1.02;
+}
+
+h2 {
+  position: relative;
+  margin-top: clamp(40px, 6vw, 60px);
+  padding-top: 18px;
+  font-size: clamp(21px, 3vw, 27px);
+  line-height: 1.2;
+}
+
+h2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 2px;
+  background: var(--legal-yellow);
+  box-shadow: 0 0 14px rgba(255, 210, 31, 0.48);
+}
+
+h3 {
+  font-size: 19px;
+}
+
+p,
+li,
+dd {
+  color: var(--legal-soft);
+}
+
+strong,
+b,
+dt {
+  color: var(--legal-ink);
+}
+
+a {
+  color: var(--legal-yellow);
+  text-underline-offset: 0.2em;
+}
+
+.meta {
+  color: rgba(244, 242, 233, 0.48);
+}
+
+.note,
+.det,
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 20px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018)),
+    rgba(12, 13, 16, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.065),
+    0 24px 70px -38px rgba(0, 0, 0, 0.98);
+}
+
+.note,
+.det {
+  padding: 22px 24px;
+}
+
+.note {
+  border-color: rgba(255, 210, 31, 0.24);
+  background:
+    linear-gradient(120deg, rgba(255, 210, 31, 0.085), transparent 50%),
+    rgba(255, 255, 255, 0.028);
+}
+
+.note::before,
+.det::before,
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 46px;
+  height: 1px;
+  background: var(--legal-yellow);
+  box-shadow: 0 0 16px rgba(255, 210, 31, 0.52);
+}
+
+.warn {
+  border-color: rgba(255, 139, 120, 0.38);
+  background: rgba(255, 139, 120, 0.055);
+}
+
+.card {
+  padding: clamp(22px, 4vw, 32px);
+}
+
+code {
+  padding: 0.15em 0.4em;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--legal-ink);
+}
+
+@media (max-width: 620px) {
+  body {
+    font-size: 15px;
+  }
+
+  body::after {
+    background-size: 52px 52px;
+  }
+
+  .note,
+  .det,
+  .card {
+    padding: 20px;
+    border-radius: 17px;
+  }
+}
+
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  body,
+  body::before,
+  body::after {
+    max-width: none;
+    padding: 0;
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .back {
+    display: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  li,
+  dd,
+  dt,
+  strong,
+  b,
+  a {
+    color: #111 !important;
+  }
+
+  .note,
+  .det,
+  .card {
+    border-color: #bbb;
+    background: #fff;
+    box-shadow: none;
+  }
+}

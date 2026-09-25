@@ -75,6 +75,7 @@
 }
 </script>
 <script src="/assets/analytics-consent.js"></script>
+<link rel="stylesheet" href="/assets/scrollcraft.css">
 <link rel="stylesheet" href="/assets/page.css">
 <style>
   .wrap{max-width:1180px}.service-page{position:relative;z-index:2}.icon-sprite{position:absolute;width:0;height:0;overflow:hidden}
@@ -128,6 +129,7 @@
   @media(max-width:900px){.hero-grid,.pricebox{grid-template-columns:1fr}.proofbar{grid-template-columns:1fr 1fr}.proof-case{grid-column:1/-1}.cards,.cases{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.hero-panel{max-width:640px}.hero{padding-top:24px}.market-card.one{left:auto;right:-45px;top:210px}.market-card.two{left:-70px;right:auto;top:980px}.market-card.three{display:none}}
   @media(max-width:640px){body{padding-bottom:72px}.hero{padding-bottom:58px}.hero:before{inset:-100px -80% -40px;background:radial-gradient(circle at 76% 22%,rgba(245,196,0,.11),transparent 28%),radial-gradient(circle at 82% 70%,rgba(38,165,229,.08),transparent 23%)}.hero:after{bottom:-285px;opacity:.12}.market-card{width:210px;height:142px;padding:13px;border-radius:18px;opacity:.13}.market-card.one{right:-62px;top:270px}.market-card.two{left:-80px;top:1070px;opacity:.11}.market-body{grid-template-columns:62px 1fr;gap:9px;margin-top:10px}.market-photo{height:59px}.market-lines{gap:6px}.market-lines i{height:5px}.market-foot{height:7px;margin-top:9px}.market-head{font-size:12px}.hero-copy h1{font-size:37px}.hero-copy>.contact-block,.price-action>.contact-block{display:none}.fit,.steps{grid-template-columns:1fr}.proofbar{gap:8px}.proof{padding:16px 8px}.proof b{font-size:24px}.proof-case{padding:13px;text-align:left}.proof-case img{width:80px;height:72px}.section{padding:48px 0}.pricebox{padding:25px}.nav-links a:not(.nav-cta){display:none}.expert{grid-template-columns:1fr}.btn,.price-action .btn{width:100%;min-width:0;justify-content:center}.contact-link{min-height:48px;padding:7px 5px;gap:6px;font-size:11.5px}.contact-icon{width:28px;height:28px;border-radius:9px}.contact-link svg{width:18px;height:18px}.contact-dock{position:fixed;z-index:50;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px;border:1px solid var(--gb2);border-radius:16px;background:rgba(15,15,17,.96);box-shadow:0 12px 38px rgba(0,0,0,.58);backdrop-filter:blur(16px)}.contact-dock .contact-link{min-height:44px;border-radius:10px}.contact-dock .contact-icon{width:25px;height:25px}.contact-dock .contact-link svg{width:16px;height:16px}}
 </style>
+<link rel="stylesheet" href="/assets/site-depth.css">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true" focusable="false">
@@ -177,8 +179,8 @@
           <input type="hidden" name="form_id" value="serviceLead">
           <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
           <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-04-v3">
-          <input class="fld ym-disable-keys" id="serviceLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="serviceLeadMsg" required>
-          <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ссылка на аккаунт или ниша — необязательно" autocomplete="off">
+          <input class="fld ym-disable-keys" id="serviceLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" aria-label="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="serviceLeadMsg" required>
+          <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ссылка на аккаунт или ниша — необязательно" aria-label="Ссылка на аккаунт или ниша" autocomplete="off">
           <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
           <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>. Форма предназначена для лиц старше 18 лет. Не указывайте паспортные, платёжные, медицинские и другие чувствительные сведения.</p>
           <button class="btn btn-y" type="submit">Получить 3 точки роста</button>
@@ -356,5 +358,7 @@
   });
 })();
 </script>
+<script src="/assets/scrollcraft.js"></script>
+<script src="/assets/site-depth.js"></script>
 </body>
 </html>

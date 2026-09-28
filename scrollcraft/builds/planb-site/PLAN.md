@@ -11,7 +11,7 @@
    - other marketing routes: Scrollcraft plus `site-depth` assets;
    - current legal routes: `legal-depth.css` only.
 6. Resolve all internal links and fragments, including extensionless routes.
-7. Verify the sitemap contains the expected 45-URL set.
+7. Verify the sitemap contains the expected 49-URL set.
 8. Verify the video library has exactly two playable video elements, captions, posters, VideoObject markup, no autoplay, and all six local media assets.
 
 ## 2. Local route server
@@ -27,7 +27,7 @@ This is required because Python's basic HTTP server does not resolve the site's 
 
 ## 3. Full-route render sweep
 
-Render all 47 active routes at:
+Render all 51 active routes at:
 
 - 1440 × 900;
 - 390 × 844.

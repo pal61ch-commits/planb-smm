@@ -2,19 +2,30 @@
 
 The executable source of truth is `routes.mjs`.
 
-## Marketing routes: 42
+## Marketing routes: 46
 
 - `/`
 - `/o-kompanii`
 - `/uslugi/vedenie-avito`
 - `/uslugi/razovaya-nastroyka-avito`
 - `/kejsy/` and 14 published case detail routes
-- `/blog/` and 21 published article routes
+- `/blog/` and 25 article routes
 - `/video/`
 
-These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 41 routes use `site-depth`.
+These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 45 marketing routes use `site-depth`.
 
-The four content-pilot routes are `/video/`, `/blog/audit-akkaunta-avito-pered-prodvizheniem`, `/blog/stoimost-kontakta-na-avito`, and `/blog/statistika-avito-crm-sdelki`. They have their own metadata and structured-data contracts instead of a baseline copy.
+The eight new-content routes are:
+
+- `/video/`
+- `/blog/agentstvo-ili-chastnyy-avitolog`
+- `/blog/audit-akkaunta-avito-pered-prodvizheniem`
+- `/blog/ii-prodavec-dlya-avito`
+- `/blog/prodvizhenie-yuridicheskih-uslug-na-avito`
+- `/blog/statistika-avito-crm-sdelki`
+- `/blog/stoimost-kontakta-na-avito`
+- `/blog/zakon-o-platformennoy-ekonomike-2026`
+
+They have their own metadata and structured-data contracts instead of a baseline copy.
 
 ## Current legal routes: 5
 
@@ -63,4 +74,4 @@ Sokrat remains outside this redesign. Its application API, auth, payment, analyt
 
 ## Sitemap contract
 
-The sitemap contains 45 URLs: the 42 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.
+The expected sitemap contains 49 URLs: the 46 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.

@@ -3,7 +3,7 @@
 ## Harness implementation
 
 - Status: implemented locally; not a production check.
-- Candidate root: `/Users/konstantin/content-factory/planb-landing-scrollcraft-home`
+- Candidate root: isolated release worktree supplied through `PLANB_SITE_ROOT`; the machine-readable report records the resolved path.
 - Baseline root: `/Users/konstantin/content-factory/planb-landing`
 - Browser: local Google Chrome through `playwright-core` 1.58.2.
 - Evidence directory: `scrollcraft/lab/planb-site/`.
@@ -34,7 +34,25 @@
 - Live production readback only after a separately approved deployment.
 - One explicitly authorized live lead canary only if delivery verification is requested.
 
-## Latest run
+## Latest completed run
+
+- Completed: 2026-09-28 07:33:44 UTC.
+- Verdict: **PASS**.
+- Marketing routes: 46.
+- Active routes: 51 of 51.
+- Sitemap URLs: 49.
+- Blog routes: 26, including the index and 25 article pages.
+- Browser runs: 162, including every active route on desktop and mobile.
+- Form runs: 6, covering local success and failure responses for all three forms.
+- Redirect runs: 4 of 4.
+- Immutable baseline comparisons: 19 of 19 unchanged.
+- Failures: 0.
+- Warnings: 0.
+- Content OS: 25 of 25 unit tests passed.
+- Article gate: all 4 release slugs passed with the live Content OS evidence database.
+- `npm audit`: 0 vulnerabilities.
+
+## Previous completed run (historical)
 
 - Completed: 2026-09-25 11:18:39 UTC.
 - Verdict: **PASS**.

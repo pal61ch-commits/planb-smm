@@ -2,14 +2,14 @@
 
 ## Purpose
 
-This build verifies the approved dark Plan B visual system plus the first owned-content pilot: three source-backed articles and a two-video library. Existing SEO metadata, legal history, consent behavior, lead payloads, and the separate Sokrat product surface remain protected.
+This build verifies the approved dark Plan B visual system plus the expanded owned-content scope: seven article routes and a two-video library. Existing SEO metadata, legal history, consent behavior, lead payloads, and the separate Sokrat product surface remain protected.
 
 The harness is local and side-effect-free. It never sends a lead, never loads live analytics code, and never changes production.
 
 ## Scope
 
-- 42 marketing routes: homepage, two service pages, company page, 15 case routes, 22 blog routes, and the video library.
-- 4 new content routes: three source-backed articles plus `/video/`.
+- 46 marketing routes: homepage, two service pages, company page, 15 case routes, 26 blog routes (the index plus 25 article pages), and the video library.
+- 8 new content routes: seven article pages plus `/video/`.
 - 2 self-hosted H.264/AAC videos with posters, Russian captions, source links, published-period context, and no autoplay.
 - 5 current legal routes: rendered and checked, but kept free of analytics and motion code.
 - 19 immutable files compared byte-for-byte with `/Users/konstantin/content-factory/planb-landing`:

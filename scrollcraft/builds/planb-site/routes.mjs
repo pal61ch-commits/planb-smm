@@ -20,10 +20,12 @@ export const MARKETING_ROUTES = [
   "/kejsy/zapusk-stroitelnogo-akkaunta",
   "/blog/",
   "/video/",
+  "/blog/agentstvo-ili-chastnyy-avitolog",
   "/blog/audit-akkaunta-avito-pered-prodvizheniem",
   "/blog/avtozagruzka-avito",
   "/blog/cheklist-zapuska-avito-s-nulya",
   "/blog/infografika-dlya-avito",
+  "/blog/ii-prodavec-dlya-avito",
   "/blog/kak-masshtabirovat-akkaunt-avito",
   "/blog/kak-napisat-prodayushchee-obyavlenie-avito",
   "/blog/kak-podnyat-obyavlenie-v-top-avito",
@@ -34,13 +36,15 @@ export const MARKETING_ROUTES = [
   "/blog/pochemu-obyavlenie-ne-pokazyvaetsya-avito",
   "/blog/povedencheskie-faktory-avito",
   "/blog/prodvizhenie-avito-dlya-stroitelnyh-uslug",
+  "/blog/prodvizhenie-yuridicheskih-uslug-na-avito",
   "/blog/skolko-obyavleniy-nuzhno-na-avito",
   "/blog/skolko-stoit-prodvizhenie-avito",
   "/blog/statistika-avito-crm-sdelki",
   "/blog/stoimost-kontakta-na-avito",
   "/blog/tarify-avito-2026",
   "/blog/uroven-servisa-avito",
-  "/blog/vedenie-akkaunta-avito"
+  "/blog/vedenie-akkaunta-avito",
+  "/blog/zakon-o-platformennoy-ekonomike-2026"
 ];
 
 export const CURRENT_LEGAL_ROUTES = [
@@ -55,9 +59,13 @@ export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
 export const NEW_CONTENT_ROUTES = [
   "/video/",
+  "/blog/agentstvo-ili-chastnyy-avitolog",
   "/blog/audit-akkaunta-avito-pered-prodvizheniem",
+  "/blog/ii-prodavec-dlya-avito",
+  "/blog/prodvizhenie-yuridicheskih-uslug-na-avito",
   "/blog/statistika-avito-crm-sdelki",
-  "/blog/stoimost-kontakta-na-avito"
+  "/blog/stoimost-kontakta-na-avito",
+  "/blog/zakon-o-platformennoy-ekonomike-2026"
 ];
 
 export const REPRESENTATIVE_ROUTES = [

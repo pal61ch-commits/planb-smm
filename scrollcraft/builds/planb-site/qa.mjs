@@ -36,7 +36,7 @@ const NOTICE_SHA256 = "c8445b179e648ea1867d3f1ac00aac22d8266c0f14839b620f6648b0c
 const BASELINE_DRIFT_FIELDS = new Set(["title", "description", "jsonld"]);
 const BASELINE_DRIFT_ALLOWLIST = new Map([
   ["/blog/", new Set(["jsonld"])],
-  ["/video/", new Set(["jsonld"])],
+  ["/video/", new Set(["description", "jsonld"])],
   ["/kejsy/", new Set(["title", "description", "jsonld"])],
   ["/kejsy/metalloprokat", new Set(["title", "description", "jsonld"])],
   ["/kejsy/odin-den-stroitelnogo-proekta", new Set(["title", "description", "jsonld"])]
@@ -384,16 +384,20 @@ async function staticAudit() {
     if (route === "/video/") {
       check(types.includes("CollectionPage"), "seo.video-schema", `${route}: missing CollectionPage`);
       check(types.includes("ItemList"), "seo.video-schema", `${route}: missing ItemList`);
-      check(types.filter(type => type === "VideoObject").length === 3, "seo.video-count", route);
+      check(types.filter(type => type === "VideoObject").length === 8, "seo.video-count", route);
       const videoNodes = values.flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value]);
       const videoList = videoNodes.find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/video/#list");
       const legalVideo = videoNodes.find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/video/#yuridicheskie-uslugi");
-      check(videoList?.numberOfItems === 3 && videoList?.itemListElement?.length === 3, "seo.video-list-count", route);
+      check(videoList?.numberOfItems === 8 && videoList?.itemListElement?.length === 8, "seo.video-list-count", route);
       check(legalVideo?.sameAs?.includes("https://t.me/planB_prodvizhenie/724"), "seo.video-provenance", route);
+      check(legalVideo?.sameAs?.includes("https://www.instagram.com/avitolog_planb_prodvizenie/reel/Dd0vpW4PW5Q/"), "seo.video-instagram-provenance", route);
       check(legalVideo?.uploadDate === "2026-09-25" && legalVideo?.duration === "PT1M5S", "seo.video-metadata", route);
-      check(count(html, "<video") === 3, "video.elements", route);
-      check(count(html, "<track") === 3, "video.captions", route);
-      check(count(html, 'preload="none"') === 3, "video.preload", route);
+      check(count(html, "<video") === 8, "video.elements", route);
+      check(count(html, "<track") === 8, "video.captions", route);
+      check(count(html, 'preload="none"') === 8, "video.preload", route);
+      check(count(html, "Открыть Reel") === 8, "video.instagram-links", route);
+      check(count(html, "Редакционная пометка:") === 2, "video.editorial-notes", route);
+      check(html.includes('id="podarok-klienta"') && html.includes('video-frame video-frame-wide'), "video.wide-modifier", route);
       for (const evidence of ["15–22 сентября 2026 года", "543 просмотра", "60 Контактов", "11%", "167 ₽", "501 активное объявление", "46 сохранений"]) {
         check(html.includes(evidence), "video.legal-evidence", evidence);
       }
@@ -404,19 +408,39 @@ async function staticAudit() {
         "media/video/kejs-stroitelstvo-23-kontakta.mp4",
         "media/video/kejs-metalloprokat-126-kontaktov.mp4",
         "media/video/kejs-yuridicheskie-uslugi-60-kontaktov.mp4",
+        "media/video/novye-prava-prodavtsov-avito-2026.mp4",
+        "media/video/avito-i-nalogovaya-2026.mp4",
+        "media/video/povedencheskie-faktory-avito.mp4",
+        "media/video/pohozhie-obyavleniya-moderatsiya-arhiv.mp4",
+        "media/video/podarok-klientu-planb.mp4",
         "media/posters/kejs-stroitelstvo-23-kontakta.jpg",
         "media/posters/kejs-metalloprokat-126-kontaktov.jpg",
         "media/posters/kejs-yuridicheskie-uslugi-60-kontaktov.jpg",
+        "media/posters/novye-prava-prodavtsov-avito-2026.jpg",
+        "media/posters/avito-i-nalogovaya-2026.jpg",
+        "media/posters/povedencheskie-faktory-avito.jpg",
+        "media/posters/pohozhie-obyavleniya-moderatsiya-arhiv.jpg",
+        "media/posters/podarok-klientu-planb.jpg",
         "media/captions/kejs-stroitelstvo-23-kontakta.vtt",
         "media/captions/kejs-metalloprokat-126-kontaktov.vtt",
-        "media/captions/kejs-yuridicheskie-uslugi-60-kontaktov.vtt"
+        "media/captions/kejs-yuridicheskie-uslugi-60-kontaktov.vtt",
+        "media/captions/novye-prava-prodavtsov-avito-2026.vtt",
+        "media/captions/avito-i-nalogovaya-2026.vtt",
+        "media/captions/povedencheskie-faktory-avito.vtt",
+        "media/captions/pohozhie-obyavleniya-moderatsiya-arhiv.vtt",
+        "media/captions/podarok-klientu-planb.vtt"
       ]) {
         check(await exists(path.join(SITE_ROOT, asset)), "video.asset", asset);
       }
       for (const caption of [
         "media/captions/kejs-stroitelstvo-23-kontakta.vtt",
         "media/captions/kejs-metalloprokat-126-kontaktov.vtt",
-        "media/captions/kejs-yuridicheskie-uslugi-60-kontaktov.vtt"
+        "media/captions/kejs-yuridicheskie-uslugi-60-kontaktov.vtt",
+        "media/captions/novye-prava-prodavtsov-avito-2026.vtt",
+        "media/captions/avito-i-nalogovaya-2026.vtt",
+        "media/captions/povedencheskie-faktory-avito.vtt",
+        "media/captions/pohozhie-obyavleniya-moderatsiya-arhiv.vtt",
+        "media/captions/podarok-klientu-planb.vtt"
       ]) {
         const captionText = await fs.readFile(path.join(SITE_ROOT, caption), "utf8");
         const longLines = captionText.split(/\r?\n/).filter(line => line && line !== "WEBVTT" && !line.includes("-->") && [...line].length > 42);

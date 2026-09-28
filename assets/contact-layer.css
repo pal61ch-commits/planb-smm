@@ -78,10 +78,10 @@ html .contact-dock.planb-contact-dock {
   box-shadow: 0 24px 70px -28px rgba(0, 0, 0, 0.98);
   backdrop-filter: blur(18px) saturate(1.25);
   -webkit-backdrop-filter: blur(18px) saturate(1.25);
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(14px, -50%);
-  visibility: hidden;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(0, -50%);
+  visibility: visible;
   transition: opacity 180ms ease, transform 220ms ease;
 }
 
@@ -167,7 +167,7 @@ html .contact-dock.planb-contact-dock .contact-link > span:last-child {
 }
 
 .planb-header-contact-strip {
-  position: absolute;
+  position: fixed;
   z-index: 79;
   inset: 0 0 auto;
   background: #090a0c;

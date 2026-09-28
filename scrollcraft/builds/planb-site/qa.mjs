@@ -600,6 +600,7 @@ async function inspectRuntime(page, noJs = false) {
     const contactRect = element => {
       const rect = element.getBoundingClientRect();
       const style = getComputedStyle(element);
+      const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
       return {
         href: element.getAttribute("href") || "",
         label: element.getAttribute("aria-label") || (element.textContent || "").trim(),
@@ -607,7 +608,9 @@ async function inspectRuntime(page, noJs = false) {
         height: rect.height,
         display: style.display,
         visibility: style.visibility,
-        opacity: Number.parseFloat(style.opacity)
+        opacity: Number.parseFloat(style.opacity),
+        insideViewport: rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight,
+        hit: hit === element || element.contains(hit)
       };
     };
     const contactDock = document.querySelector(".contact-dock.planb-contact-dock");
@@ -755,8 +758,8 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
       const contactSchemes = headerContacts.map(item => item.href).sort();
       check(contactSchemes.some(href => href.startsWith("tel:")) && contactSchemes.some(href => href.includes("wa.me/")) && contactSchemes.some(href => href.includes("t.me/")), "contact.header-targets", `${profile.name} ${route}: ${contactSchemes.join(", ")}`);
       if (profile.width <= 720) {
-        check(headerContacts.every(item => item.width > 0 && item.height > 0 && item.visibility === "visible"), "contact.header-visible", `${profile.name} ${route}: ${JSON.stringify(headerContacts)}`);
-        check(state.contactDock.visibility === "hidden", "contact.dock-hidden-at-top", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
+        check(headerContacts.every(item => item.width > 0 && item.height > 0 && item.visibility === "visible" && item.insideViewport && item.hit), "contact.header-visible", `${profile.name} ${route}: ${JSON.stringify(headerContacts)}`);
+        check(state.contactDock.visibility === "visible" && state.contactDock.opacity >= 0.99, "contact.dock-visible-at-top", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
       } else {
         check(state.contactDock.display === "none", "contact.dock-desktop-hidden", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
       }
@@ -837,11 +840,28 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
       }
       const settings = document.querySelector("#planb-analytics-settings");
       const settingsRect = settings?.getBoundingClientRect();
+      const headerContactSelector = location.pathname === "/" ? ".contact-strip-links a" : ".planb-header-contact-links a";
+      const headerContacts = [...document.querySelectorAll(headerContactSelector)].map(link => {
+        const rect = link.getBoundingClientRect();
+        const linkStyle = getComputedStyle(link);
+        return {
+          width: rect.width,
+          height: rect.height,
+          top: rect.top,
+          bottom: rect.bottom,
+          visible: linkStyle.display !== "none" && linkStyle.visibility !== "hidden" && Number(linkStyle.opacity) > 0 && rect.top >= 0 && rect.bottom <= innerHeight,
+          hit: (() => {
+            const target = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            return target === link || link.contains(target);
+          })()
+        };
+      });
       return {
         display: style.display,
         visibility: style.visibility,
         opacity: Number.parseFloat(style.opacity),
         links,
+        headerContacts,
         contentOverlaps,
         settings: settingsRect ? {
           width: settingsRect.width,
@@ -854,6 +874,7 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
     check(Boolean(settledDockState), "contact.dock-runtime", `${profile.name} ${route}`);
     check(settledDockState?.display !== "none" && settledDockState?.visibility === "visible" && settledDockState?.opacity >= 0.99, "contact.dock-visible-after-scroll", `${profile.name} ${route}: ${JSON.stringify(settledDockState)}`);
     check(settledDockState?.links.length === 3 && settledDockState.links.every(item => item.width >= 44 && item.height >= 44 && item.insideViewport && item.hit), "contact.dock-tap-targets", `${profile.name} ${route}: ${JSON.stringify(settledDockState)}`);
+    check(settledDockState?.headerContacts.length === 3 && settledDockState.headerContacts.every(item => item.visible && item.hit), "contact.header-visible-after-scroll", `${profile.name} ${route}: ${JSON.stringify(settledDockState?.headerContacts)}`);
     check(settledDockState?.contentOverlaps.length === 0, "contact.dock-content-overlap", `${profile.name} ${route}: ${settledDockState?.contentOverlaps.join(", ")}`);
     check(Boolean(settledDockState?.settings) && settledDockState.settings.width >= 44 && settledDockState.settings.height >= 44 && settledDockState.settings.insideViewport && !settledDockState.settings.overlapsDock, "contact.settings-position", `${profile.name} ${route}: ${JSON.stringify(settledDockState?.settings)}`);
   }

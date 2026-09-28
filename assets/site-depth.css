@@ -171,14 +171,14 @@ main:not([class]) .wrap {
 /* Shared navigation */
 .nav {
   position: sticky;
-  top: 12px;
+  top: 46px;
   z-index: 80;
   margin-top: 12px;
 }
 
-/* The strip is absolutely positioned into this pre-reserved first row. */
+/* Keep the original neutral contact row visible together with the sticky nav. */
 .planb-header-contact-strip {
-  position: absolute;
+  position: fixed;
   inset: 0 0 auto;
 }
 
@@ -1073,7 +1073,7 @@ footer img {
   }
 
   .nav {
-    top: 8px;
+    top: 42px;
     margin-top: 8px;
   }
 

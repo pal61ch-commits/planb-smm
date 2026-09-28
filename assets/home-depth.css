@@ -1255,6 +1255,25 @@ footer {
   }
 }
 
+@media (max-width: 720px) {
+  main .container {
+    padding-right: 80px;
+  }
+
+  main .container > *,
+  main .stage-grid > * {
+    min-width: 0;
+  }
+
+  #planb-analytics-settings {
+    right: 12px !important;
+    bottom: 10px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
 @media (max-width: 560px) {
   body {
     font-size: 16px;
@@ -1466,11 +1485,11 @@ footer {
   }
 
   #planb-analytics-settings {
-    right: 8px !important;
-    bottom: 8px !important;
-    width: 38px !important;
-    height: 38px !important;
-    min-height: 38px !important;
+    right: 12px !important;
+    bottom: 10px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
   }
 }
 

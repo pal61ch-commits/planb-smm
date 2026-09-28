@@ -17,6 +17,7 @@ export const MARKETING_ROUTES = [
   "/kejsy/tnvd-nasosy",
   "/kejsy/uslugi-massazha",
   "/kejsy/vrach-kosmetolog",
+  "/kejsy/yuridicheskie-uslugi",
   "/kejsy/zapusk-stroitelnogo-akkaunta",
   "/blog/",
   "/video/",
@@ -59,6 +60,7 @@ export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
 export const NEW_CONTENT_ROUTES = [
   "/video/",
+  "/kejsy/yuridicheskie-uslugi",
   "/blog/agentstvo-ili-chastnyy-avitolog",
   "/blog/audit-akkaunta-avito-pered-prodvizheniem",
   "/blog/ii-prodavec-dlya-avito",
@@ -74,6 +76,8 @@ export const REPRESENTATIVE_ROUTES = [
   "/o-kompanii",
   "/kejsy/",
   "/kejsy/metalloprokat",
+  "/kejsy/odin-den-stroitelnogo-proekta",
+  "/kejsy/yuridicheskie-uslugi",
   "/blog/",
   "/video/",
   "/blog/audit-akkaunta-avito-pered-prodvizheniem",

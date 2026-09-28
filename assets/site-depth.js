@@ -109,7 +109,52 @@
     window.requestAnimationFrame(render);
   }
 
+  function loadContactLayer() {
+    if (window.PlanBContactLayer) {
+      window.PlanBContactLayer.mount();
+      return;
+    }
+    function loadScript() {
+      if (document.querySelector('script[data-planb-contact-layer]')) return;
+      var script = document.createElement("script");
+      script.src = "/assets/contact-layer.js";
+      script.defer = true;
+      script.setAttribute("data-planb-contact-layer", "");
+      document.head.appendChild(script);
+    }
+    var stylesheet = document.querySelector('link[data-planb-contact-layer]');
+    if (stylesheet) {
+      loadScript();
+      return;
+    }
+    stylesheet = document.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = "/assets/contact-layer.css";
+    stylesheet.setAttribute("data-planb-contact-layer", "");
+    stylesheet.addEventListener("load", loadScript, { once: true });
+    stylesheet.addEventListener("error", function () {
+      var placeholder = document.querySelector("[data-planb-contact-placeholder]");
+      if (placeholder) placeholder.remove();
+    }, { once: true });
+    document.head.appendChild(stylesheet);
+  }
+
+  function reserveContactHeader() {
+    if (document.querySelector(".contact-strip,.planb-header-contact-strip")) return;
+    var nav = document.querySelector(".nav");
+    if (!nav || !nav.parentNode) return;
+    root.classList.add("has-contact-dock");
+    var placeholder = document.createElement("div");
+    placeholder.className = "planb-header-contact-strip";
+    placeholder.setAttribute("data-planb-contact-placeholder", "");
+    placeholder.setAttribute("aria-hidden", "true");
+    placeholder.style.cssText = "min-height:34px;background:#090a0c";
+    nav.parentNode.insertBefore(placeholder, nav);
+  }
+
+  reserveContactHeader();
   mountMenu();
+  loadContactLayer();
   decorate();
 
   try {

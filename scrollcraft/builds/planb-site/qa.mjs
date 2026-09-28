@@ -33,6 +33,33 @@ const CONSENT_VERSION = "planb-analytics-2026-09-02-v2";
 const PRIVACY_VERSION = "planb-privacy-2026-09-04-v3";
 const PRIVACY_SHA256 = "5cf6b80085eab30dc1d0a3f0c3dbafbf530ad271e5e1d33250c1a0e25b5508c8";
 const NOTICE_SHA256 = "c8445b179e648ea1867d3f1ac00aac22d8266c0f14839b620f6648b0ca25e275";
+const BASELINE_DRIFT_FIELDS = new Set(["title", "description", "jsonld"]);
+const BASELINE_DRIFT_ALLOWLIST = new Map([
+  ["/blog/", new Set(["jsonld"])],
+  ["/video/", new Set(["jsonld"])],
+  ["/kejsy/", new Set(["title", "description", "jsonld"])],
+  ["/kejsy/metalloprokat", new Set(["title", "description", "jsonld"])],
+  ["/kejsy/odin-den-stroitelnogo-proekta", new Set(["title", "description", "jsonld"])]
+]);
+const VERIFIED_CASE_URLS = [
+  "https://planb-prodvizhenie.ru/kejsy/odin-den-stroitelnogo-proekta",
+  "https://planb-prodvizhenie.ru/kejsy/metalloprokat",
+  "https://planb-prodvizhenie.ru/kejsy/yuridicheskie-uslugi"
+];
+const REAL_CASE_CONTRACTS = new Map([
+  ["/kejsy/odin-den-stroitelnogo-proekta", {
+    proof: "media/cases/avito-stroitelstvo-23-kontakta-proof.png",
+    metrics: ["23 Контакта", "56 просмотров", "4 815", "209,3"]
+  }],
+  ["/kejsy/metalloprokat", {
+    proof: "media/cases/avito-metalloprokat-126-kontaktov-proof.png",
+    metrics: ["126 Контактов", "1 835", "132,9", "17 августа", "2 сентября"]
+  }],
+  ["/kejsy/yuridicheskie-uslugi", {
+    proof: "media/cases/avito-yuridicheskie-uslugi-60-kontaktov-proof.png",
+    metrics: ["60 Контактов", "543 просмотра", "11%", "167", "15–22 сентября"]
+  }]
+]);
 
 const failures = [];
 const warnings = [];
@@ -48,6 +75,7 @@ const report = {
   },
   static: {},
   profiles: [],
+  contactStability: [],
   forms: [],
   consent: {},
   redirects: [],
@@ -158,6 +186,12 @@ async function digest(file) {
   return crypto.createHash("sha256").update(await fs.readFile(file)).digest("hex");
 }
 
+async function pngDimensions(file) {
+  const bytes = await fs.readFile(file);
+  if (bytes.length < 24 || bytes.subarray(1, 4).toString("ascii") !== "PNG") return null;
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
+
 async function seedDeniedConsent(context) {
   await context.addInitScript(({ key, version, privacyVersion, privacyHash, noticeHash }) => {
     const now = Date.now();
@@ -193,7 +227,7 @@ function screenshotName(route) {
 }
 
 async function staticAudit() {
-  check(MARKETING_ROUTES.length === 46, "scope.marketing", `expected 46, got ${MARKETING_ROUTES.length}`);
+  check(MARKETING_ROUTES.length === 47, "scope.marketing", `expected 47, got ${MARKETING_ROUTES.length}`);
   check(CURRENT_LEGAL_ROUTES.length === 5, "scope.current-legal", `expected 5, got ${CURRENT_LEGAL_ROUTES.length}`);
   check(VERSIONED_LEGAL_FILES.length === 6, "scope.versioned-legal", `expected 6, got ${VERSIONED_LEGAL_FILES.length}`);
   check(REDIRECT_CONTRACTS.length === 4, "scope.redirects", `expected 4, got ${REDIRECT_CONTRACTS.length}`);
@@ -201,6 +235,10 @@ async function staticAudit() {
   check(SOKRAT_FILES.length === 5, "scope.sokrat", `expected 5, got ${SOKRAT_FILES.length}`);
   check(new Set(ACTIVE_ROUTES).size === ACTIVE_ROUTES.length, "scope.active-duplicates");
   check(new Set(IMMUTABLE_FILES).size === IMMUTABLE_FILES.length, "scope.immutable-duplicates");
+  for (const [route, fields] of BASELINE_DRIFT_ALLOWLIST) {
+    check(ACTIVE_ROUTES.includes(route), "baseline.allowlist-route", route);
+    check([...fields].every(field => BASELINE_DRIFT_FIELDS.has(field)), "baseline.allowlist-field", `${route}: ${[...fields].join(", ")}`);
+  }
 
   const immutable = [];
   for (const relative of IMMUTABLE_FILES) {
@@ -248,30 +286,39 @@ async function staticAudit() {
 
     if (baselineExists) {
       const baselineHtml = await fs.readFile(baseline, "utf8");
-      check(tagContent(html, "title") === tagContent(baselineHtml, "title"), "seo.title-drift", route);
-      check(metaContent(html, "description") === metaContent(baselineHtml, "description"), "seo.description-drift", route);
+      const allowedDrift = BASELINE_DRIFT_ALLOWLIST.get(route) || new Set();
+      const actualTitle = tagContent(html, "title");
+      const baselineTitle = tagContent(baselineHtml, "title");
+      const titleChanged = actualTitle !== baselineTitle;
+      const actualDescription = metaContent(html, "description");
+      const baselineDescription = metaContent(baselineHtml, "description");
+      const descriptionChanged = actualDescription !== baselineDescription;
+      if (allowedDrift.has("title")) check(titleChanged, "baseline.allowlist-stale", `${route}: title`);
+      else check(!titleChanged, "seo.title-drift", route);
+      if (allowedDrift.has("description")) check(descriptionChanged, "baseline.allowlist-stale", `${route}: description`);
+      else check(!descriptionChanged, "seo.description-drift", route);
       check(canonicalHref(html) === canonicalHref(baselineHtml), "seo.canonical-drift", route);
-      if (route !== "/blog/") {
-        try {
-          const actualJson = JSON.stringify(normalizeJson(values));
-          const baselineValues = jsonLdValues(baselineHtml);
-          if (route === "/") {
-            const organization = baselineValues
-              .flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value])
-              .find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/#business");
-            if (organization) {
-              organization.sameAs = [
-                "https://www.instagram.com/avitolog_planb_prodvizenie/",
-                "https://vk.ru/planb_avitolog",
-                "https://t.me/planB_prodvizhenie"
-              ];
-            }
+      try {
+        const actualJson = JSON.stringify(normalizeJson(values));
+        const baselineValues = jsonLdValues(baselineHtml);
+        if (route === "/") {
+          const organization = baselineValues
+            .flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value])
+            .find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/#business");
+          if (organization) {
+            organization.sameAs = [
+              "https://www.instagram.com/avitolog_planb_prodvizenie/",
+              "https://vk.ru/planb_avitolog",
+              "https://t.me/planB_prodvizhenie"
+            ];
           }
-          const baselineJson = JSON.stringify(normalizeJson(baselineValues));
-          check(actualJson === baselineJson, "seo.jsonld-drift", route);
-        } catch (error) {
-          check(false, "seo.jsonld-baseline", `${route}: ${error.message}`);
         }
+        const baselineJson = JSON.stringify(normalizeJson(baselineValues));
+        const jsonChanged = actualJson !== baselineJson;
+        if (allowedDrift.has("jsonld")) check(jsonChanged, "baseline.allowlist-stale", `${route}: jsonld`);
+        else check(!jsonChanged, "seo.jsonld-drift", route);
+      } catch (error) {
+        check(false, "seo.jsonld-baseline", `${route}: ${error.message}`);
       }
     }
 
@@ -287,10 +334,45 @@ async function staticAudit() {
       for (const socialURL of socialURLs) {
         check(socialCards.some(tag => tag.includes(`href="${socialURL}"`)), "home.social-card-link", socialURL);
       }
+      const freeConsultationCopy = "Получить бесплатную консультацию и план продвижения";
+      check(count(html, freeConsultationCopy) >= 2, "home.free-consultation-copy", `expected repeated CTA/form copy: ${freeConsultationCopy}`);
+      check(html.includes("Получите бесплатную консультацию и план продвижения"), "home.free-consultation-heading");
+      check(html.includes("Получить бесплатную консультацию и план</button>"), "home.free-consultation-submit");
     }
     if (NEW_CONTENT_ROUTES.includes(route) && route.startsWith("/blog/")) {
       for (const type of ["BlogPosting", "FAQPage", "BreadcrumbList"]) {
         check(types.includes(type), "seo.article-schema", `${route}: missing ${type}`);
+      }
+    }
+    if (route === "/kejsy/") {
+      check(types.includes("CollectionPage") && types.includes("ItemList") && types.includes("BreadcrumbList"), "cases.index-schema", types.join(", "));
+      const nodes = values.flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value]);
+      const list = nodes.find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/kejsy/#verified-cases");
+      const listed = (list?.itemListElement || []).map(item => item?.url || item?.item?.url || item?.item?.["@id"]).filter(Boolean);
+      check(list?.numberOfItems === 3 && listed.length === 3, "cases.index-count", JSON.stringify(list));
+      check(VERIFIED_CASE_URLS.every(url => listed.includes(url)) && listed.every(url => VERIFIED_CASE_URLS.includes(url)), "cases.index-urls", JSON.stringify(listed));
+      check(count(html, "case-feature-card glass") === 3, "cases.index-card-count", String(count(html, "case-feature-card glass")));
+    }
+    const caseContract = REAL_CASE_CONTRACTS.get(route);
+    if (caseContract) {
+      check(types.includes("Article") && types.includes("BreadcrumbList"), "cases.detail-schema", `${route}: ${types.join(", ")}`);
+      const nodes = values.flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value]);
+      const article = nodes.find(node => (Array.isArray(node?.["@type"]) ? node["@type"] : [node?.["@type"]]).includes("Article"));
+      const proofUrl = `https://planb-prodvizhenie.ru/${caseContract.proof}`;
+      check(article?.mainEntityOfPage === expectedCanonical(route), "cases.main-entity", `${route}: ${article?.mainEntityOfPage}`);
+      check(article?.image === proofUrl && article?.dateModified === "2026-09-28", "cases.article-proof", `${route}: ${JSON.stringify(article)}`);
+      check(count(html, '<figure class="case-evidence">') === 1, "cases.evidence-figure", route);
+      check(html.includes(`src="/${caseContract.proof}"`) && html.includes('loading="lazy"'), "cases.evidence-image", route);
+      check(caseContract.metrics.every(metric => html.includes(metric)), "cases.metrics", `${route}: ${caseContract.metrics.filter(metric => !html.includes(metric)).join(", ")}`);
+      check(html.includes("case-provenance") && html.includes("Ограничение результата") && html.includes("не подтверждённая сделка"), "cases.provenance-limit", route);
+      for (const rawName of ["avito-stats-andrey-final.png", "avito-metal-stats.png", "avito-legal-stats.png"]) {
+        check(!html.includes(rawName), "cases.raw-proof-reference", `${route}: ${rawName}`);
+      }
+      const proofFile = path.join(SITE_ROOT, caseContract.proof);
+      check(await exists(proofFile), "cases.proof-file", caseContract.proof);
+      if (await exists(proofFile)) {
+        const dimensions = await pngDimensions(proofFile);
+        check(dimensions?.width === 1000 && dimensions?.height === 600, "cases.proof-dimensions", `${caseContract.proof}: ${JSON.stringify(dimensions)}`);
       }
     }
     const videoTags = html.match(/<video\b[^>]*>/gi) || [];
@@ -302,23 +384,39 @@ async function staticAudit() {
     if (route === "/video/") {
       check(types.includes("CollectionPage"), "seo.video-schema", `${route}: missing CollectionPage`);
       check(types.includes("ItemList"), "seo.video-schema", `${route}: missing ItemList`);
-      check(types.filter(type => type === "VideoObject").length === 2, "seo.video-count", route);
-      check(count(html, "<video") === 2, "video.elements", route);
-      check(count(html, "<track") === 2, "video.captions", route);
-      check(count(html, 'preload="none"') === 2, "video.preload", route);
+      check(types.filter(type => type === "VideoObject").length === 3, "seo.video-count", route);
+      const videoNodes = values.flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value]);
+      const videoList = videoNodes.find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/video/#list");
+      const legalVideo = videoNodes.find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/video/#yuridicheskie-uslugi");
+      check(videoList?.numberOfItems === 3 && videoList?.itemListElement?.length === 3, "seo.video-list-count", route);
+      check(legalVideo?.sameAs?.includes("https://t.me/planB_prodvizhenie/724"), "seo.video-provenance", route);
+      check(legalVideo?.uploadDate === "2026-09-25" && legalVideo?.duration === "PT1M5S", "seo.video-metadata", route);
+      check(count(html, "<video") === 3, "video.elements", route);
+      check(count(html, "<track") === 3, "video.captions", route);
+      check(count(html, 'preload="none"') === 3, "video.preload", route);
+      for (const evidence of ["15–22 сентября 2026 года", "543 просмотра", "60 Контактов", "11%", "167 ₽", "501 активное объявление", "46 сохранений"]) {
+        check(html.includes(evidence), "video.legal-evidence", evidence);
+      }
+      for (const unsupported of ["100 крупнейших городов", "обращения пришли из разных регионов", "отзывов практически нет"]) {
+        check(!html.includes(unsupported), "video.legal-unsupported-claim", unsupported);
+      }
       for (const asset of [
         "media/video/kejs-stroitelstvo-23-kontakta.mp4",
         "media/video/kejs-metalloprokat-126-kontaktov.mp4",
+        "media/video/kejs-yuridicheskie-uslugi-60-kontaktov.mp4",
         "media/posters/kejs-stroitelstvo-23-kontakta.jpg",
         "media/posters/kejs-metalloprokat-126-kontaktov.jpg",
+        "media/posters/kejs-yuridicheskie-uslugi-60-kontaktov.jpg",
         "media/captions/kejs-stroitelstvo-23-kontakta.vtt",
-        "media/captions/kejs-metalloprokat-126-kontaktov.vtt"
+        "media/captions/kejs-metalloprokat-126-kontaktov.vtt",
+        "media/captions/kejs-yuridicheskie-uslugi-60-kontaktov.vtt"
       ]) {
         check(await exists(path.join(SITE_ROOT, asset)), "video.asset", asset);
       }
       for (const caption of [
         "media/captions/kejs-stroitelstvo-23-kontakta.vtt",
-        "media/captions/kejs-metalloprokat-126-kontaktov.vtt"
+        "media/captions/kejs-metalloprokat-126-kontaktov.vtt",
+        "media/captions/kejs-yuridicheskie-uslugi-60-kontaktov.vtt"
       ]) {
         const captionText = await fs.readFile(path.join(SITE_ROOT, caption), "utf8");
         const longLines = captionText.split(/\r?\n/).filter(line => line && line !== "WEBVTT" && !line.includes("-->") && [...line].length > 42);
@@ -403,8 +501,13 @@ async function staticAudit() {
   check(new Set(sitemapUrls).size === sitemapUrls.length, "sitemap.duplicates");
   check(expectedSitemap.every(url => sitemapUrls.includes(url)), "sitemap.missing", expectedSitemap.filter(url => !sitemapUrls.includes(url)).join(", "));
   check(sitemapUrls.every(url => expectedSitemap.includes(url)), "sitemap.unexpected", sitemapUrls.filter(url => !expectedSitemap.includes(url)).join(", "));
+  const sitemapLastmods = new Map([...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)].map(match => [match[1], match[2]]));
+  for (const route of ["/", "/video/", "/kejsy/", ...REAL_CASE_CONTRACTS.keys()]) {
+    const url = expectedCanonical(route);
+    check(sitemapLastmods.get(url) === "2026-09-28", "sitemap.lastmod", `${url}: ${sitemapLastmods.get(url) || "missing"}`);
+  }
 
-  report.static = { active, immutable, localLinkFailures, sitemapUrls };
+  report.static = { active, immutable, localLinkFailures, sitemapUrls, sitemapLastmods: Object.fromEntries(sitemapLastmods) };
 }
 
 async function installPageRouting(page, baseURL, externalRequests, leadHandler = null) {
@@ -494,6 +597,20 @@ async function inspectRuntime(page, noJs = false) {
       .map(element => `${element.tagName.toLowerCase()}.${String(element.className || "").replace(/\s+/g, ".").slice(0, 70)}`);
     const localStyles = [...document.querySelectorAll("link[rel='stylesheet']")].map(link => new URL(link.href).pathname);
     const localScripts = [...document.scripts].filter(script => script.src).map(script => new URL(script.src).pathname);
+    const contactRect = element => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return {
+        href: element.getAttribute("href") || "",
+        label: element.getAttribute("aria-label") || (element.textContent || "").trim(),
+        width: rect.width,
+        height: rect.height,
+        display: style.display,
+        visibility: style.visibility,
+        opacity: Number.parseFloat(style.opacity)
+      };
+    };
+    const contactDock = document.querySelector(".contact-dock.planb-contact-dock");
     return {
       url: location.pathname,
       title: document.title,
@@ -528,10 +645,20 @@ async function inspectRuntime(page, noJs = false) {
       scrollcraftScripts: localScripts.filter(value => value === "/assets/scrollcraft.js").length,
       homeScripts: localScripts.filter(value => value === "/assets/home-depth.js").length,
       siteScripts: localScripts.filter(value => value === "/assets/site-depth.js").length,
+      contactScripts: localScripts.filter(value => value === "/assets/contact-layer.js").length,
       scrollcraftStyles: localStyles.filter(value => value === "/assets/scrollcraft.css").length,
       homeStyles: localStyles.filter(value => value === "/assets/home-depth.css").length,
       siteStyles: localStyles.filter(value => value === "/assets/site-depth.css").length,
+      contactStyles: localStyles.filter(value => value === "/assets/contact-layer.css").length,
       legalStyles: localStyles.filter(value => value === "/assets/legal-depth.css").length,
+      topContacts: [...document.querySelectorAll(".contact-strip-links a")].map(contactRect),
+      pageHeaderContacts: [...document.querySelectorAll(".planb-header-contact-links a")].map(contactRect),
+      contactDock: contactDock ? {
+        display: getComputedStyle(contactDock).display,
+        visibility: getComputedStyle(contactDock).visibility,
+        opacity: Number.parseFloat(getComputedStyle(contactDock).opacity),
+        links: [...contactDock.querySelectorAll("a[href]")].map(contactRect)
+      } : null,
       textLength: document.body.innerText.length,
       formCount: document.querySelectorAll("form").length
     };
@@ -619,6 +746,20 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
       check(state.scrollcraftScripts === 1 && state.scrollcraftStyles === 1, "runtime.scrollcraft-assets", `${profile.name} ${route}: js=${state.scrollcraftScripts}, css=${state.scrollcraftStyles}`);
       check(state.engineInstances === 1, "runtime.scrollcraft-instance", `${profile.name} ${route}: ${state.engineInstances}`);
       check(state.hiddenReveals.length === 0, "motion.hidden-reveal", `${profile.name} ${route}: ${state.hiddenReveals.slice(0, 5).join(" | ")}`);
+      check(state.contactScripts === 1 && state.contactStyles === 1, "runtime.contact-assets", `${profile.name} ${route}: js=${state.contactScripts}, css=${state.contactStyles}`);
+      check(Boolean(state.contactDock) && state.contactDock.links.length === 3, "contact.dock-count", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
+      const dockTargets = state.contactDock?.links.map(item => item.href) || [];
+      check(dockTargets[0]?.startsWith("tel:") && dockTargets[1]?.includes("wa.me/") && dockTargets[2]?.includes("t.me/"), "contact.dock-order", `${profile.name} ${route}: ${dockTargets.join(", ")}`);
+      const headerContacts = route === "/" ? state.topContacts : state.pageHeaderContacts;
+      check(headerContacts.length === 3, "contact.header-count", `${profile.name} ${route}: ${headerContacts.length}`);
+      const contactSchemes = headerContacts.map(item => item.href).sort();
+      check(contactSchemes.some(href => href.startsWith("tel:")) && contactSchemes.some(href => href.includes("wa.me/")) && contactSchemes.some(href => href.includes("t.me/")), "contact.header-targets", `${profile.name} ${route}: ${contactSchemes.join(", ")}`);
+      if (profile.width <= 720) {
+        check(headerContacts.every(item => item.width > 0 && item.height > 0 && item.visibility === "visible"), "contact.header-visible", `${profile.name} ${route}: ${JSON.stringify(headerContacts)}`);
+        check(state.contactDock.visibility === "hidden", "contact.dock-hidden-at-top", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
+      } else {
+        check(state.contactDock.display === "none", "contact.dock-desktop-hidden", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
+      }
       if (route === "/") check(state.homeScripts === 1 && state.homeStyles === 1 && state.siteScripts === 0 && state.siteStyles === 0, "runtime.home-assets", `${profile.name} ${route}`);
       else check(state.siteScripts === 1 && state.siteStyles === 1, "runtime.site-assets", `${profile.name} ${route}: js=${state.siteScripts}, css=${state.siteStyles}`);
     } else {
@@ -650,6 +791,71 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
     check(state.engineReduced, "motion.engine-reduced", `${profile.name} ${route}`);
     check(state.movingForever.length === 0, "motion.infinite-under-reduce", `${profile.name} ${route}: ${state.movingForever.slice(0, 8).join(" | ")}`);
     check(state.scrollBehavior !== "smooth", "motion.smooth-under-reduce", `${profile.name} ${route}: ${state.scrollBehavior}`);
+  }
+
+  if (profile.javaScript !== false && MARKETING_ROUTES.includes(route) && profile.width <= 720) {
+    await page.evaluate(() => {
+      window.scrollTo({ top: Math.min(Math.max(80, innerHeight * 0.45), Math.max(0, document.documentElement.scrollHeight - innerHeight)), behavior: "instant" });
+    });
+    await page.waitForFunction(
+      () => document.documentElement.matches(".home-scrolled,.site-scrolled"),
+      undefined,
+      { timeout: 2000 }
+    );
+    if (!profile.reduced) await page.waitForTimeout(240);
+    const settledDockState = await page.evaluate(async () => {
+      const dock = document.querySelector(".contact-dock.planb-contact-dock");
+      if (!dock) return null;
+      const intersects = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      const dockRect = dock.getBoundingClientRect();
+      const links = [...dock.querySelectorAll("a[href]")].map(link => {
+        const rect = link.getBoundingClientRect();
+        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return {
+          width: rect.width,
+          height: rect.height,
+          insideViewport: rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight,
+          hit: hit === link || link.contains(hit)
+        };
+      });
+      const style = getComputedStyle(dock);
+      const contentOverlaps = [];
+      const contentSelector = "main p,main li,main h1,main h2,main h3,main a[href],main button,main input,main textarea,main video,main .case-feature-card,main .stage-card,main .kpi,main form";
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+      const samplePositions = [...new Set([scrollY, maxScroll * 0.25, maxScroll * 0.5, maxScroll * 0.75, maxScroll].map(Math.round))];
+      for (const top of samplePositions) {
+        window.scrollTo({ top, behavior: "instant" });
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const currentDockRect = dock.getBoundingClientRect();
+        [...document.querySelectorAll(contentSelector)].forEach(element => {
+          const rect = element.getBoundingClientRect();
+          const elementStyle = getComputedStyle(element);
+          if (elementStyle.display !== "none" && elementStyle.visibility !== "hidden" && Number(elementStyle.opacity) > 0 && rect.width > 0 && rect.height > 0 && intersects(rect, currentDockRect)) {
+            contentOverlaps.push(`${top}:${element.tagName.toLowerCase()}.${String(element.className || "").replace(/\s+/g, ".").slice(0, 72)}`);
+          }
+        });
+      }
+      const settings = document.querySelector("#planb-analytics-settings");
+      const settingsRect = settings?.getBoundingClientRect();
+      return {
+        display: style.display,
+        visibility: style.visibility,
+        opacity: Number.parseFloat(style.opacity),
+        links,
+        contentOverlaps,
+        settings: settingsRect ? {
+          width: settingsRect.width,
+          height: settingsRect.height,
+          insideViewport: settingsRect.left >= 0 && settingsRect.right <= innerWidth && settingsRect.top >= 0 && settingsRect.bottom <= innerHeight,
+          overlapsDock: intersects(settingsRect, dockRect)
+        } : null
+      };
+    });
+    check(Boolean(settledDockState), "contact.dock-runtime", `${profile.name} ${route}`);
+    check(settledDockState?.display !== "none" && settledDockState?.visibility === "visible" && settledDockState?.opacity >= 0.99, "contact.dock-visible-after-scroll", `${profile.name} ${route}: ${JSON.stringify(settledDockState)}`);
+    check(settledDockState?.links.length === 3 && settledDockState.links.every(item => item.width >= 44 && item.height >= 44 && item.insideViewport && item.hit), "contact.dock-tap-targets", `${profile.name} ${route}: ${JSON.stringify(settledDockState)}`);
+    check(settledDockState?.contentOverlaps.length === 0, "contact.dock-content-overlap", `${profile.name} ${route}: ${settledDockState?.contentOverlaps.join(", ")}`);
+    check(Boolean(settledDockState?.settings) && settledDockState.settings.width >= 44 && settledDockState.settings.height >= 44 && settledDockState.settings.insideViewport && !settledDockState.settings.overlapsDock, "contact.settings-position", `${profile.name} ${route}: ${JSON.stringify(settledDockState?.settings)}`);
   }
 
   let focusOrder = [];
@@ -703,6 +909,47 @@ async function runRenderProfiles(browser, baseURL) {
   for (const route of REPRESENTATIVE_ROUTES) {
     report.profiles.push(await renderRoute({ browser, baseURL, route, profile: reduced }));
     report.profiles.push(await renderRoute({ browser, baseURL, route, profile: noJs }));
+  }
+}
+
+async function runContactStability(browser, baseURL) {
+  for (const contract of [
+    { route: "/", delayedAsset: "/assets/home-depth.js" },
+    { route: "/video/", delayedAsset: "/assets/site-depth.js" }
+  ]) {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+    await seedDeniedConsent(context);
+    await context.addInitScript(() => {
+      window.__qaLayoutShifts = [];
+      new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
+          if (!entry.hadRecentInput) window.__qaLayoutShifts.push(entry.value);
+        });
+      }).observe({ type: "layout-shift", buffered: true });
+    });
+    const page = await context.newPage();
+    await page.route(`**${contract.delayedAsset}`, async intercepted => {
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      await intercepted.continue();
+    });
+    await page.goto(baseURL + contract.route, { waitUntil: "load", timeout: 15000 });
+    await page.waitForTimeout(300);
+    const state = await page.evaluate(() => {
+      const strip = document.querySelector(".contact-strip,.planb-header-contact-strip")?.getBoundingClientRect();
+      const mainShell = document.querySelector("main .container,main.wrap,main .wrap");
+      const mainStyle = mainShell && getComputedStyle(mainShell);
+      return {
+        shifts: window.__qaLayoutShifts || [],
+        cls: (window.__qaLayoutShifts || []).reduce((total, value) => total + value, 0),
+        strip: strip ? { top: strip.top, height: strip.height } : null,
+        mainPaddingRight: mainStyle?.paddingRight || ""
+      };
+    });
+    check(state.cls === 0, "contact.slow-load-cls", `${contract.route}: ${JSON.stringify(state)}`);
+    check(state.strip?.top === 0 && state.strip?.height >= 33 && state.strip?.height <= 34.5, "contact.slow-load-strip", `${contract.route}: ${JSON.stringify(state.strip)}`);
+    check(state.mainPaddingRight === "80px", "contact.slow-load-gutter", `${contract.route}: ${state.mainPaddingRight}`);
+    report.contactStability.push({ ...contract, ...state });
+    await context.close();
   }
 }
 
@@ -831,6 +1078,14 @@ async function runConsent(browser, baseURL) {
   check(initial.stored === null && initial.activeChoice === "denied", "consent.initial-focus", JSON.stringify(initial));
   check(initial.role === "dialog" && initial.labelledBy && initial.describedBy, "consent.dialog-a11y", JSON.stringify(initial));
   check(initial.analyticsScripts === 0 && freshExternal.every(item => !/mc\.yandex\.ru/.test(item.url)), "consent.no-preload");
+  await freshPage.evaluate(() => window.scrollTo({ top: 240, behavior: "instant" }));
+  await freshPage.waitForTimeout(240);
+  const dockBehindConsent = await freshPage.evaluate(() => {
+    const dock = document.querySelector(".contact-dock.planb-contact-dock");
+    const style = dock && getComputedStyle(dock);
+    return style ? { visibility: style.visibility, pointerEvents: style.pointerEvents, opacity: Number.parseFloat(style.opacity) } : null;
+  });
+  check(dockBehindConsent?.visibility === "hidden" && dockBehindConsent?.pointerEvents === "none", "contact.dock-hidden-by-consent", JSON.stringify(dockBehindConsent));
   await freshPage.locator("[data-choice='denied']").click();
   const denied = await freshPage.evaluate(key => JSON.parse(localStorage.getItem(key) || "null"), CONSENT_KEY);
   check(denied?.schema === "planb-analytics-choice-v2" && denied?.version === CONSENT_VERSION && denied?.privacy_version === PRIVACY_VERSION && denied?.privacy_sha256 === PRIVACY_SHA256 && denied?.notice_sha256 === NOTICE_SHA256 && denied?.choice === "denied", "consent.denied-record", JSON.stringify(denied));
@@ -854,6 +1109,29 @@ async function runConsent(browser, baseURL) {
   check(granted.state?.choice === "granted" && granted.scripts === 1 && granted.label === "Аналитика: разрешена", "consent.granted", JSON.stringify(granted));
   check(Boolean(initCall) && initCall[2]?.webvisor === false && initCall[2]?.clickmap === false, "consent.safe-init", JSON.stringify(initCall));
   check(grantExternal.filter(item => /mc\.yandex\.ru/.test(item.url)).length === 1, "consent.single-loader", JSON.stringify(grantExternal));
+  await grantPage.evaluate(() => {
+    document.addEventListener("click", event => {
+      if (event.target.closest(".planb-contact-dock a")) event.preventDefault();
+    }, true);
+    window.scrollTo({ top: 240, behavior: "instant" });
+  });
+  await grantPage.waitForTimeout(240);
+  for (const selector of [
+    ".planb-contact-dock .planb-contact-action--phone",
+    ".planb-contact-dock .planb-contact-action--whatsapp",
+    ".planb-contact-dock .planb-contact-action--telegram"
+  ]) {
+    await grantPage.locator(selector).click();
+  }
+  const contactGoals = await grantPage.evaluate(() => (window.ym?.a || [])
+    .map(args => Array.from(args))
+    .filter(args => args[1] === "reachGoal" && String(args[2] || "").startsWith("CONTACT_")));
+  for (const [goal, targetType] of [["CONTACT_PHONE", "phone"], ["CONTACT_WHATSAPP", "whatsapp"], ["CONTACT_TELEGRAM", "telegram"]]) {
+    const matches = contactGoals.filter(args => args[2] === goal);
+    check(matches.length === 1 && matches[0]?.[3]?.target_type === targetType && matches[0]?.[3]?.route === "/", "analytics.contact-goal", `${goal}: ${JSON.stringify(matches)}`);
+  }
+  const serializedContactGoals = JSON.stringify(contactGoals);
+  check(!/79281446617|Здравствуйте|консультац/i.test(serializedContactGoals), "analytics.contact-payload-safe", serializedContactGoals);
   await grantPage.locator("#planb-analytics-settings").click();
   await grantPage.locator("#planb-cookie [data-choice='denied']").click();
   await grantPage.waitForFunction(key => JSON.parse(localStorage.getItem(key) || "null")?.choice === "denied", CONSENT_KEY);
@@ -881,7 +1159,7 @@ async function runConsent(browser, baseURL) {
   check(tamperedExternal.every(item => !/mc\.yandex\.ru/.test(item.url)), "consent.tampered-preload", JSON.stringify(tamperedExternal));
   await tamperedContext.close();
 
-  report.consent = { initial, denied, granted, revoked, freshExternal, grantExternal, tamperedExternal };
+  report.consent = { initial, denied, granted, contactGoals, revoked, freshExternal, grantExternal, tamperedExternal };
 }
 
 async function runRedirects(browser, baseURL) {
@@ -915,6 +1193,7 @@ async function main() {
 
     browser = await chromium.launch({ executablePath: CHROME, headless: true });
     await runRenderProfiles(browser, running.baseURL);
+    await runContactStability(browser, running.baseURL);
     await runForms(browser, running.baseURL);
     await runConsent(browser, running.baseURL);
     await runRedirects(browser, running.baseURL);

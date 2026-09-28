@@ -1,0 +1,270 @@
+.planb-contact-action {
+  position: relative;
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  color: #fff;
+  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.96), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  isolation: isolate;
+  transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+}
+
+.planb-contact-action::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), transparent 58%);
+  content: "";
+}
+
+.planb-contact-action:hover,
+.planb-contact-action:focus-visible {
+  filter: brightness(1.08);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.planb-contact-action:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.planb-contact-action svg {
+  width: 23px;
+  height: 23px;
+  fill: currentColor;
+}
+
+.planb-contact-action--phone {
+  border-color: rgba(255, 210, 31, 0.78);
+  background: #f5c400;
+  color: #17150c;
+  box-shadow: 0 14px 34px -18px rgba(245, 196, 0, 0.95);
+}
+
+.planb-contact-action--whatsapp {
+  border-color: rgba(80, 245, 143, 0.78);
+  background: #087a3e;
+  box-shadow: 0 14px 34px -18px rgba(37, 211, 102, 0.96);
+}
+
+.planb-contact-action--telegram {
+  border-color: rgba(92, 199, 251, 0.82);
+  background: #168fca;
+  box-shadow: 0 14px 34px -18px rgba(38, 165, 229, 0.96);
+}
+
+html .contact-dock.planb-contact-dock {
+  position: fixed;
+  top: 58svh;
+  right: max(6px, env(safe-area-inset-right));
+  bottom: auto;
+  left: auto;
+  z-index: 78;
+  display: flex;
+  width: auto;
+  padding: 4px;
+  flex-direction: column;
+  grid-template-columns: none;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background: rgba(10, 11, 13, 0.82);
+  box-shadow: 0 24px 70px -28px rgba(0, 0, 0, 0.98);
+  backdrop-filter: blur(18px) saturate(1.25);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(14px, -50%);
+  visibility: hidden;
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+
+.home-scrolled .contact-dock.planb-contact-dock,
+.site-scrolled .contact-dock.planb-contact-dock {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(0, -50%);
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+html .contact-dock.planb-contact-dock .planb-contact-action,
+html .contact-dock.planb-contact-dock .contact-link {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  place-items: center;
+  border-radius: 16px;
+  font-size: 0;
+  text-align: center;
+}
+
+html .contact-dock.planb-contact-dock .contact-link .contact-icon {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  box-shadow: none;
+}
+
+html .contact-dock.planb-contact-dock .contact-link svg {
+  width: 24px;
+  height: 24px;
+}
+
+html .contact-dock.planb-contact-dock .contact-link.call {
+  border-color: rgba(255, 210, 31, 0.78);
+  background: #f5c400;
+  color: #17150c;
+}
+
+html .contact-dock.planb-contact-dock .contact-link.tg {
+  border-color: rgba(92, 199, 251, 0.82);
+  background: #168fca;
+  color: #fff;
+}
+
+html .contact-dock.planb-contact-dock .contact-link.wa {
+  border-color: rgba(80, 245, 143, 0.78);
+  background: #087a3e;
+  color: #fff;
+}
+
+html:has(#planb-cookie) .contact-dock.planb-contact-dock {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.planb-visually-hidden,
+html .contact-dock.planb-contact-dock .contact-link > span:last-child {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.has-contact-dock #planb-analytics-settings {
+  left: auto !important;
+  right: max(12px, env(safe-area-inset-right)) !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+}
+
+.planb-header-contact-strip {
+  position: absolute;
+  z-index: 79;
+  inset: 0 0 auto;
+  background: #090a0c;
+  color: #f4f2e9;
+}
+
+.planb-header-contact-row {
+  display: flex;
+  width: min(100%, 1220px);
+  min-height: 34px;
+  margin-inline: auto;
+  padding-inline: 26px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.planb-header-contact-label {
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 700;
+}
+
+.planb-header-contact-links {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 22px;
+  font-weight: 780;
+}
+
+.planb-header-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  white-space: nowrap;
+  transition: color 180ms ease;
+}
+
+.planb-header-contact-link:hover,
+.planb-header-contact-link:focus-visible {
+  color: #ffd21f;
+}
+
+.planb-header-contact-link svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  fill: currentColor;
+}
+
+@media (max-width: 720px) {
+  html .contact-dock.planb-contact-dock { top: 61svh; }
+  html.has-contact-dock main.wrap,
+  html.has-contact-dock main .wrap,
+  html.has-contact-dock main .container,
+  html.has-contact-dock body > .wrap {
+    padding-right: 80px;
+  }
+  html.has-contact-dock main.wrap > *,
+  html.has-contact-dock main .wrap > *,
+  html.has-contact-dock main .container > *,
+  html.has-contact-dock body > .wrap > * {
+    min-width: 0;
+  }
+  html.has-contact-dock main .stage-grid > * {
+    min-width: 0;
+  }
+  .planb-header-contact-label { display: none; }
+  .planb-header-contact-row {
+    min-height: 34px;
+    padding-inline: 16px;
+    font-size: 11px;
+  }
+  .planb-header-contact-links {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .planb-header-contact-link { gap: 5px; }
+  .planb-header-contact-link svg { width: 14px; height: 14px; }
+}
+
+@media (min-width: 721px) {
+  html .contact-dock.planb-contact-dock { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planb-contact-action,
+  html .contact-dock.planb-contact-dock { transition: none; }
+  .planb-contact-action:hover,
+  .planb-contact-action:focus-visible { transform: none; }
+}
+
+@media print {
+  .planb-header-contact-strip,
+  .planb-contact-dock { display: none !important; }
+}

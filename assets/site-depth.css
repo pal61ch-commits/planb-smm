@@ -29,6 +29,7 @@ html {
 body {
   position: relative;
   min-height: 100vh;
+  padding-top: 34px;
   background: transparent;
   color: var(--text);
   font-family: Onest, Manrope, "Golos Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -173,6 +174,12 @@ main:not([class]) .wrap {
   top: 12px;
   z-index: 80;
   margin-top: 12px;
+}
+
+/* The strip is absolutely positioned into this pre-reserved first row. */
+.planb-header-contact-strip {
+  position: absolute;
+  inset: 0 0 auto;
 }
 
 .nav .wrap {
@@ -1242,12 +1249,29 @@ footer img {
     bottom: 68px !important;
   }
 
+  html[data-planb-depth-mounted].has-contact-dock #planb-analytics-settings {
+    right: 12px !important;
+    bottom: 68px !important;
+  }
+
   #planb-analytics-settings {
-    right: 8px !important;
-    bottom: 8px !important;
-    width: 38px !important;
-    height: 38px !important;
-    min-height: 38px !important;
+    right: 12px !important;
+    bottom: 68px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+  }
+
+  main.wrap,
+  main .wrap,
+  body > .wrap {
+    padding-right: 80px;
+  }
+
+  main.wrap > *,
+  main .wrap > *,
+  body > .wrap > * {
+    min-width: 0;
   }
 }
 

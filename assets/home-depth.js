@@ -66,7 +66,34 @@
     window.requestAnimationFrame(render);
   }
 
+  function loadContactLayer() {
+    if (window.PlanBContactLayer) {
+      window.PlanBContactLayer.mount();
+      return;
+    }
+    function loadScript() {
+      if (document.querySelector('script[data-planb-contact-layer]')) return;
+      var script = document.createElement("script");
+      script.src = "/assets/contact-layer.js";
+      script.defer = true;
+      script.setAttribute("data-planb-contact-layer", "");
+      document.head.appendChild(script);
+    }
+    var stylesheet = document.querySelector('link[data-planb-contact-layer]');
+    if (stylesheet) {
+      loadScript();
+      return;
+    }
+    stylesheet = document.createElement("link");
+    stylesheet.rel = "stylesheet";
+    stylesheet.href = "/assets/contact-layer.css";
+    stylesheet.setAttribute("data-planb-contact-layer", "");
+    stylesheet.addEventListener("load", loadScript, { once: true });
+    document.head.appendChild(stylesheet);
+  }
+
   decorateReveals();
+  loadContactLayer();
 
   if (window.ScrollCraft && typeof window.ScrollCraft.mount === "function") {
     window.ScrollCraft.mount(document.body);

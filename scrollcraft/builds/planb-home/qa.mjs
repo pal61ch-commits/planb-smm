@@ -53,7 +53,9 @@ async function inspectRun(config) {
   await page.waitForTimeout(700);
 
   const base = await page.evaluate(() => {
+    const cleanText = element => (element?.textContent || "").trim().replace(/\s+/g, " ");
     const form = document.querySelector("#leadForm");
+    const heroCta = document.querySelector('.hero-actions .btn-primary[href="#contact"]');
     const analyticsControl = document.querySelector("#planb-analytics-settings");
     const analyticsRect = analyticsControl?.getBoundingClientRect();
     const contactEyebrow = document.querySelector("#contact .eyebrow");
@@ -81,6 +83,13 @@ async function inspectRun(config) {
         statusRole: document.querySelector("#leadMsg")?.getAttribute("role"),
         statusLive: document.querySelector("#leadMsg")?.getAttribute("aria-live")
       } : null,
+      conversionCopy: {
+        heroCta: cleanText(heroCta),
+        heroCtaHref: heroCta?.getAttribute("href") || "",
+        contactHeading: cleanText(document.querySelector("#contact .contact-copy h2")),
+        formHeading: cleanText(form?.querySelector("h3")),
+        submit: cleanText(form?.querySelector('button[type="submit"]'))
+      },
       analyticsControl: analyticsControl ? {
         label: analyticsControl.getAttribute("aria-label"),
         title: analyticsControl.getAttribute("title"),
@@ -104,6 +113,10 @@ async function inspectRun(config) {
   requireCheck(base.form?.privacyVersion === "planb-privacy-2026-09-04-v3", config.name + ": privacy version changed");
   requireCheck(base.form?.requiredPhone && base.form?.requiredConsent, config.name + ": required form controls changed");
   requireCheck(base.form?.statusRole === "status" && base.form?.statusLive === "polite", config.name + ": form status accessibility changed");
+  requireCheck(base.conversionCopy?.heroCta === "Получить бесплатную консультацию и план продвижения" && base.conversionCopy?.heroCtaHref === "#contact", config.name + ": hero CTA copy or target changed");
+  requireCheck(base.conversionCopy?.contactHeading === "Получите бесплатную консультацию и план продвижения", config.name + ": contact heading copy changed");
+  requireCheck(base.conversionCopy?.formHeading === "Получить бесплатную консультацию и план продвижения", config.name + ": form heading copy changed");
+  requireCheck(base.conversionCopy?.submit === "Получить бесплатную консультацию и план", config.name + ": form submit copy changed");
   requireCheck(base.analyticsControl?.label === "Настройки аналитики" && base.analyticsControl?.title === "Настройки аналитики", config.name + ": analytics settings label changed");
   requireCheck(base.analyticsControl?.width <= 44 && base.analyticsControl?.height <= 44, config.name + ": analytics settings control is no longer compact");
   requireCheck(base.contactEyebrowColor === "rgb(255, 210, 31)", config.name + ": contact eyebrow lost brand contrast");

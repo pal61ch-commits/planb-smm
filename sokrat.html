@@ -167,6 +167,7 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
 .mcard h3{font-size:23px;margin-bottom:6px}
 .mcard .msub{font-size:13px;color:var(--muted);margin-bottom:6px;line-height:1.5}
 .mcard label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
+#mRecoveryEmailLabel[hidden]{display:none}
 .mcard input{width:100%;background:var(--glass2);border:1px solid var(--gb);border-radius:12px;color:var(--text);
   font-family:'Golos Text';font-size:16px;padding:13px 14px;transition:border-color .2s}
 .mcard input:focus{outline:none;border-color:var(--gb2)}
@@ -493,6 +494,8 @@ h1,h2,h3{font-family:'Manrope',sans-serif;letter-spacing:-.02em;line-height:1.1;
     <form id="mForm" autocomplete="on">
       <label id="mEmailLabel">Email</label>
       <input id="mEmail" type="email" autocomplete="email" placeholder="you@mail.ru" required>
+      <label id="mRecoveryEmailLabel" hidden>Правильная почта (можно исправить адрес)</label>
+      <input id="mRecoveryEmail" type="email" autocomplete="email" maxlength="254" hidden>
       <label id="mPassLabel">Пароль</label>
       <input id="mPass" type="password" minlength="1" maxlength="256" autocomplete="current-password" placeholder="Пароль" required>
       <button class="msubmit" id="mSubmit" type="submit">Войти</button>
@@ -808,6 +811,27 @@ try{
   form.addEventListener('submit',e=>{e.preventDefault();const v=input.value.trim();if(!v&&!cImg)return;const img=cImg;input.value='';input.style.height='auto';cClear();ask(v,img);});
   input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
 })();
+
+var SOK_AUTH_COPY={
+  title:{login:'Вход',register:'Регистрация',verify:'Подтверждение почты',reset:'Новый пароль',handoff:'Готовый запрос уже собран'},
+  submit:{login:'Войти',register:'Зарегистрироваться',verify:'Отправить письмо',reset:'Сохранить пароль',handoff:'Зарегистрироваться и открыть'},
+  hint:{recovery:'Введите пароль и правильную почту. Для повторного письма оставьте адрес без изменений. После подтверждения можно войти.',reset:'Задайте новый пароль — после сохранения потребуется войти заново.',handoff:'После входа запрос автоматически откроется в инструменте «{tool}». Первые генерации бесплатны.',auth:'Консультант бесплатен без дневного лимита. После входа доступны по 5 бесплатных генераций каждого дополнительного инструмента.'},
+  tool:{copywriter:'Копирайтер',designer:'Дизайнер',autoload:'Автозагрузка'},
+  field:{email:'Email',currentEmail:'Текущая почта аккаунта',password:'Пароль',newPassword:'Новый пароль',passwordHint:'8–256 символов'},
+  verification:{success:'Почта подтверждена ✓',expired:'Ссылка подтверждения устарела'},
+  emailChange:{required:'Введите новую почту и текущий пароль',failed:'Не удалось сменить почту'},
+  toggle:{login:'Нет аккаунта? <a id="mSwap" href="#register">Зарегистрироваться</a> · <a id="mForgot" href="#password-reset">Забыли пароль?</a><br><a id="mRecover" href="#email-recovery">Не приходит письмо? Исправить почту</a>',register:'Уже есть аккаунт? <a id="mSwap" href="#login">Войти</a>',verify:'Почту подтвердили? <a id="mSwap" href="#login">Войти</a>',reset:''},
+  message:{'send-error':'Ошибка отправки. Повторите позже.','verify-hint':'Подтвердите почту по ссылке из письма.','created-hint':'Аккаунт создан. Подтвердите почту.','email-changed-sent':'Почта изменена. Подтвердите её по письму.','email-changed-failed':'Почта изменена. Письмо не отправилось; повторите отправку.','email-changed-login':'Почта изменена. Войдите заново.','welcome-back':'С возвращением!','account-created':'Аккаунт создан 🎉 Вам доступно по {free} бесплатных генераций каждого инструмента!','password-changed':'Пароль изменён. Войдите заново.','password-changed-all':'Пароль изменён. Все web-сессии завершены — войдите заново.','reset-empty':'Сначала введите почту','reset-sent':'Если аккаунт существует, ссылка отправлена.','required-reset':'Введите новый пароль','required-auth':'Заполните почту и пароль','fallback-error':'Ошибка, попробуйте ещё раз'}
+};
+
+function sokRenderRecoveryFields(recover){
+  var label=document.getElementById('mRecoveryEmailLabel'),email=document.getElementById('mRecoveryEmail');
+  if(label)label.hidden=!recover;if(email){email.hidden=!recover;email.required=recover;}
+}
+function sokSetEmailRecovery(email,message,sent){
+  document.getElementById('mEmail').value=email||'';document.getElementById('mRecoveryEmail').value=email||'';
+  var error=document.getElementById('mErr');error.className=sent?'merr ok':'merr';error.textContent=message||'';
+}
 
 /* ── авторизация + гейт платных вкладок ── */
 (function(){
@@ -1157,24 +1181,23 @@ try{
   /* модалка */
   function openModal(m,skipSignupTrack){mode=m;if(m==='register'&&!skipSignupTrack)sokTrack('signup_started','/signup');renderModal();$('#authModal').classList.add('on');setTimeout(function(){(m==='reset'?$('#mPass'):$('#mEmail')).focus();},50);}
   function closeModal(){$('#authModal').classList.remove('on');$('#mErr').textContent='';}
+  function authMessage(key){return SOK_AUTH_COPY.message[key];}
   function renderModal(){
-    var reset=mode==='reset';
-    var handoffTool=pendingHandoff&&({copywriter:'Копирайтер',designer:'Дизайнер',autoload:'Автозагрузка'})[pendingHandoff.tool];
-    var handoffRegister=!!handoffTool&&mode==='register';
-    $('#mTitle').textContent=reset?'Новый пароль':(mode==='login'?'Вход':(handoffRegister?'Готовый запрос уже собран':'Регистрация'));
-    $('#mSub').textContent=reset
-      ?'Задайте новый пароль — после сохранения потребуется войти заново.'
-      :(handoffTool
-        ?'После входа запрос автоматически откроется в инструменте «'+handoffTool+'». Первые генерации бесплатны.'
-        :'Консультант бесплатен без дневного лимита. После входа доступны по 5 бесплатных генераций каждого дополнительного инструмента.');
-    $('#mSubmit').textContent=reset?'Сохранить пароль':(mode==='login'?'Войти':(handoffRegister?'Зарегистрироваться и открыть':'Зарегистрироваться'));
+    var reset=mode==='reset',recover=mode==='verify';
+    var handoffTool=pendingHandoff&&SOK_AUTH_COPY.tool[pendingHandoff.tool];
+    var copyMode=handoffTool&&mode==='register'?'handoff':mode;
+    $('#mTitle').textContent=SOK_AUTH_COPY.title[copyMode];
+    $('#mSub').textContent=SOK_AUTH_COPY.hint[recover?'recovery':reset?'reset':handoffTool?'handoff':'auth'].replace('{tool}',handoffTool||'');
+    $('#mSubmit').textContent=SOK_AUTH_COPY.submit[copyMode];
+    $('#mEmailLabel').textContent=SOK_AUTH_COPY.field[recover?'currentEmail':'email'];
     $('#mEmailLabel').style.display=reset?'none':'block';$('#mEmail').style.display=reset?'none':'block';$('#mEmail').required=!reset;
-    $('#mPassLabel').textContent=reset?'Новый пароль':'Пароль';
-    $('#mPass').setAttribute('autocomplete',mode==='login'?'current-password':'new-password');
-    $('#mPass').minLength=mode==='login'?1:8;
+    sokRenderRecoveryFields(recover);
+    $('#mPassLabel').textContent=SOK_AUTH_COPY.field[reset?'newPassword':'password'];
+    $('#mPass').setAttribute('autocomplete',mode==='login'||recover?'current-password':'new-password');
+    $('#mPass').minLength=mode==='login'||recover?1:8;
     $('#mLegal').hidden=mode!=='register';
-    $('#mPass').placeholder=mode==='login'?'Пароль':'8–256 символов';
-    $('#mToggle').innerHTML=reset?'':(mode==='login'?'Нет аккаунта? <a id="mSwap" href="#register">Зарегистрироваться</a> · <a id="mForgot" href="#password-reset">Забыли пароль?</a>':'Уже есть аккаунт? <a id="mSwap" href="#login">Войти</a>');
+    $('#mPass').placeholder=SOK_AUTH_COPY.field[mode==='login'||recover?'password':'passwordHint'];
+    $('#mToggle').innerHTML=SOK_AUTH_COPY.toggle[mode];
     var swap=$('#mSwap');if(swap)swap.onclick=function(e){
       if(e)e.preventDefault();
       mode=(mode==='login'?'register':'login');
@@ -1182,26 +1205,37 @@ try{
       renderModal();
     };
     var forgot=$('#mForgot');if(forgot)forgot.onclick=function(e){if(e)e.preventDefault();requestPasswordReset();};
-    $('#mErr').textContent='';
+    var recoverLink=$('#mRecover');if(recoverLink)recoverLink.onclick=function(e){if(e)e.preventDefault();openEmailRecovery($('#mEmail').value);};
+    $('#mErr').className='merr';$('#mErr').textContent='';
+  }
+  function openEmailRecovery(email,message,sent){
+    openModal('verify');sokSetEmailRecovery(email,message,sent);
   }
   async function requestPasswordReset(){
     var email=$('#mEmail').value.trim();
-    if(!email){$('#mErr').textContent='Сначала введите почту';return;}
+    if(!email){$('#mErr').textContent=authMessage('reset-empty');return;}
     sokTrack('password_reset_started','/password-reset');
     var res=await api('/c/sokrat/password/reset/request',{email:email});
-    $('#mErr').className='merr ok';$('#mErr').textContent=(res.d&&res.d.message)||'Если аккаунт существует, ссылка отправлена.';
+    $('#mErr').className='merr ok';$('#mErr').textContent=(res.d&&res.d.message)||authMessage('reset-sent');
   }
   async function submitModal(e){
     if(e)e.preventDefault();
     const submittedMode=mode;
     const email=$('#mEmail').value.trim(), pw=$('#mPass').value;
-    if((mode!=='reset'&&!email)||!pw){$('#mErr').textContent=mode==='reset'?'Введите новый пароль':'Заполните почту и пароль';return;}
+    if((mode!=='reset'&&!email)||!pw){$('#mErr').textContent=authMessage(mode==='reset'?'required-reset':'required-auth');return;}
     const btn=$('#mSubmit');btn.disabled=true;
     const {st,d}=mode==='reset'
       ?await api('/c/sokrat/password/reset/confirm',{code:resetCode,password:pw})
-      :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw});
+      :(mode==='verify'
+        ?await api('/c/sokrat/account/email/recover',{email:email,password:pw,new_email:$('#mRecoveryEmail').value.trim()})
+        :await api('/c/sokrat/'+(mode==='login'?'login':'register'),{email:email,password:pw}));
     btn.disabled=false;
-    if(mode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast('Пароль изменён. Войдите заново.');}
+    if(submittedMode==='verify'){
+      if(d&&d.email){$('#mEmail').value=d.email;$('#mRecoveryEmail').value=d.email;}
+      $('#mErr').className=d&&d.verification_sent?'merr ok':'merr';
+      $('#mErr').textContent=(d&&(d.message||d.error))||authMessage('send-error');
+    }
+    else if(submittedMode==='reset'&&d&&d.ok){resetCode='';history.replaceState({},'',location.pathname);closeModal();openModal('login');toast(authMessage('password-changed'));}
     else if(d&&d.token){
       var goPay=pendingSubscribe;pendingSubscribe=null;
       var hasHandoff=!!pendingHandoff;
@@ -1209,12 +1243,16 @@ try{
       setToken(d.token);state=accountState(d);await refreshProjects();closeModal();
       renderAuthbox();renderGates();renderProjects();activatePendingHandoff();
       continueAccountConnect();
-      toast(submittedMode==='login'?'С возвращением!':'Аккаунт создан 🎉 Вам доступно по '+(state.freeGens||5)+' бесплатных генераций каждого инструмента!');
+      toast(authMessage(submittedMode==='login'?'welcome-back':'account-created').replace('{free}',state.freeGens||5));
       if(goPay&&!state.subscribed)openSubscribe(goPay);
       else if(submittedMode==='register'&&!hasHandoff)openActivationGuide();
     }
-    else if(d&&d.registered){if(submittedMode==='register')sokGoal('SOKRAT_REGISTER');$('#mErr').className='merr ok';$('#mErr').textContent=d.message||'Аккаунт создан. Подтвердите почту.';}
-    else{$('#mErr').textContent=(d&&d.error)||'Ошибка, попробуйте ещё раз';}
+    else if(d&&d.verification_required){
+      if(submittedMode==='register'&&d.registered)sokGoal('SOKRAT_REGISTER');
+      openEmailRecovery(email,d.message||d.error||authMessage('verify-hint'),d.verification_sent);
+    }
+    else if(d&&d.registered){if(submittedMode==='register')sokGoal('SOKRAT_REGISTER');$('#mErr').className='merr ok';$('#mErr').textContent=d.message||authMessage('created-hint');}
+    else{$('#mErr').textContent=(d&&d.error)||authMessage('fallback-error');}
   }
 
   /* тост */
@@ -1238,7 +1276,7 @@ try{
     if(verify){
       var res=await api('/c/sokrat/account/email/verify',{code:verify});
       history.replaceState({},'',location.pathname);
-      toast(res.d&&res.d.ok?'Почта подтверждена ✓':((res.d&&res.d.error)||'Ссылка подтверждения устарела'));
+      toast(res.d&&res.d.ok?SOK_AUTH_COPY.verification.success:((res.d&&res.d.error)||SOK_AUTH_COPY.verification.expired));
       if(token)await refresh();
     }
     resetCode=q.get('reset')||'';
@@ -1265,18 +1303,25 @@ try{
     this.disabled=true;
     var res=await api('/c/sokrat/account/password',{old:old,new:nw});var d=res.d;
     this.disabled=false;
-    if(d&&d.ok){setToken('');state={auth:false};closeAcct();renderAuthbox();renderGates();openModal('login');toast('Пароль изменён. Все web-сессии завершены — войдите заново.');}
+    if(d&&d.ok){setToken('');state={auth:false};closeAcct();renderAuthbox();renderGates();openModal('login');toast(authMessage('password-changed-all'));}
     else{er.textContent=(d&&d.error)||'Не удалось сменить пароль';}
   });
   $('#aEmailBtn').addEventListener('click',async function(){
     var er=$('#aEmailErr');er.className='merr';er.textContent='';
     var em=$('#aNewEmail').value.trim(), pw=$('#aEmailPw').value;
-    if(!em||!pw){er.textContent='Введите новую почту и текущий пароль';return;}
+    if(!em||!pw){er.textContent=SOK_AUTH_COPY.emailChange.required;return;}
     this.disabled=true;
     var res=await api('/c/sokrat/account/email',{email:em,password:pw});var d=res.d;
     this.disabled=false;
-    if(d&&d.ok){setToken('');state={auth:false};closeAcct();renderAuthbox();renderGates();openModal('login');$('#mEmail').value=d.email||em;toast('Почта изменена. Войдите заново'+(d.verification_sent?' и подтвердите её по письму.':'.'));}
-    else{er.textContent=(d&&d.error)||'Не удалось сменить почту';}
+    if(d&&d.ok){
+      setToken('');state={auth:false};closeAcct();renderAuthbox();renderGates();
+      if(d.verification_required){
+        $('#mPass').value=pw;
+        openEmailRecovery(d.email||em,authMessage(d.verification_sent?'email-changed-sent':'email-changed-failed'),d.verification_sent);
+      }else{openModal('login');$('#mEmail').value=d.email||em;toast(authMessage('email-changed-login'));}
+      $('#aEmailPw').value='';
+    }
+    else{er.textContent=(d&&d.error)||SOK_AUTH_COPY.emailChange.failed;}
   });
   $('#aTgBtn').addEventListener('click',async function(){
     var er=$('#aIdentityErr');er.className='merr';er.textContent='';this.disabled=true;

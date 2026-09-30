@@ -487,9 +487,11 @@
       <nav id="mainNav" aria-label="Основная навигация">
         <a href="#services">Услуги</a>
         <a href="#products">Продукты</a>
-        <a href="#cases">Кейсы</a>
+        <a href="/kejsy/">Кейсы</a>
         <a href="/blog/">Блог</a>
         <a href="/video/">Видео</a>
+        <a href="/otzyvy/">Отзывы</a>
+        <a href="#contact">Контакты</a>
         <a href="#faq">Вопросы</a>
         <a class="nav-cta" href="#contact">Получить план</a>
       </nav>
@@ -704,7 +706,7 @@
           <input type="hidden" name="form_id" value="leadForm">
           <input type="hidden" name="scenario" value="unspecified">
           <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
-          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-04-v3">
+          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-29-v4">
           <div class="form-grid">
             <div class="field"><label for="leadName">Имя — необязательно</label><input class="ym-disable-keys" id="leadName" type="text" name="name" autocomplete="name" placeholder="Как к вам обращаться"></div>
             <div class="field"><label for="leadPhone">Телефон</label><input class="ym-disable-keys" id="leadPhone" type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 999 000-00-00" required></div>
@@ -771,11 +773,12 @@
         button.disabled=true;message.className='lead-msg';message.textContent='Отправляем заявку…';
         try{
           const acceptedAt=new Date().toISOString(),params=new URLSearchParams(window.location.search);
+          const attribution=window.PlanBAnalyticsConsent?.attribution?.()||{utm_source:params.get('utm_source')||'',utm_medium:params.get('utm_medium')||'',utm_campaign:params.get('utm_campaign')||'',utm_content:params.get('utm_content')||'',utm_term:params.get('utm_term')||'',yclid:params.get('yclid')||''};
           const response=await fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
             name:form.elements.name.value.trim()||'не представился',phone:phoneValue,niche:form.elements.niche.value.trim(),scenario:form.elements.scenario.value||'unspecified',
             product:'planb_agency',route:'agency_hub',landing_variant:'home_agency_v4',form_id:form.elements.form_id.value,pd_consent:true,
             pd_consent_version:form.elements.pd_consent_version.value,pd_consent_client_at:acceptedAt,privacy_version:form.elements.privacy_version.value,
-            utm_source:params.get('utm_source')||'',utm_medium:params.get('utm_medium')||'',utm_campaign:params.get('utm_campaign')||'',utm_content:params.get('utm_content')||'',utm_term:params.get('utm_term')||'',yclid:params.get('yclid')||'',
+            utm_source:attribution.utm_source||'',utm_medium:attribution.utm_medium||'',utm_campaign:attribution.utm_campaign||'',utm_content:attribution.utm_content||'',utm_term:attribution.utm_term||'',yclid:attribution.yclid||'',
             page:window.location.href,ref:document.referrer||'',ts:acceptedAt
           })});
           if(!response.ok)throw new Error('http '+response.status);

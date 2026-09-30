@@ -43,6 +43,36 @@
     }
   }
 
+  function ensureCompleteMenu() {
+    var links = document.querySelector(".nav .nav-links");
+    if (!links) return;
+    var existingCta = links.querySelector(".nav-cta");
+    var cta = existingCta ? existingCta.cloneNode(true) : document.createElement("a");
+    if (!existingCta) {
+      cta.className = "nav-cta";
+      cta.href = "/#contact";
+      cta.textContent = "Получить разбор";
+    }
+    var pathname = window.location.pathname.replace(/\.html$/, "").replace(/\/$/, "") || "/";
+    var items = [
+      { label: "Услуги", href: "/#services", current: pathname.indexOf("/uslugi/") === 0 },
+      { label: "Кейсы", href: "/kejsy/", current: pathname === "/kejsy" || pathname.indexOf("/kejsy/") === 0 },
+      { label: "Блог", href: "/blog/", current: pathname === "/blog" || pathname.indexOf("/blog/") === 0 },
+      { label: "Видео", href: "/video/", current: pathname === "/video" },
+      { label: "Отзывы", href: "/otzyvy/", current: pathname === "/otzyvy" },
+      { label: "Контакты", href: "/#contact", current: false }
+    ];
+    links.replaceChildren();
+    items.forEach(function (item) {
+      var link = document.createElement("a");
+      link.href = item.href;
+      link.textContent = item.label;
+      if (item.current) link.setAttribute("aria-current", "page");
+      links.appendChild(link);
+    });
+    links.appendChild(cta);
+  }
+
   function mountMenu() {
     var nav = document.querySelector(".nav");
     var shell = nav && nav.querySelector(".wrap");
@@ -153,6 +183,7 @@
   }
 
   reserveContactHeader();
+  ensureCompleteMenu();
   mountMenu();
   loadContactLayer();
   decorate();

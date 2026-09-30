@@ -28,38 +28,96 @@ const OUT = path.resolve(HERE, "../../lab/planb-site");
 const SCREENSHOTS = path.join(OUT, "screenshots");
 const LEAD_HOST = "functions.yandexcloud.net";
 const LEAD_PATH = "/d4egi8sqig8ak86v89jg";
-const CONSENT_KEY = "planb_analytics_consent_v2";
-const CONSENT_VERSION = "planb-analytics-2026-09-02-v2";
-const PRIVACY_VERSION = "planb-privacy-2026-09-04-v3";
-const PRIVACY_SHA256 = "5cf6b80085eab30dc1d0a3f0c3dbafbf530ad271e5e1d33250c1a0e25b5508c8";
-const NOTICE_SHA256 = "c8445b179e648ea1867d3f1ac00aac22d8266c0f14839b620f6648b0ca25e275";
+const CONSENT_KEY = "planb_analytics_consent_v3";
+const CONSENT_SCHEMA = "planb-analytics-choice-v3";
+const CONSENT_VERSION = "planb-analytics-2026-09-29-v3";
+const ATTRIBUTION_KEY = "planb_session_attribution_v1";
+const PRIVACY_VERSION = "planb-privacy-2026-09-29-v4";
+const PRIVACY_SHA256 = "455d7155c3aa47424bb66daee7e8dd2492532a30c567e5f84e8634bbe853ee83";
+const NOTICE_SHA256 = "567a90210a2d829edccf7b977e7727a4c0fd4b2e2b294826f4ccd574f2916270";
+const CURRENT_LEGAL_EVIDENCE = new Map([
+  ["legal/privacy/planb-privacy-2026-09-29-v4.html", PRIVACY_SHA256],
+  ["legal/analytics-consent/planb-analytics-notice-2026-09-29-v3.txt", NOTICE_SHA256]
+]);
+const HISTORICAL_CASE_ROUTES = [
+  "/kejsy/avtostekla",
+  "/kejsy/buhgalterskie-uslugi",
+  "/kejsy/doma-pod-klyuch",
+  "/kejsy/naraschivanie-volos",
+  "/kejsy/pokrytiya-dlya-dereva",
+  "/kejsy/stroitel-7-regionov",
+  "/kejsy/stroitelstvo-po-regionam",
+  "/kejsy/stroyuslugi-god-k-godu",
+  "/kejsy/tnvd-nasosy",
+  "/kejsy/uslugi-massazha",
+  "/kejsy/vrach-kosmetolog",
+  "/kejsy/zapusk-stroitelnogo-akkaunta"
+];
 const BASELINE_DRIFT_FIELDS = new Set(["title", "description", "jsonld"]);
 const BASELINE_DRIFT_ALLOWLIST = new Map([
   ["/blog/", new Set(["jsonld"])],
   ["/video/", new Set(["description", "jsonld"])],
   ["/kejsy/", new Set(["title", "description", "jsonld"])],
   ["/kejsy/metalloprokat", new Set(["title", "description", "jsonld"])],
-  ["/kejsy/odin-den-stroitelnogo-proekta", new Set(["title", "description", "jsonld"])]
+  ["/kejsy/odin-den-stroitelnogo-proekta", new Set(["title", "description", "jsonld"])],
+  ...HISTORICAL_CASE_ROUTES.map(route => [route, new Set(["title", "description", "jsonld"])])
 ]);
-const VERIFIED_CASE_URLS = [
+const CASE_INDEX_URLS = [
   "https://planb-prodvizhenie.ru/kejsy/odin-den-stroitelnogo-proekta",
   "https://planb-prodvizhenie.ru/kejsy/metalloprokat",
-  "https://planb-prodvizhenie.ru/kejsy/yuridicheskie-uslugi"
+  "https://planb-prodvizhenie.ru/kejsy/yuridicheskie-uslugi",
+  "https://planb-prodvizhenie.ru/kejsy/avtostekla",
+  "https://planb-prodvizhenie.ru/kejsy/tnvd-nasosy",
+  "https://planb-prodvizhenie.ru/kejsy/vrach-kosmetolog",
+  "https://planb-prodvizhenie.ru/kejsy/stroyuslugi-god-k-godu",
+  "https://planb-prodvizhenie.ru/kejsy/doma-pod-klyuch",
+  "https://planb-prodvizhenie.ru/kejsy/stroitelstvo-po-regionam#rezultat-154-539",
+  "https://planb-prodvizhenie.ru/kejsy/pokrytiya-dlya-dereva#rezultat-woodcoat",
+  "https://planb-prodvizhenie.ru/kejsy/stroitel-7-regionov",
+  "https://planb-prodvizhenie.ru/kejsy/odin-den-stroitelnogo-proekta#arhiv-16-iyunya",
+  "https://planb-prodvizhenie.ru/kejsy/buhgalterskie-uslugi",
+  "https://planb-prodvizhenie.ru/kejsy/naraschivanie-volos",
+  "https://planb-prodvizhenie.ru/kejsy/uslugi-massazha",
+  "https://planb-prodvizhenie.ru/kejsy/metalloprokat#arhiv-noyabr",
+  "https://planb-prodvizhenie.ru/kejsy/zapusk-stroitelnogo-akkaunta#rezultat-245"
 ];
 const REAL_CASE_CONTRACTS = new Map([
   ["/kejsy/odin-den-stroitelnogo-proekta", {
     proof: "media/cases/avito-stroitelstvo-23-kontakta-proof.png",
-    metrics: ["23 Контакта", "56 просмотров", "4 815", "209,3"]
+    metrics: ["23 Контакта", "56 просмотров", "4 815", "209,3"],
+    figures: 2
   }],
   ["/kejsy/metalloprokat", {
     proof: "media/cases/avito-metalloprokat-126-kontaktov-proof.png",
-    metrics: ["126 Контактов", "1 835", "132,9", "17 августа", "2 сентября"]
+    metrics: ["126 Контактов", "1 835", "132,9", "17 августа", "2 сентября"],
+    figures: 2
   }],
   ["/kejsy/yuridicheskie-uslugi", {
     proof: "media/cases/avito-yuridicheskie-uslugi-60-kontaktov-proof.png",
-    metrics: ["60 Контактов", "543 просмотра", "11%", "167", "15–22 сентября"]
+    metrics: ["60 Контактов", "543 просмотра", "11%", "167", "15–22 сентября"],
+    figures: 1
   }]
 ]);
+const HISTORICAL_CASE_CONTRACTS = new Map([
+  ["/kejsy/avtostekla", { proof: "media/cases/history/avtostekla-before-after.jpg", metrics: ["5 010", "13 893", "6 478", "50,9 ₽"] }],
+  ["/kejsy/tnvd-nasosy", { proof: "media/cases/history/tnvd-periods.jpg", metrics: ["1 154", "27 773", "2 338", "3 505"] }],
+  ["/kejsy/vrach-kosmetolog", { proof: "media/cases/history/vrach-kosmetolog-may-june.jpg", metrics: ["110 Контактов", "3 120", "552", "130,8 ₽"] }],
+  ["/kejsy/stroyuslugi-god-k-godu", { proof: "media/cases/history/stroyuslugi-may-comparison.jpg", metrics: ["78 → 480", "1 072 → 2 899", "1 039,5 → 524,5 ₽"] }],
+  ["/kejsy/doma-pod-klyuch", { proof: "media/cases/history/doma-may-june.jpg", metrics: ["325 Контактов", "23 109", "1 650", "210,7 ₽"] }],
+  ["/kejsy/stroitelstvo-po-regionam", { proof: "media/cases/history/stroy-garant-two-periods.jpg", metrics: ["154 → 539", "1 025 → 4 370", "382,2 → 155,3 ₽"], anchor: "rezultat-154-539" }],
+  ["/kejsy/pokrytiya-dlya-dereva", { proof: "media/cases/history/woodcoat-may-june.jpg", metrics: ["13 → 54", "461 → 1 776", "1 136,3 → 595,2 ₽"], anchor: "rezultat-woodcoat" }],
+  ["/kejsy/stroitel-7-regionov", { proof: "media/cases/history/stroitel-7-regionov-may-june.jpg", metrics: ["266 Контактов", "1 631", "210", "433,5 ₽"] }],
+  ["/kejsy/buhgalterskie-uslugi", { proof: "media/cases/history/buhgalteriya-july-october.jpg", metrics: ["37 → 135", "306 → 1 175", "37 → 486"] }],
+  ["/kejsy/naraschivanie-volos", { proof: "media/cases/history/volosy-jan-feb.jpg", metrics: ["618 просмотров", "332", "10,89 ₽"] }],
+  ["/kejsy/uslugi-massazha", { proof: "media/cases/history/massage-feb-march.jpg", metrics: ["17 Контактов", "962", "181"] }],
+  ["/kejsy/zapusk-stroitelnogo-akkaunta", { proof: "media/cases/history/stroymestr-march-april.jpg", metrics: ["245 Контактов", "1 619", "194", "244,5 ₽"], anchor: "rezultat-245" }]
+]);
+const CASE_DETAIL_ROUTES = [...HISTORICAL_CASE_CONTRACTS.keys(), ...REAL_CASE_CONTRACTS.keys()];
+const HISTORY_PROOF_FILES = [
+  ...[...HISTORICAL_CASE_CONTRACTS.values()].map(contract => contract.proof),
+  "media/cases/history/stroitelstvo-june-16.jpg",
+  "media/cases/history/metalloprokat-november.jpg"
+];
 
 const failures = [];
 const warnings = [];
@@ -192,11 +250,35 @@ async function pngDimensions(file) {
   return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
 }
 
+async function jpegDimensions(file) {
+  const bytes = await fs.readFile(file);
+  if (bytes.length < 4 || bytes[0] !== 0xff || bytes[1] !== 0xd8) return null;
+  let offset = 2;
+  while (offset + 9 < bytes.length) {
+    if (bytes[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+    const marker = bytes[offset + 1];
+    if (marker === 0xd8 || marker === 0xd9) {
+      offset += 2;
+      continue;
+    }
+    const length = bytes.readUInt16BE(offset + 2);
+    if (length < 2 || offset + length + 2 > bytes.length) return null;
+    if ([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf].includes(marker)) {
+      return { height: bytes.readUInt16BE(offset + 5), width: bytes.readUInt16BE(offset + 7) };
+    }
+    offset += length + 2;
+  }
+  return null;
+}
+
 async function seedDeniedConsent(context) {
-  await context.addInitScript(({ key, version, privacyVersion, privacyHash, noticeHash }) => {
+  await context.addInitScript(({ key, schema, version, privacyVersion, privacyHash, noticeHash }) => {
     const now = Date.now();
     localStorage.setItem(key, JSON.stringify({
-      schema: "planb-analytics-choice-v2",
+      schema,
       version,
       privacy_version: privacyVersion,
       privacy_sha256: privacyHash,
@@ -207,6 +289,7 @@ async function seedDeniedConsent(context) {
     }));
   }, {
     key: CONSENT_KEY,
+    schema: CONSENT_SCHEMA,
     version: CONSENT_VERSION,
     privacyVersion: PRIVACY_VERSION,
     privacyHash: PRIVACY_SHA256,
@@ -227,7 +310,7 @@ function screenshotName(route) {
 }
 
 async function staticAudit() {
-  check(MARKETING_ROUTES.length === 47, "scope.marketing", `expected 47, got ${MARKETING_ROUTES.length}`);
+  check(MARKETING_ROUTES.length === 48, "scope.marketing", `expected 48, got ${MARKETING_ROUTES.length}`);
   check(CURRENT_LEGAL_ROUTES.length === 5, "scope.current-legal", `expected 5, got ${CURRENT_LEGAL_ROUTES.length}`);
   check(VERSIONED_LEGAL_FILES.length === 6, "scope.versioned-legal", `expected 6, got ${VERSIONED_LEGAL_FILES.length}`);
   check(REDIRECT_CONTRACTS.length === 4, "scope.redirects", `expected 4, got ${REDIRECT_CONTRACTS.length}`);
@@ -255,6 +338,21 @@ async function staticAudit() {
     immutable.push({ file: relative, expected, actual, unchanged: actual === expected });
   }
 
+  const currentLegalEvidence = [];
+  for (const [relative, expected] of CURRENT_LEGAL_EVIDENCE) {
+    const candidate = path.join(SITE_ROOT, relative);
+    const candidateExists = await exists(candidate);
+    check(candidateExists, "legal.current-evidence-missing", relative);
+    if (!candidateExists) continue;
+    const actual = await digest(candidate);
+    check(actual === expected, "legal.current-evidence-hash", `${relative} expected ${expected}, got ${actual}`);
+    currentLegalEvidence.push({ file: relative, expected, actual, valid: actual === expected });
+  }
+  const currentPrivacy = path.join(SITE_ROOT, "privacy.html");
+  if (await exists(currentPrivacy)) {
+    const actual = await digest(currentPrivacy);
+    check(actual === PRIVACY_SHA256, "legal.current-privacy-hash", `privacy.html expected ${PRIVACY_SHA256}, got ${actual}`);
+  }
   const active = [];
   const localLinkFailures = [];
   for (const route of ACTIVE_ROUTES) {
@@ -344,14 +442,33 @@ async function staticAudit() {
         check(types.includes(type), "seo.article-schema", `${route}: missing ${type}`);
       }
     }
+    if (CASE_DETAIL_ROUTES.includes(route)) {
+      const primaryNav = html.match(/<nav\b[^>]*class=["'][^"']*\bnav\b[^"']*["'][^>]*>[\s\S]*?<\/nav>/i)?.[0] || "";
+      const requiredItems = ["Услуги", "Кейсы", "Блог", "Видео", "Отзывы", "Контакты", "Получить разбор"];
+      check(primaryNav.includes("nav--complete"), "cases.detail-full-nav-class", route);
+      check(requiredItems.every(item => primaryNav.includes(`>${item}</a>`)), "cases.detail-full-nav-items", `${route}: ${requiredItems.filter(item => !primaryNav.includes(`>${item}</a>`)).join(", ")}`);
+      check(/href=["']\/kejsy\/["'][^>]*aria-current=["']page["']|aria-current=["']page["'][^>]*href=["']\/kejsy\/["']/i.test(primaryNav), "cases.detail-nav-current", route);
+      check(!primaryNav.includes(">Сократ</a>"), "cases.detail-legacy-nav", route);
+    }
     if (route === "/kejsy/") {
       check(types.includes("CollectionPage") && types.includes("ItemList") && types.includes("BreadcrumbList"), "cases.index-schema", types.join(", "));
       const nodes = values.flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value]);
-      const list = nodes.find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/kejsy/#verified-cases");
+      const list = nodes.find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/kejsy/#cases");
       const listed = (list?.itemListElement || []).map(item => item?.url || item?.item?.url || item?.item?.["@id"]).filter(Boolean);
-      check(list?.numberOfItems === 3 && listed.length === 3, "cases.index-count", JSON.stringify(list));
-      check(VERIFIED_CASE_URLS.every(url => listed.includes(url)) && listed.every(url => VERIFIED_CASE_URLS.includes(url)), "cases.index-urls", JSON.stringify(listed));
-      check(count(html, "case-feature-card glass") === 3, "cases.index-card-count", String(count(html, "case-feature-card glass")));
+      check(list?.numberOfItems === 17 && listed.length === 17, "cases.index-count", JSON.stringify(list));
+      check(CASE_INDEX_URLS.every(url => listed.includes(url)) && listed.every(url => CASE_INDEX_URLS.includes(url)), "cases.index-urls", JSON.stringify(listed));
+      check(count(html, "case-feature-card glass") === 17, "cases.index-card-count", String(count(html, "case-feature-card glass")));
+      check(count(html, "/media/cases/history/") === 14, "cases.index-history-proof-count", String(count(html, "/media/cases/history/")));
+      check(!html.includes("scenario-section") && !/сценари[йия]/i.test(html), "cases.index-no-scenarios");
+      check(!/(?:заявк|\bлид(?:ы|ов|а|у|ом|ами)?\b)/iu.test(html), "cases.index-contact-terminology");
+      for (const proof of HISTORY_PROOF_FILES) {
+        const file = path.join(SITE_ROOT, proof);
+        check(await exists(file), "cases.history-proof-file", proof);
+        if (await exists(file)) {
+          const dimensions = await jpegDimensions(file);
+          check(dimensions?.width === 1000 && dimensions?.height === 600, "cases.history-proof-dimensions", `${proof}: ${JSON.stringify(dimensions)}`);
+        }
+      }
     }
     const caseContract = REAL_CASE_CONTRACTS.get(route);
     if (caseContract) {
@@ -360,8 +477,8 @@ async function staticAudit() {
       const article = nodes.find(node => (Array.isArray(node?.["@type"]) ? node["@type"] : [node?.["@type"]]).includes("Article"));
       const proofUrl = `https://planb-prodvizhenie.ru/${caseContract.proof}`;
       check(article?.mainEntityOfPage === expectedCanonical(route), "cases.main-entity", `${route}: ${article?.mainEntityOfPage}`);
-      check(article?.image === proofUrl && article?.dateModified === "2026-09-28", "cases.article-proof", `${route}: ${JSON.stringify(article)}`);
-      check(count(html, '<figure class="case-evidence">') === 1, "cases.evidence-figure", route);
+      check(article?.image === proofUrl && article?.dateModified === "2026-09-29", "cases.article-proof", `${route}: ${JSON.stringify(article)}`);
+      check(count(html, '<figure class="case-evidence">') === caseContract.figures, "cases.evidence-figure", `${route}: ${count(html, '<figure class="case-evidence">')}`);
       check(html.includes(`src="/${caseContract.proof}"`) && html.includes('loading="lazy"'), "cases.evidence-image", route);
       check(caseContract.metrics.every(metric => html.includes(metric)), "cases.metrics", `${route}: ${caseContract.metrics.filter(metric => !html.includes(metric)).join(", ")}`);
       check(html.includes("case-provenance") && html.includes("Ограничение результата") && html.includes("не подтверждённая сделка"), "cases.provenance-limit", route);
@@ -374,6 +491,21 @@ async function staticAudit() {
         const dimensions = await pngDimensions(proofFile);
         check(dimensions?.width === 1000 && dimensions?.height === 600, "cases.proof-dimensions", `${caseContract.proof}: ${JSON.stringify(dimensions)}`);
       }
+    }
+    const historicalContract = HISTORICAL_CASE_CONTRACTS.get(route);
+    if (historicalContract) {
+      check(types.includes("Article") && types.includes("BreadcrumbList"), "cases.history-detail-schema", `${route}: ${types.join(", ")}`);
+      const nodes = values.flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value]);
+      const article = nodes.find(node => (Array.isArray(node?.["@type"]) ? node["@type"] : [node?.["@type"]]).includes("Article"));
+      const proofUrl = `https://planb-prodvizhenie.ru/${historicalContract.proof}`;
+      check(article?.mainEntityOfPage === expectedCanonical(route), "cases.history-main-entity", `${route}: ${article?.mainEntityOfPage}`);
+      check(article?.image === proofUrl && article?.dateModified === "2026-09-29", "cases.history-article-proof", `${route}: ${JSON.stringify(article)}`);
+      check(count(html, '<figure class="case-evidence">') === 1, "cases.history-evidence-figure", route);
+      check(html.includes(`src="/${historicalContract.proof}"`), "cases.history-evidence-image", route);
+      check(historicalContract.metrics.every(metric => html.includes(metric)), "cases.history-metrics", `${route}: ${historicalContract.metrics.filter(metric => !html.includes(metric)).join(", ")}`);
+      check(html.includes("Ограничение результата") && html.includes("Детерминированный фрагмент"), "cases.history-proof-context", route);
+      check(!/сценари[йия]/i.test(html) && !/(?:заявк|\bлид(?:ы|ов|а|у|ом|ами)?\b)/iu.test(html), "cases.history-terminology", route);
+      if (historicalContract.anchor) check(hasId(html, `#${historicalContract.anchor}`), "cases.history-anchor", `${route}#${historicalContract.anchor}`);
     }
     const videoTags = html.match(/<video\b[^>]*>/gi) || [];
     if (videoTags.length) {
@@ -461,6 +593,34 @@ async function staticAudit() {
         check(denseCues.length === 0, "video.caption-reading-speed", `${caption}: ${denseCues.join(" | ")}`);
       }
     }
+    if (route === "/otzyvy/") {
+      check(types.includes("CollectionPage") && types.includes("ItemList") && types.includes("BreadcrumbList"), "testimonials.schema", `${route}: ${types.join(", ")}`);
+      check(!types.includes("Review") && !types.includes("AggregateRating"), "testimonials.no-invented-rating-schema", `${route}: ${types.join(", ")}`);
+      const testimonialNodes = values.flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value]);
+      const testimonialList = testimonialNodes.find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/otzyvy/#list");
+      check(testimonialList?.numberOfItems === 4 && testimonialList?.itemListElement?.length === 4, "testimonials.list-count", route);
+      check(count(html, "<video") === 4, "testimonials.video-count", route);
+      check(count(html, "<track") === 4, "testimonials.caption-count", route);
+      check(count(html, 'preload="none"') === 4, "testimonials.preload", route);
+      check(count(html, "Видео клиента") === 4, "testimonials.client-labels", route);
+      check(html.includes("Телефон и государственный номер автомобиля в кадре скрыты"), "testimonials.pii-note", route);
+      for (const asset of [
+        "media/testimonials/otzyv-sergey-gruzoperevozki-01.mp4",
+        "media/testimonials/otzyv-o-prodvizhenii-na-avito-02.mp4",
+        "media/testimonials/otzyv-o-prodvizhenii-na-avito-03.mp4",
+        "media/testimonials/otzyv-arenda-nedvizhimosti-04.mp4",
+        "media/testimonials/otzyv-sergey-gruzoperevozki-01.jpg",
+        "media/testimonials/otzyv-o-prodvizhenii-na-avito-02.jpg",
+        "media/testimonials/otzyv-o-prodvizhenii-na-avito-03.jpg",
+        "media/testimonials/otzyv-arenda-nedvizhimosti-04.jpg",
+        "media/captions/otzyv-sergey-gruzoperevozki-01.vtt",
+        "media/captions/otzyv-o-prodvizhenii-na-avito-02.vtt",
+        "media/captions/otzyv-o-prodvizhenii-na-avito-03.vtt",
+        "media/captions/otzyv-arenda-nedvizhimosti-04.vtt"
+      ]) {
+        check(await exists(path.join(SITE_ROOT, asset)), "testimonials.asset", asset);
+      }
+    }
 
     if (marketing) {
       check(count(html, "/assets/analytics-consent.js") === 1, "asset.consent-loader", route);
@@ -526,12 +686,16 @@ async function staticAudit() {
   check(expectedSitemap.every(url => sitemapUrls.includes(url)), "sitemap.missing", expectedSitemap.filter(url => !sitemapUrls.includes(url)).join(", "));
   check(sitemapUrls.every(url => expectedSitemap.includes(url)), "sitemap.unexpected", sitemapUrls.filter(url => !expectedSitemap.includes(url)).join(", "));
   const sitemapLastmods = new Map([...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)].map(match => [match[1], match[2]]));
-  for (const route of ["/", "/video/", "/kejsy/", ...REAL_CASE_CONTRACTS.keys()]) {
+  for (const route of ["/", "/video/"]) {
     const url = expectedCanonical(route);
     check(sitemapLastmods.get(url) === "2026-09-28", "sitemap.lastmod", `${url}: ${sitemapLastmods.get(url) || "missing"}`);
   }
+  for (const route of ["/kejsy/", ...CASE_DETAIL_ROUTES]) {
+    const url = expectedCanonical(route);
+    check(sitemapLastmods.get(url) === "2026-09-29", "sitemap.case-lastmod", `${url}: ${sitemapLastmods.get(url) || "missing"}`);
+  }
 
-  report.static = { active, immutable, localLinkFailures, sitemapUrls, sitemapLastmods: Object.fromEntries(sitemapLastmods) };
+  report.static = { active, immutable, currentLegalEvidence, localLinkFailures, sitemapUrls, sitemapLastmods: Object.fromEntries(sitemapLastmods) };
 }
 
 async function installPageRouting(page, baseURL, externalRequests, leadHandler = null) {
@@ -553,7 +717,7 @@ async function installPageRouting(page, baseURL, externalRequests, leadHandler =
 
 async function scrollSweep(page, reduced) {
   await page.evaluate(async prefersReduced => {
-    const targets = [...document.querySelectorAll(".reveal,[data-sc-in]")];
+    const targets = [...document.querySelectorAll(".reveal,[data-sc-in],img[loading='lazy']")];
     const positions = [...new Set(targets.map(element => Math.max(0, Math.round(element.getBoundingClientRect().top + scrollY - innerHeight * 0.62))))].sort((a, b) => a - b);
     for (const top of positions) {
       window.scrollTo({ top, behavior: "instant" });
@@ -678,6 +842,9 @@ async function inspectRuntime(page, noJs = false) {
       siteStyles: localStyles.filter(value => value === "/assets/site-depth.css").length,
       contactStyles: localStyles.filter(value => value === "/assets/contact-layer.css").length,
       legalStyles: localStyles.filter(value => value === "/assets/legal-depth.css").length,
+      primaryNavLabels: [...document.querySelectorAll("header #mainNav a:not(.nav-cta), .nav .nav-links a:not(.nav-cta)")]
+        .map(link => (link.textContent || "").trim())
+        .filter(Boolean),
       topContacts: [...document.querySelectorAll(".contact-strip-links a")].map(contactRect),
       pageHeaderContacts: [...document.querySelectorAll(".planb-header-contact-links a")].map(contactRect),
       contactDock: contactDock ? {
@@ -774,6 +941,9 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
       check(state.engineInstances === 1, "runtime.scrollcraft-instance", `${profile.name} ${route}: ${state.engineInstances}`);
       check(state.hiddenReveals.length === 0, "motion.hidden-reveal", `${profile.name} ${route}: ${state.hiddenReveals.slice(0, 5).join(" | ")}`);
       check(state.contactScripts === 1 && state.contactStyles === 1, "runtime.contact-assets", `${profile.name} ${route}: js=${state.contactScripts}, css=${state.contactStyles}`);
+      for (const label of ["Услуги", "Кейсы", "Блог", "Видео", "Отзывы", "Контакты"]) {
+        check(state.primaryNavLabels.includes(label), "navigation.core-link", `${profile.name} ${route}: missing ${label}; got ${state.primaryNavLabels.join(" | ")}`);
+      }
       check(Boolean(state.contactDock) && state.contactDock.links.length === 3, "contact.dock-count", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
       const dockTargets = state.contactDock?.links.map(item => item.href) || [];
       check(dockTargets[0]?.startsWith("tel:") && dockTargets[1]?.includes("wa.me/") && dockTargets[2]?.includes("t.me/"), "contact.dock-order", `${profile.name} ${route}: ${dockTargets.join(", ")}`);
@@ -781,12 +951,9 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
       check(headerContacts.length === 3, "contact.header-count", `${profile.name} ${route}: ${headerContacts.length}`);
       const contactSchemes = headerContacts.map(item => item.href).sort();
       check(contactSchemes.some(href => href.startsWith("tel:")) && contactSchemes.some(href => href.includes("wa.me/")) && contactSchemes.some(href => href.includes("t.me/")), "contact.header-targets", `${profile.name} ${route}: ${contactSchemes.join(", ")}`);
-      if (profile.width <= 720) {
-        check(headerContacts.every(item => item.width > 0 && item.height > 0 && item.visibility === "visible" && item.insideViewport && item.hit), "contact.header-visible", `${profile.name} ${route}: ${JSON.stringify(headerContacts)}`);
-        check(state.contactDock.visibility === "visible" && state.contactDock.opacity >= 0.99, "contact.dock-visible-at-top", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
-      } else {
-        check(state.contactDock.display === "none", "contact.dock-desktop-hidden", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
-      }
+      check(headerContacts.every(item => item.width > 0 && item.height > 0 && item.visibility === "visible" && item.insideViewport && item.hit), "contact.header-visible", `${profile.name} ${route}: ${JSON.stringify(headerContacts)}`);
+      check(state.contactDock.display !== "none" && state.contactDock.visibility === "visible" && state.contactDock.opacity >= 0.99, "contact.dock-visible-at-top", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
+      check(state.contactDock.links.every(item => item.width >= 44 && item.height >= 44 && item.insideViewport && item.hit), "contact.dock-tap-targets-at-top", `${profile.name} ${route}: ${JSON.stringify(state.contactDock)}`);
       if (route === "/") check(state.homeScripts === 1 && state.homeStyles === 1 && state.siteScripts === 0 && state.siteStyles === 0, "runtime.home-assets", `${profile.name} ${route}`);
       else check(state.siteScripts === 1 && state.siteStyles === 1, "runtime.site-assets", `${profile.name} ${route}: js=${state.siteScripts}, css=${state.siteStyles}`);
     } else {
@@ -820,7 +987,7 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
     check(state.scrollBehavior !== "smooth", "motion.smooth-under-reduce", `${profile.name} ${route}: ${state.scrollBehavior}`);
   }
 
-  if (profile.javaScript !== false && MARKETING_ROUTES.includes(route) && profile.width <= 720) {
+  if (profile.javaScript !== false && MARKETING_ROUTES.includes(route) && profile.width <= 1360) {
     await page.evaluate(() => {
       window.scrollTo({ top: Math.min(Math.max(80, innerHeight * 0.45), Math.max(0, document.documentElement.scrollHeight - innerHeight)), behavior: "instant" });
     });
@@ -1125,15 +1292,32 @@ async function runConsent(browser, baseURL) {
   check(initial.analyticsScripts === 0 && freshExternal.every(item => !/mc\.yandex\.ru/.test(item.url)), "consent.no-preload");
   await freshPage.evaluate(() => window.scrollTo({ top: 240, behavior: "instant" }));
   await freshPage.waitForTimeout(240);
-  const dockBehindConsent = await freshPage.evaluate(() => {
+  const dockAlongsideConsent = await freshPage.evaluate(() => {
     const dock = document.querySelector(".contact-dock.planb-contact-dock");
+    const banner = document.querySelector("#planb-cookie");
     const style = dock && getComputedStyle(dock);
-    return style ? { visibility: style.visibility, pointerEvents: style.pointerEvents, opacity: Number.parseFloat(style.opacity) } : null;
+    if (!dock || !banner || !style) return null;
+    const dockRect = dock.getBoundingClientRect();
+    const bannerRect = banner.getBoundingClientRect();
+    const overlaps = dockRect.left < bannerRect.right && dockRect.right > bannerRect.left && dockRect.top < bannerRect.bottom && dockRect.bottom > bannerRect.top;
+    const links = [...dock.querySelectorAll("a[href]")].map(link => {
+      const rect = link.getBoundingClientRect();
+      const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      return {
+        width: rect.width,
+        height: rect.height,
+        insideViewport: rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight,
+        hit: hit === link || link.contains(hit)
+      };
+    });
+    return { visibility: style.visibility, pointerEvents: style.pointerEvents, opacity: Number.parseFloat(style.opacity), overlaps, links };
   });
-  check(dockBehindConsent?.visibility === "hidden" && dockBehindConsent?.pointerEvents === "none", "contact.dock-hidden-by-consent", JSON.stringify(dockBehindConsent));
+  check(dockAlongsideConsent?.visibility === "visible" && dockAlongsideConsent?.pointerEvents !== "none" && dockAlongsideConsent?.opacity > 0.95, "contact.dock-visible-with-consent", JSON.stringify(dockAlongsideConsent));
+  check(dockAlongsideConsent?.overlaps === false, "contact.dock-clear-of-consent", JSON.stringify(dockAlongsideConsent));
+  check(dockAlongsideConsent?.links?.length === 3 && dockAlongsideConsent.links.every(link => link.width >= 44 && link.height >= 44 && link.insideViewport && link.hit), "contact.dock-usable-with-consent", JSON.stringify(dockAlongsideConsent));
   await freshPage.locator("[data-choice='denied']").click();
   const denied = await freshPage.evaluate(key => JSON.parse(localStorage.getItem(key) || "null"), CONSENT_KEY);
-  check(denied?.schema === "planb-analytics-choice-v2" && denied?.version === CONSENT_VERSION && denied?.privacy_version === PRIVACY_VERSION && denied?.privacy_sha256 === PRIVACY_SHA256 && denied?.notice_sha256 === NOTICE_SHA256 && denied?.choice === "denied", "consent.denied-record", JSON.stringify(denied));
+  check(denied?.schema === CONSENT_SCHEMA && denied?.version === CONSENT_VERSION && denied?.privacy_version === PRIVACY_VERSION && denied?.privacy_sha256 === PRIVACY_SHA256 && denied?.notice_sha256 === NOTICE_SHA256 && denied?.choice === "denied", "consent.denied-record", JSON.stringify(denied));
   check(Number.isFinite(denied?.expires_at) && denied.expires_at > Date.now(), "consent.denied-expiry", JSON.stringify(denied));
   await freshContext.close();
 
@@ -1141,18 +1325,22 @@ async function runConsent(browser, baseURL) {
   const grantPage = await grantContext.newPage();
   const grantExternal = [];
   await installPageRouting(grantPage, baseURL, grantExternal);
-  await grantPage.goto(baseURL + "/", { waitUntil: "load" });
+  await grantPage.goto(baseURL + "/?utm_source=qa-first&utm_medium=consent&utm_campaign=first-touch&yclid=qa-first-yclid", { waitUntil: "load" });
   await grantPage.locator("[data-choice='granted']").click();
   await grantPage.waitForFunction(() => window.__planbAnalyticsLoaded === true);
-  const granted = await grantPage.evaluate(key => ({
-    state: JSON.parse(localStorage.getItem(key) || "null"),
+  const granted = await grantPage.evaluate(({ consentKey, attributionKey }) => ({
+    state: JSON.parse(localStorage.getItem(consentKey) || "null"),
+    attribution: window.PlanBAnalyticsConsent?.attribution?.() || null,
+    storedAttribution: JSON.parse(sessionStorage.getItem(attributionKey) || "null"),
     scripts: document.querySelectorAll("script[data-planb-analytics]").length,
     label: document.querySelector("#planb-analytics-settings")?.getAttribute("aria-label"),
     calls: (window.ym?.a || []).map(args => Array.from(args))
-  }), CONSENT_KEY);
+  }), { consentKey: CONSENT_KEY, attributionKey: ATTRIBUTION_KEY });
   const initCall = granted.calls.find(args => args[0] === 110884885 && args[1] === "init");
   check(granted.state?.choice === "granted" && granted.scripts === 1 && granted.label === "Аналитика: разрешена", "consent.granted", JSON.stringify(granted));
-  check(Boolean(initCall) && initCall[2]?.webvisor === false && initCall[2]?.clickmap === false, "consent.safe-init", JSON.stringify(initCall));
+  check(Boolean(initCall) && initCall[2]?.webvisor === true && initCall[2]?.clickmap === true, "consent.safe-init", JSON.stringify(initCall));
+  check(granted.attribution?.utm_source === "qa-first" && granted.attribution?.utm_medium === "consent" && granted.attribution?.utm_campaign === "first-touch" && granted.attribution?.yclid === "qa-first-yclid", "consent.first-touch-attribution", JSON.stringify(granted.attribution));
+  check(granted.storedAttribution?.schema === "planb-session-attribution-v1" && granted.storedAttribution?.utm_source === "qa-first", "consent.first-touch-stored", JSON.stringify(granted.storedAttribution));
   check(grantExternal.filter(item => /mc\.yandex\.ru/.test(item.url)).length === 1, "consent.single-loader", JSON.stringify(grantExternal));
   await grantPage.evaluate(() => {
     document.addEventListener("click", event => {
@@ -1181,21 +1369,22 @@ async function runConsent(browser, baseURL) {
   await grantPage.locator("#planb-cookie [data-choice='denied']").click();
   await grantPage.waitForFunction(key => JSON.parse(localStorage.getItem(key) || "null")?.choice === "denied", CONSENT_KEY);
   await grantPage.waitForTimeout(150);
-  const revoked = await grantPage.evaluate(key => ({
-    state: JSON.parse(localStorage.getItem(key) || "null"),
+  const revoked = await grantPage.evaluate(({ consentKey, attributionKey }) => ({
+    state: JSON.parse(localStorage.getItem(consentKey) || "null"),
+    attribution: sessionStorage.getItem(attributionKey),
     scripts: document.querySelectorAll("script[data-planb-analytics]").length
-  }), CONSENT_KEY);
-  check(revoked.state?.choice === "denied" && revoked.scripts === 0, "consent.revoked", JSON.stringify(revoked));
+  }), { consentKey: CONSENT_KEY, attributionKey: ATTRIBUTION_KEY });
+  check(revoked.state?.choice === "denied" && revoked.attribution === null && revoked.scripts === 0, "consent.revoked", JSON.stringify(revoked));
   await grantContext.close();
 
   const tamperedContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  await tamperedContext.addInitScript(key => localStorage.setItem(key, JSON.stringify({
-    schema: "planb-analytics-choice-v2",
+  await tamperedContext.addInitScript(({ key, schema }) => localStorage.setItem(key, JSON.stringify({
+    schema,
     version: "stale",
     privacy_version: "stale",
     choice: "granted",
     expires_at: Date.now() - 1
-  })), CONSENT_KEY);
+  })), { key: CONSENT_KEY, schema: CONSENT_SCHEMA });
   const tamperedPage = await tamperedContext.newPage();
   const tamperedExternal = [];
   await installPageRouting(tamperedPage, baseURL, tamperedExternal);

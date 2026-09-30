@@ -8,13 +8,15 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SITE_ROOT = path.resolve(HERE, "../../..");
 const CHROME = process.env.SCROLLCRAFT_CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const CONSENT = {
-  key: "planb_analytics_consent_v2",
-  schema: "planb-analytics-choice-v2",
-  version: "planb-analytics-2026-09-02-v2",
-  privacyVersion: "planb-privacy-2026-09-04-v3",
-  privacyHash: "5cf6b80085eab30dc1d0a3f0c3dbafbf530ad271e5e1d33250c1a0e25b5508c8",
-  noticeHash: "c8445b179e648ea1867d3f1ac00aac22d8266c0f14839b620f6648b0ca25e275"
+  key: "planb_analytics_consent_v3",
+  schema: "planb-analytics-choice-v3",
+  version: "planb-analytics-2026-09-29-v3",
+  privacyVersion: "planb-privacy-2026-09-29-v4",
+  privacyHash: "455d7155c3aa47424bb66daee7e8dd2492532a30c567e5f84e8634bbe853ee83",
+  noticeHash: "567a90210a2d829edccf7b977e7727a4c0fd4b2e2b294826f4ccd574f2916270"
 };
+const ATTRIBUTION_KEY = "planb_session_attribution_v1";
+const LEAD_ENDPOINT = "https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg?tag=stable";
 const TRACKED_GOALS = new Set([
   "CONTACT_PHONE",
   "CONTACT_TELEGRAM",
@@ -101,6 +103,12 @@ async function testDeniedConsent(browser, baseURL) {
   await page.evaluate(() => window.PlanBAnalyticsConsent.track("lead_success", { phone: "+7 999 123-45-67" }));
   assert.deepEqual(await trackedCalls(page), []);
   assert.equal(await page.locator("script[data-planb-analytics]").count(), 0);
+  const attribution = await page.evaluate(key => ({
+    value: window.PlanBAnalyticsConsent.attribution(),
+    stored: sessionStorage.getItem(key)
+  }), ATTRIBUTION_KEY);
+  assert.equal(attribution.value.utm_source, "private");
+  assert.equal(attribution.stored, null);
   await context.close();
 }
 
@@ -108,6 +116,11 @@ async function testGlobalEventsAndPayloads(browser, baseURL) {
   const context = await browser.newContext();
   await seedConsent(context, "granted");
   const page = await openTestPage(context, baseURL, "/blog/statistika-avito-crm-sdelki?utm_source=private&yclid=secret-id");
+  const initCalls = await page.evaluate(() => (window.__analyticsTestCalls || [])
+    .filter(args => args[0] === 110884885 && args[1] === "init"));
+  assert.equal(initCalls.length, 1);
+  assert.equal(initCalls[0][2].webvisor, true);
+  assert.equal(initCalls[0][2].clickmap, true);
   await page.evaluate(() => {
     document.body.insertAdjacentHTML("beforeend", `
       <a id="qa-phone" href="tel:+79991234567">Phone</a>
@@ -163,6 +176,105 @@ async function testGlobalEventsAndPayloads(browser, baseURL) {
   await context.close();
 }
 
+async function testFirstTouchAttribution(browser, baseURL) {
+  const context = await browser.newContext();
+  await seedConsent(context, "granted");
+  const page = await openTestPage(
+    context,
+    baseURL,
+    "/blog/statistika-avito-crm-sdelki?utm_source=first&utm_medium=organic&utm_campaign=launch&utm_content=article&utm_term=avito&yclid=first-click"
+  );
+  const captured = await page.evaluate(key => ({
+    value: window.PlanBAnalyticsConsent.attribution(),
+    stored: JSON.parse(sessionStorage.getItem(key) || "null")
+  }), ATTRIBUTION_KEY);
+  assert.equal(captured.stored.schema, "planb-session-attribution-v1");
+  assert.equal(captured.stored.utm_source, "first");
+  assert.deepEqual(captured.value, {
+    utm_source: "first",
+    utm_medium: "organic",
+    utm_campaign: "launch",
+    utm_content: "article",
+    utm_term: "avito",
+    yclid: "first-click"
+  });
+
+  await page.goto(baseURL + "/uslugi/vedenie-avito?utm_source=later&utm_campaign=retargeting&yclid=later-click", { waitUntil: "load" });
+  const carried = await page.evaluate(() => window.PlanBAnalyticsConsent.attribution());
+  assert.deepEqual(carried, captured.value);
+  await context.close();
+}
+
+async function testExpandedContentSelectors(browser, baseURL) {
+  const context = await browser.newContext();
+  await seedConsent(context, "granted");
+  const page = await openTestPage(context, baseURL, "/blog/statistika-avito-crm-sdelki");
+  await page.evaluate(() => {
+    document.body.insertAdjacentHTML("beforeend", `
+      <a id="qa-post-card" class="post-card" href="/blog/skolko-stoit-prodvizhenie-avito">Post</a>
+      <a id="qa-case-card" class="case-feature-card" href="/kejsy/metalloprokat">Case</a>
+      <div class="video-links"><a id="qa-video-link" href="https://video.example.test/watch">Video source</a></div>
+      <a id="qa-social-card" class="social-card" href="https://www.instagram.com/avitolog_planb_prodvizenie/">Social</a>
+    `);
+  });
+  const scenarios = [
+    ["#qa-post-card", "blog", "127.0.0.1"],
+    ["#qa-case-card", "case", "127.0.0.1"],
+    ["#qa-video-link", "external", "video.example.test"],
+    ["#qa-social-card", "external", "instagram.com"]
+  ];
+  for (const [selector, targetType, targetHost] of scenarios) {
+    await page.evaluate(() => { window.__analyticsTestCalls = []; });
+    await page.locator(selector).click();
+    const calls = await trackedCalls(page);
+    const content = callFor(calls, "CONTENT_CTA");
+    assertSafeCall(content);
+    assert.equal(content[3].target_type, targetType);
+    assert.equal(content[3].target_host, targetHost);
+  }
+  await context.close();
+}
+
+async function testFormsUseFirstTouchAttribution(browser, baseURL) {
+  const contracts = [
+    ["/", "#leadForm", "#leadPhone"],
+    ["/uslugi/vedenie-avito", "#serviceLead", "#serviceLeadPhone"],
+    ["/uslugi/razovaya-nastroyka-avito", "#setupLead", "#setupLeadPhone"]
+  ];
+  for (const [route, formSelector, phoneSelector] of contracts) {
+    const context = await browser.newContext();
+    await seedConsent(context, "granted");
+    const page = await openTestPage(
+      context,
+      baseURL,
+      "/blog/statistika-avito-crm-sdelki?utm_source=first-form&utm_medium=organic&utm_campaign=forms&utm_content=article&utm_term=avito&yclid=form-first-click"
+    );
+    let resolvePayload;
+    const payloadPromise = new Promise(resolve => { resolvePayload = resolve; });
+    await page.route(LEAD_ENDPOINT, async intercepted => {
+      resolvePayload(intercepted.request().postDataJSON());
+      await intercepted.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({ ok: true })
+      });
+    });
+    await page.goto(baseURL + route, { waitUntil: "load" });
+    await page.locator(phoneSelector).fill("+7 999 123-45-67");
+    await page.locator(`${formSelector} [name="pd_consent"]`).check();
+    await page.locator(formSelector).evaluate(form => form.requestSubmit());
+    const payload = await payloadPromise;
+    assert.equal(payload.privacy_version, CONSENT.privacyVersion);
+    assert.equal(payload.utm_source, "first-form");
+    assert.equal(payload.utm_medium, "organic");
+    assert.equal(payload.utm_campaign, "forms");
+    assert.equal(payload.utm_content, "article");
+    assert.equal(payload.utm_term, "avito");
+    assert.equal(payload.yclid, "form-first-click");
+    await context.close();
+  }
+}
+
 async function testLegacyContactsAreSafeAndNotDuplicated(browser, baseURL) {
   const scenarios = [
     {
@@ -195,8 +307,11 @@ try {
   browser = await chromium.launch({ executablePath: CHROME, headless: true });
   await testDeniedConsent(browser, running.baseURL);
   await testGlobalEventsAndPayloads(browser, running.baseURL);
+  await testFirstTouchAttribution(browser, running.baseURL);
+  await testExpandedContentSelectors(browser, running.baseURL);
+  await testFormsUseFirstTouchAttribution(browser, running.baseURL);
   await testLegacyContactsAreSafeAndNotDuplicated(browser, running.baseURL);
-  console.log("PASS analytics-consent: consent gate, goal mapping, safe payloads, and deduplication");
+  console.log("PASS analytics-consent: consent gate, Webvisor config, first-touch attribution, CTA mapping, safe payloads, and deduplication");
 } finally {
   if (browser) await browser.close();
   await running.close();

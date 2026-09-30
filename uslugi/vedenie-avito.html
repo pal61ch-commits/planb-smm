@@ -183,7 +183,7 @@
           <input type="hidden" name="name" value="Заявка с посадочной ведения">
           <input type="hidden" name="form_id" value="serviceLead">
           <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
-          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-04-v3">
+          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-29-v4">
           <input class="fld ym-disable-keys" id="serviceLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" aria-label="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="serviceLeadMsg" required>
           <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ссылка на аккаунт или ниша — необязательно" aria-label="Ссылка на аккаунт или ниша" autocomplete="off">
           <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
@@ -342,8 +342,9 @@
     const button=form.querySelector('button');button.disabled=true;msg.className='lead-msg';msg.textContent='Отправляю…';
     try{
       const params=new URLSearchParams(location.search);
+      const attribution=window.PlanBAnalyticsConsent?.attribution?.()||{utm_source:params.get('utm_source')||'',utm_medium:params.get('utm_medium')||'',utm_campaign:params.get('utm_campaign')||'',utm_content:params.get('utm_content')||'',utm_term:params.get('utm_term')||'',yclid:params.get('yclid')||''};
       const acceptedAt=new Date().toISOString();
-      const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:form.name.value.trim()||'Заявка с посадочной ведения',phone,niche:form.niche.value.trim()||'ведение Авито',product:'planb_vedenie',route:'vedenie',landing_variant:'service_vedenie_v4',form_id:form.form_id.value,pd_consent:true,pd_consent_version:form.pd_consent_version.value,pd_consent_client_at:acceptedAt,privacy_version:form.privacy_version.value,utm_source:params.get('utm_source')||'',utm_medium:params.get('utm_medium')||'',utm_campaign:params.get('utm_campaign')||'',utm_content:params.get('utm_content')||'',utm_term:params.get('utm_term')||'',yclid:params.get('yclid')||'',page:location.href,ref:document.referrer||'',ts:acceptedAt})});
+      const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:form.name.value.trim()||'Заявка с посадочной ведения',phone,niche:form.niche.value.trim()||'ведение Авито',product:'planb_vedenie',route:'vedenie',landing_variant:'service_vedenie_v4',form_id:form.form_id.value,pd_consent:true,pd_consent_version:form.pd_consent_version.value,pd_consent_client_at:acceptedAt,privacy_version:form.privacy_version.value,utm_source:attribution.utm_source||'',utm_medium:attribution.utm_medium||'',utm_campaign:attribution.utm_campaign||'',utm_content:attribution.utm_content||'',utm_term:attribution.utm_term||'',yclid:attribution.yclid||'',page:location.href,ref:document.referrer||'',ts:acceptedAt})});
       let result={};try{result=await response.json()}catch(_){result={}}
       if(!response.ok||result.ok===false)throw new Error('HTTP '+response.status);
       form.reset();msg.className='lead-msg ok';msg.textContent='Заявка принята. Свяжемся с вами в ближайшее время.';

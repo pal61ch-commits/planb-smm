@@ -21,6 +21,7 @@ export const MARKETING_ROUTES = [
   "/kejsy/zapusk-stroitelnogo-akkaunta",
   "/blog/",
   "/video/",
+  "/otzyvy/",
   "/blog/agentstvo-ili-chastnyy-avitolog",
   "/blog/audit-akkaunta-avito-pered-prodvizheniem",
   "/blog/avtozagruzka-avito",
@@ -60,6 +61,7 @@ export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
 export const NEW_CONTENT_ROUTES = [
   "/video/",
+  "/otzyvy/",
   "/kejsy/yuridicheskie-uslugi",
   "/blog/agentstvo-ili-chastnyy-avitolog",
   "/blog/audit-akkaunta-avito-pered-prodvizheniem",
@@ -80,6 +82,7 @@ export const REPRESENTATIVE_ROUTES = [
   "/kejsy/yuridicheskie-uslugi",
   "/blog/",
   "/video/",
+  "/otzyvy/",
   "/blog/audit-akkaunta-avito-pered-prodvizheniem",
   "/blog/vedenie-akkaunta-avito",
   "/privacy.html"

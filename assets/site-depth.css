@@ -247,6 +247,14 @@ main:not([class]) .wrap {
   color: var(--text);
 }
 
+.nav-links a[aria-current="page"] {
+  color: var(--text);
+}
+
+.nav--complete .nav-links {
+  gap: clamp(10px, 1.45vw, 20px);
+}
+
 .nav-cta {
   min-height: 42px;
   padding: 11px 19px;
@@ -260,6 +268,20 @@ main:not([class]) .wrap {
 .nav-cta:hover {
   background: var(--yellow);
   color: #111106 !important;
+}
+
+@media (min-width: 721px) and (max-width: 940px) {
+  .nav--complete .logo span {
+    display: none;
+  }
+
+  .nav--complete .nav-links a {
+    font-size: 12px;
+  }
+
+  .nav--complete .nav-cta {
+    padding-inline: 13px;
+  }
 }
 
 .inner-menu-btn {
@@ -1169,6 +1191,14 @@ footer img {
   .company-page .hero h1 {
     font-size: clamp(38px, 12vw, 53px);
     line-height: 0.98;
+  }
+
+  main:not([class]) > .case-hub-hero h1 {
+    max-width: 100%;
+    font-size: clamp(30px, 9.4vw, 42px);
+    letter-spacing: -0.045em;
+    overflow-wrap: anywhere;
+    hyphens: auto;
   }
 
   .phead::before,

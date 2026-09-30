@@ -18,12 +18,12 @@ function requireCheck(ok, message) {
 async function seedDeniedConsent(context) {
   await context.addInitScript(() => {
     const now = Date.now();
-    localStorage.setItem("planb_analytics_consent_v2", JSON.stringify({
-      schema: "planb-analytics-choice-v2",
-      version: "planb-analytics-2026-09-02-v2",
-      privacy_version: "planb-privacy-2026-09-04-v3",
-      privacy_sha256: "5cf6b80085eab30dc1d0a3f0c3dbafbf530ad271e5e1d33250c1a0e25b5508c8",
-      notice_sha256: "c8445b179e648ea1867d3f1ac00aac22d8266c0f14839b620f6648b0ca25e275",
+    localStorage.setItem("planb_analytics_consent_v3", JSON.stringify({
+      schema: "planb-analytics-choice-v3",
+      version: "planb-analytics-2026-09-29-v3",
+      privacy_version: "planb-privacy-2026-09-29-v4",
+      privacy_sha256: "455d7155c3aa47424bb66daee7e8dd2492532a30c567e5f84e8634bbe853ee83",
+      notice_sha256: "567a90210a2d829edccf7b977e7727a4c0fd4b2e2b294826f4ccd574f2916270",
       choice: "denied",
       decided_at: new Date(now).toISOString(),
       expires_at: now + 180 * 24 * 60 * 60 * 1000
@@ -110,7 +110,7 @@ async function inspectRun(config) {
   requireCheck(base.engineInstances === 1, config.name + ": Scrollcraft did not mount exactly once");
   requireCheck(base.form?.formId === "leadForm" && base.form?.scenario === "unspecified", config.name + ": form identity changed");
   requireCheck(base.form?.pdVersion === "planb-pd-2026-09-04-v2", config.name + ": personal-data consent version changed");
-  requireCheck(base.form?.privacyVersion === "planb-privacy-2026-09-04-v3", config.name + ": privacy version changed");
+  requireCheck(base.form?.privacyVersion === "planb-privacy-2026-09-29-v4", config.name + ": privacy version changed");
   requireCheck(base.form?.requiredPhone && base.form?.requiredConsent, config.name + ": required form controls changed");
   requireCheck(base.form?.statusRole === "status" && base.form?.statusLive === "polite", config.name + ": form status accessibility changed");
   requireCheck(base.conversionCopy?.heroCta === "Получить бесплатную консультацию и план продвижения" && base.conversionCopy?.heroCtaHref === "#contact", config.name + ": hero CTA copy or target changed");

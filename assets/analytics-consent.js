@@ -1,12 +1,14 @@
 (function(){
   'use strict';
 
-  const STORAGE_KEY='planb_analytics_consent_v2';
-  const LEGACY_KEY='planb_analytics_consent_v1';
-  const CONSENT_VERSION='planb-analytics-2026-09-02-v2';
-  const PRIVACY_VERSION='planb-privacy-2026-09-04-v3';
-  const PRIVACY_SHA256='5cf6b80085eab30dc1d0a3f0c3dbafbf530ad271e5e1d33250c1a0e25b5508c8';
-  const NOTICE_SHA256='c8445b179e648ea1867d3f1ac00aac22d8266c0f14839b620f6648b0ca25e275';
+  const STORAGE_KEY='planb_analytics_consent_v3';
+  const LEGACY_KEYS=['planb_analytics_consent_v2','planb_analytics_consent_v1'];
+  const ATTRIBUTION_KEY='planb_session_attribution_v1';
+  const ATTRIBUTION_KEYS=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid'];
+  const CONSENT_VERSION='planb-analytics-2026-09-29-v3';
+  const PRIVACY_VERSION='planb-privacy-2026-09-29-v4';
+  const PRIVACY_SHA256='455d7155c3aa47424bb66daee7e8dd2492532a30c567e5f84e8634bbe853ee83';
+  const NOTICE_SHA256='567a90210a2d829edccf7b977e7727a4c0fd4b2e2b294826f4ccd574f2916270';
   const TTL_MS=180*24*60*60*1000;
   const METRIKA_ID=110884885;
   const SCRIPT_MARKER='planb-metrika';
@@ -27,7 +29,7 @@
   function readState(){
     try{
       const state=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
-      if(!state||state.schema!=='planb-analytics-choice-v2')return null;
+      if(!state||state.schema!=='planb-analytics-choice-v3')return null;
       if(state.version!==CONSENT_VERSION||state.privacy_version!==PRIVACY_VERSION)return null;
       if(state.privacy_sha256!==PRIVACY_SHA256||state.notice_sha256!==NOTICE_SHA256)return null;
       if(state.choice!=='granted'&&state.choice!=='denied')return null;
@@ -39,7 +41,7 @@
   function saveState(choice){
     const decidedAt=new Date();
     const state={
-      schema:'planb-analytics-choice-v2',
+      schema:'planb-analytics-choice-v3',
       version:CONSENT_VERSION,
       privacy_version:PRIVACY_VERSION,
       privacy_sha256:PRIVACY_SHA256,
@@ -50,7 +52,7 @@
     };
     try{
       localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
-      localStorage.removeItem(LEGACY_KEY);
+      LEGACY_KEYS.forEach(function(key){localStorage.removeItem(key)});
       const persisted=readState();
       if(!persisted||persisted.choice!==state.choice||persisted.decided_at!==state.decided_at||persisted.expires_at!==state.expires_at){
         try{localStorage.removeItem(STORAGE_KEY)}catch(_){}
@@ -66,6 +68,44 @@
   function hasAnalyticsConsent(){
     const state=readState();
     return Boolean(state&&state.choice==='granted');
+  }
+
+  function attributionFromUrl(){
+    const result={};
+    let params;
+    try{params=new URLSearchParams(location.search||'')}catch(_){params=null}
+    ATTRIBUTION_KEYS.forEach(function(key){
+      const value=params?String(params.get(key)||'').trim().slice(0,300):'';
+      result[key]=value;
+    });
+    return result;
+  }
+
+  function hasAttribution(values){
+    return ATTRIBUTION_KEYS.some(function(key){return Boolean(values&&values[key])});
+  }
+
+  function storedAttribution(){
+    if(!hasAnalyticsConsent())return null;
+    try{
+      const stored=JSON.parse(sessionStorage.getItem(ATTRIBUTION_KEY)||'null');
+      if(!stored||stored.schema!=='planb-session-attribution-v1')return null;
+      const values={};
+      ATTRIBUTION_KEYS.forEach(function(key){values[key]=String(stored[key]||'').trim().slice(0,300)});
+      return hasAttribution(values)?values:null;
+    }catch(_){return null}
+  }
+
+  function captureFirstTouchAttribution(){
+    if(!hasAnalyticsConsent()||storedAttribution())return;
+    const values=attributionFromUrl();
+    if(!hasAttribution(values))return;
+    try{sessionStorage.setItem(ATTRIBUTION_KEY,JSON.stringify(Object.assign({schema:'planb-session-attribution-v1'},values)))}catch(_){}
+  }
+
+  function formAttribution(){
+    const current=attributionFromUrl();
+    return storedAttribution()||current;
   }
 
   function routeValue(){
@@ -97,7 +137,7 @@
   }
 
   function contentIdFromPath(pathname){
-    const match=String(pathname||'').match(/^\/(blog|kejsy|video)(?:\/([^/?#]+))?\/?$/i);
+    const match=String(pathname||'').match(/^\/(blog|kejsy|video|otzyvy)(?:\/([^/?#]+))?\/?$/i);
     if(!match)return '';
     return safeToken(match[1]+'_'+(match[2]||'index'),80);
   }
@@ -191,7 +231,7 @@
     const explicit=link.matches('[data-content-cta],[data-analytics-event="content_cta_click"],[data-analytics-goal="CONTENT_CTA"]');
     const sameOrigin=url.origin===location.origin;
     const sourceId=currentContentId();
-    const styledCta=link.matches('.more-card,.blog-card,.scenario-card,.nav-cta,.btn');
+    const styledCta=link.matches('.more-card,.blog-card,.post-card,.scenario-card,.case-feature-card,.video-links a,.social-card,.nav-cta,.btn');
     if(!explicit&&!styledCta)return null;
 
     let targetType='external';
@@ -200,6 +240,7 @@
       else if(/^\/blog(?:\/|$)/.test(url.pathname))targetType='blog';
       else if(/^\/kejsy(?:\/|$)/.test(url.pathname))targetType='case';
       else if(/^\/video(?:\/|$)/.test(url.pathname))targetType='video';
+      else if(/^\/otzyvy(?:\/|$)/.test(url.pathname))targetType='testimonial';
       else if(/^\/uslugi(?:\/|$)/.test(url.pathname))targetType='service';
       else targetType='internal';
     }
@@ -256,8 +297,8 @@
     })(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id='+METRIKA_ID,'ym');
     window.ym(METRIKA_ID,'init',{
       ssr:true,
-      webvisor:false,
-      clickmap:false,
+      webvisor:true,
+      clickmap:true,
       accurateTrackBounce:true,
       trackLinks:true
     });
@@ -280,6 +321,7 @@
         }
       }catch(_){}
     });
+    try{sessionStorage.removeItem(ATTRIBUTION_KEY)}catch(_){}
   }
 
   function disableAnalytics(){
@@ -328,7 +370,10 @@
     }
     closeDialog();
     updateSettingsLabel();
-    if(choice==='granted')loadAnalytics();
+    if(choice==='granted'){
+      captureFirstTouchAttribution();
+      loadAnalytics();
+    }
     else{
       disableAnalytics();
       if(wasLoaded)location.reload();
@@ -348,9 +393,9 @@
     const status=state?(state.choice==='granted'?'Сейчас аналитика разрешена.':'Сейчас аналитика отключена.'):'Выбор ещё не сделан.';
     banner.innerHTML=(settingsMode&&state?'<button type="button" class="close" aria-label="Закрыть настройки">×</button>':'')+
       '<p id="planb-cookie-title"><strong>Необязательная аналитика</strong></p>'+
-      '<p id="planb-cookie-copy">Яндекс.Метрика помогает считать посещения и успешные отправки форм. Вебвизор, карта кликов и запись сессий отключены. До разрешения Метрика не загружается. <a href="/privacy.html">Подробнее</a>.</p>'+
+      '<p id="planb-cookie-copy">После вашего разрешения Яндекс.Метрика считает посещения и успешные отправки форм, а Вебвизор и карта кликов помогают оценивать навигацию, прокрутку и работу интерфейса. Поля форм, нажатия клавиш и отправка формы исключены из записи. До разрешения Метрика не загружается. <a href="/privacy.html">Подробнее</a>.</p>'+
       '<p id="planb-cookie-status">'+status+'</p>'+
-      '<div id="planb-cookie-actions"><button type="button" class="decision" data-choice="denied">Отклонить</button><button type="button" class="decision allow" data-choice="granted">Разрешить Метрику</button></div>';
+      '<div id="planb-cookie-actions"><button type="button" class="decision" data-choice="denied">Отклонить</button><button type="button" class="decision allow" data-choice="granted">Разрешить аналитику</button></div>';
     banner.addEventListener('click',function(event){
       const choiceButton=event.target.closest('[data-choice]');
       if(choiceButton)setChoice(choiceButton.dataset.choice);
@@ -376,11 +421,14 @@
   }
 
   function init(){
-    try{localStorage.removeItem(LEGACY_KEY)}catch(_){}
+    try{LEGACY_KEYS.forEach(function(key){localStorage.removeItem(key)})}catch(_){}
     bindGoalEvents();
     mountSettingsControl();
     const state=readState();
-    if(state&&state.choice==='granted')loadAnalytics();
+    if(state&&state.choice==='granted'){
+      captureFirstTouchAttribution();
+      loadAnalytics();
+    }
     else if(!state)mountDialog(false);
   }
 
@@ -388,11 +436,16 @@
     version:CONSENT_VERSION,
     state:readState,
     track:trackEvent,
+    attribution:formAttribution,
     grant:function(){setChoice('granted')},
     deny:function(){setChoice('denied')},
     open:function(){mountDialog(true)},
     reset:function(){
-      try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_KEY)}catch(_){}
+      try{
+        localStorage.removeItem(STORAGE_KEY);
+        LEGACY_KEYS.forEach(function(key){localStorage.removeItem(key)});
+        sessionStorage.removeItem(ATTRIBUTION_KEY);
+      }catch(_){}
       disableAnalytics();
       location.reload();
     }

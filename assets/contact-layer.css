@@ -141,9 +141,10 @@ html .contact-dock.planb-contact-dock .contact-link.wa {
 }
 
 html:has(#planb-cookie) .contact-dock.planb-contact-dock {
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
+  top: 35svh;
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
 }
 
 .planb-visually-hidden,
@@ -253,8 +254,20 @@ html .contact-dock.planb-contact-dock .contact-link > span:last-child {
   .planb-header-contact-link svg { width: 14px; height: 14px; }
 }
 
-@media (min-width: 721px) {
-  html .contact-dock.planb-contact-dock { display: none; }
+@media (min-width: 721px) and (max-width: 1360px) {
+  html.has-contact-dock main.wrap,
+  html.has-contact-dock main .wrap,
+  html.has-contact-dock main .container,
+  html.has-contact-dock body > .wrap {
+    padding-right: 86px;
+  }
+
+  html.has-contact-dock main.wrap > *,
+  html.has-contact-dock main .wrap > *,
+  html.has-contact-dock main .container > *,
+  html.has-contact-dock body > .wrap > * {
+    min-width: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

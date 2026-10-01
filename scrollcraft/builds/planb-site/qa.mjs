@@ -23,6 +23,9 @@ import { DEFAULT_ROOT, resolveRequestPath, startServer } from "./server.mjs";
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SITE_ROOT = path.resolve(process.env.PLANB_SITE_ROOT || DEFAULT_ROOT);
 const BASELINE_ROOT = path.resolve(process.env.PLANB_BASELINE_ROOT || "/Users/konstantin/content-factory/planb-landing");
+// Historical SEO expectations and current protected assets can have different
+// release baselines (for example an independently shipped Sokrat page).
+const SEO_BASELINE_ROOT = path.resolve(process.env.PLANB_SEO_BASELINE_ROOT || BASELINE_ROOT);
 const CHROME = process.env.SCROLLCRAFT_CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const OUT = path.resolve(HERE, "../../lab/planb-site");
 const SCREENSHOTS = path.join(OUT, "screenshots");
@@ -125,6 +128,7 @@ const report = {
   generatedAt: new Date().toISOString(),
   siteRoot: SITE_ROOT,
   baselineRoot: BASELINE_ROOT,
+  seoBaselineRoot: SEO_BASELINE_ROOT,
   scope: {
     marketing: MARKETING_ROUTES.length,
     currentLegal: CURRENT_LEGAL_ROUTES.length,
@@ -358,7 +362,7 @@ async function staticAudit() {
   for (const route of ACTIVE_ROUTES) {
     const relative = routeToRelativeFile(route);
     const candidate = path.join(SITE_ROOT, relative);
-    const baseline = path.join(BASELINE_ROOT, relative);
+    const baseline = path.join(SEO_BASELINE_ROOT, relative);
     const candidateExists = await exists(candidate);
     const baselineExists = await exists(baseline);
     check(candidateExists, "active.missing-candidate", `${route} -> ${relative}`);
@@ -433,8 +437,17 @@ async function staticAudit() {
         check(socialCards.some(tag => tag.includes(`href="${socialURL}"`)), "home.social-card-link", socialURL);
       }
       const freeConsultationCopy = "Получить бесплатную консультацию и план продвижения";
-      check(count(html, freeConsultationCopy) >= 2, "home.free-consultation-copy", `expected repeated CTA/form copy: ${freeConsultationCopy}`);
-      check(html.includes("Получите бесплатную консультацию и план продвижения"), "home.free-consultation-heading");
+      const conversionCandidate = html.includes('<body class="cro-home">');
+      check(count(html, freeConsultationCopy) >= (conversionCandidate ? 1 : 2), "home.free-consultation-copy", `expected primary CTA: ${freeConsultationCopy}`);
+      if (conversionCandidate) {
+        check(html.includes("Консультация + план · бесплатно"), "home.free-consultation-heading");
+        check(count(html, 'class="proof-card reveal"') === 3, "home.real-proof-card-count");
+        check(html.includes('href="#leadForm"'), "home.direct-form-anchor");
+        check(html.includes('class="optional-fields"'), "home.optional-details");
+        check(html.indexOf('id="cases"') < html.indexOf('id="services"'), "home.proof-before-process");
+      } else {
+        check(html.includes("Получите бесплатную консультацию и план продвижения"), "home.free-consultation-heading");
+      }
       check(html.includes("Получить бесплатную консультацию и план</button>"), "home.free-consultation-submit");
     }
     if (NEW_CONTENT_ROUTES.includes(route) && route.startsWith("/blog/")) {
@@ -771,6 +784,9 @@ async function inspectRuntime(page, noJs = false) {
       }
     }).filter(Boolean);
     const hiddenReveals = [...document.querySelectorAll(".reveal,[data-sc-in]")]
+      // Responsive components intentionally absent from this layout do not
+      // enter the viewport or receive reveal classes; visible content must.
+      .filter(element => element.getClientRects().length > 0 && getComputedStyle(element).display !== "none")
       .filter(element => javaScriptDisabled
         ? Number.parseFloat(getComputedStyle(element).opacity) < 0.95 || getComputedStyle(element).visibility === "hidden"
         : (element.hasAttribute("data-sc-in")
@@ -1126,8 +1142,8 @@ async function runRenderProfiles(browser, baseURL) {
 
 async function runContactStability(browser, baseURL) {
   for (const contract of [
-    { route: "/", delayedAsset: "/assets/home-depth.js" },
-    { route: "/video/", delayedAsset: "/assets/site-depth.js" }
+    { route: "/", delayedAsset: "/assets/home-depth.js", mainGutter: "60px" },
+    { route: "/video/", delayedAsset: "/assets/site-depth.js", mainGutter: "80px" }
   ]) {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
     await seedDeniedConsent(context);
@@ -1159,7 +1175,9 @@ async function runContactStability(browser, baseURL) {
     });
     check(state.cls === 0, "contact.slow-load-cls", `${contract.route}: ${JSON.stringify(state)}`);
     check(state.strip?.top === 0 && state.strip?.height >= 33 && state.strip?.height <= 34.5, "contact.slow-load-strip", `${contract.route}: ${JSON.stringify(state.strip)}`);
-    check(state.mainPaddingRight === "80px", "contact.slow-load-gutter", `${contract.route}: ${state.mainPaddingRight}`);
+    const isConversionCandidate = await page.locator("body.cro-home").count() > 0;
+    const expectedGutter = isConversionCandidate ? contract.mainGutter : "80px";
+    check(state.mainPaddingRight === expectedGutter, "contact.slow-load-gutter", `${contract.route}: expected ${expectedGutter}, got ${state.mainPaddingRight}`);
     report.contactStability.push({ ...contract, ...state });
     await context.close();
   }
@@ -1210,6 +1228,10 @@ async function formAttempt(browser, baseURL, contract, outcome) {
 
     if (contract.submittedScenario) {
       await page.locator(`[data-scenario="${contract.submittedScenario}"]`).first().evaluate(element => element.click());
+    }
+    const optionalDetails = form.locator("details.optional-fields");
+    if (await optionalDetails.count() && !await optionalDetails.first().getAttribute("open")) {
+      await optionalDetails.first().locator("summary").click();
     }
     const niche = form.locator("[name='niche']");
     if (await niche.count()) await niche.fill("QA test, no external delivery");

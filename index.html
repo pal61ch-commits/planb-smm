@@ -325,11 +325,6 @@
     .footer-bottom a{color:rgba(255,255,255,.82)}
     .reveal{opacity:0;transform:translateY(24px);transition:opacity .65s var(--ease),transform .65s var(--ease)}
     .reveal.in{opacity:1;transform:none}
-    #planb-cookie{right:12px!important;bottom:12px!important;max-width:430px!important;padding:14px!important;border-radius:14px!important;font-size:12px!important;line-height:1.4!important;box-shadow:0 12px 34px rgba(0,0,0,.18)!important}
-    #planb-cookie p{margin:0 0 8px!important}
-    #planb-cookie-actions{gap:7px!important;margin-top:9px!important}
-    #planb-cookie button{min-height:38px!important;padding:8px 11px!important;font-size:11px!important}
-    body:has(#planb-cookie) #planb-analytics-settings{display:none!important}
     @media(max-width:1040px){
       .hero-grid{grid-template-columns:1fr 420px;gap:36px}
       .outcome-grid{grid-template-columns:1fr 1fr}
@@ -442,15 +437,12 @@
       .footer-brand{align-items:flex-start;flex-direction:column}
       .footer-brand p{text-align:left}
       .footer-grid{grid-template-columns:1fr;gap:26px;padding:36px 0}
-      #planb-cookie{left:8px!important;right:8px!important;bottom:8px!important;max-width:none!important;padding:10px 12px!important;border-radius:12px!important;font-size:11px!important;line-height:1.3!important}
-      #planb-cookie p{margin:0 0 6px!important}
-      #planb-cookie-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;margin-top:7px!important}
-      #planb-cookie button{min-height:34px!important;padding:6px 8px!important;font-size:10.5px!important}
     }
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
   </style>
   <link rel="stylesheet" href="/assets/scrollcraft.css">
   <link rel="stylesheet" href="/assets/home-depth.css">
+  <link rel="stylesheet" href="/assets/conversion-layout.css">
   <noscript><style>
     [data-sc-in],.reveal{opacity:1!important;transform:none!important}
     @media(max-width:1120px){
@@ -462,7 +454,7 @@
     }
   </style></noscript>
 </head>
-<body>
+<body class="cro-home">
   <div class="home-atmosphere" aria-hidden="true">
     <div class="home-glow"></div>
     <div class="home-orbit"></div>
@@ -493,7 +485,7 @@
         <a href="/otzyvy/">Отзывы</a>
         <a href="#contact">Контакты</a>
         <a href="#faq">Вопросы</a>
-        <a class="nav-cta" href="#contact">Получить план</a>
+        <a class="nav-cta" href="#leadForm">Получить план</a>
       </nav>
     </div>
   </header>
@@ -502,53 +494,77 @@
       <div class="container hero-grid">
         <div class="hero-copy reveal" data-sc-in>
           <p class="eyebrow">Plan B · продвижение бизнеса на Avito</p>
-          <h1>Берём Avito<br><span class="hero-accent">на себя.</span><br>От запуска до роста.</h1>
-          <p class="hero-lead">Запустим аккаунт с нуля или усилим действующий. Соединим спрос, объявления, продвижение и аналитику в один рабочий канал.</p>
+          <h1>Берём Avito <span class="hero-accent">на себя.</span><br>От запуска до роста.</h1>
+          <p class="hero-lead">Запускаем и ведём аккаунты для бизнеса. Объявления, продвижение и контроль стоимости обращений — в одной команде.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#contact" data-sc-magnet="0.12">Получить бесплатную консультацию и план продвижения</a>
-            <a class="text-link" href="#services">Посмотреть, что входит</a>
+            <a class="btn btn-primary" href="#leadForm" data-sc-magnet="0.12">Получить бесплатную консультацию и план продвижения</a>
+            <a class="text-link" href="#cases">Посмотреть результаты клиентов →</a>
           </div>
           <div class="hero-facts" aria-label="Условия работы"><span>Ведение от 30 000 ₽ в месяц</span><span>Бюджет Avito отдельно</span></div>
-          <p class="hero-note">До разбора не обещаем место в топе и число заявок: сначала смотрим нишу, аккаунт и цифры.</p>
+          <p class="hero-note">Сначала бесплатно разберём вашу задачу и предложим первые шаги.</p>
         </div>
-        <div class="signal-stage reveal" data-sc-in data-sc-tilt="3.5" data-sc-spotlight aria-label="Система продвижения: спрос, объявления и обращения" data-home-signal>
-          <div class="signal-depth" data-sc-parallax="-0.045">
-            <div class="signal-ring" aria-hidden="true"></div>
-            <div class="signal-spine" aria-hidden="true"></div>
-            <div class="signal-pulse" aria-hidden="true"></div>
-            <div class="signal-plane signal-plane-a"><span class="signal-index">01</span><div><strong>Спрос</strong><small>Что ищут и где выбирают</small></div></div>
-            <div class="signal-plane signal-plane-b"><span class="signal-index">02</span><div><strong>Объявления</strong><small>Предложение, упаковка, продвижение</small></div></div>
-            <div class="signal-plane signal-plane-c"><span class="signal-index">03</span><div><strong>Обращения</strong><small>Контроль расходов и следующий шаг</small></div></div>
+        <a class="hero-proof reveal" data-sc-in href="/kejsy/metalloprokat">
+          <div class="hero-proof-head"><span class="eyebrow">Реальный кейс · металлопрокат</span><span class="proof-arrow" aria-hidden="true">↗</span></div>
+          <p class="hero-proof-number">126 <span>контактов за 17 дней</span></p>
+          <img src="/media/cases/avito-metalloprokat-126-kontaktov-proof.png" width="1000" height="600" alt="Статистика Avito: 1 835 просмотров и 126 контактов за 17 августа — 2 сентября 2026 года">
+          <div class="hero-proof-foot"><span>132,9 ₽ за контакт</span><span>Скриншот и разбор →</span></div>
+        </a>
+      </div>
+    </section>
+    <section class="section proof-section" id="cases">
+      <div class="container">
+        <div class="section-head proof-heading reveal"><div><p class="eyebrow">Цифры из кабинетов Avito</p><h2>Результаты, которые можно проверить</h2></div><a class="text-link" href="/kejsy/">Все 17 кейсов →</a></div>
+        <div class="proof-grid">
+          <a class="proof-card reveal" href="/kejsy/odin-den-stroitelnogo-proekta"><img src="/media/cases/avito-stroitelstvo-23-kontakta-proof.png" width="1000" height="600" loading="lazy" alt="Статистика строительного проекта: 56 просмотров и 23 контакта"><div class="proof-card-copy"><p class="eyebrow">Строительство · 2 сентября 2026</p><h3>23 контакта за день</h3><p>56 просмотров · 4 815 ₽ расход<br>209,3 ₽ за контакт</p><span class="text-link">Что сделали и что получили →</span></div></a>
+          <a class="proof-card reveal" href="/kejsy/metalloprokat"><img src="/media/cases/avito-metalloprokat-126-kontaktov-proof.png" width="1000" height="600" loading="lazy" alt="Статистика металлопроката: 1 835 просмотров и 126 контактов"><div class="proof-card-copy"><p class="eyebrow">Металлопрокат · 17 августа — 2 сентября</p><h3>126 контактов за 17 дней</h3><p>1 835 просмотров · 13 рабочих дней<br>132,9 ₽ за контакт</p><span class="text-link">Что сделали и что получили →</span></div></a>
+          <a class="proof-card reveal" href="/kejsy/yuridicheskie-uslugi"><img src="/media/cases/avito-yuridicheskie-uslugi-60-kontaktov-proof.png" width="1000" height="600" loading="lazy" alt="Статистика юридических услуг: 543 просмотра и 60 контактов"><div class="proof-card-copy"><p class="eyebrow">Юридические услуги · 15–22 сентября</p><h3>60 контактов за 8 дней</h3><p>543 просмотра · конверсия 11%<br>167 ₽ за контакт</p><span class="text-link">Что сделали и что получили →</span></div></a>
+        </div>
+        <p class="proof-note">Это результаты конкретных проектов за указанные периоды, не прогноз для любой ниши. Контакт в статистике Avito не равен продаже. Данные клиентов на скриншотах скрыты.</p>
+      </div>
+    </section>
+    <section class="section yellow-section consultation-section" id="contact">
+      <div class="container contact-shell">
+        <div class="contact-copy reveal">
+          <p class="eyebrow">Бесплатная консультация</p>
+          <h2>С чего начать<br>в вашей нише?</h2>
+          <p>Посмотрим ваш аккаунт или обсудим запуск с нуля. На консультации разберём:</p>
+          <ul class="consultation-list"><li>Что мешает получать обращения сейчас.</li><li>Какие действия стоит сделать первыми.</li><li>Стоимость работы команды и отдельный бюджет Avito.</li></ul>
+          <div class="contact-direct" aria-label="Прямые контакты"><a href="tel:+79281446617">+7 928 144-66-17</a><a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer">Telegram</a></div>
+        </div>
+        <form class="lead-form ym-disable-submit reveal" id="leadForm" novalidate>
+          <p class="eyebrow">Консультация + план · бесплатно</p>
+          <h3>Куда с вами связаться?</h3>
+          <input type="hidden" name="form_id" value="leadForm">
+          <input type="hidden" name="scenario" value="unspecified">
+          <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
+          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-29-v4">
+          <div class="form-grid">
+            <div class="field field-full"><label for="leadPhone">Ваш телефон</label><input class="ym-disable-keys" id="leadPhone" type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 999 000-00-00" required></div>
           </div>
-        </div>
+          <details class="optional-fields"><summary>Добавить имя и задачу — необязательно</summary><div class="form-grid"><div class="field"><label for="leadName">Имя</label><input class="ym-disable-keys" id="leadName" type="text" name="name" autocomplete="name" placeholder="Как к вам обращаться"></div><div class="field"><label for="leadNiche">Что продаёте</label><textarea class="ym-disable-keys" id="leadNiche" name="niche" placeholder="Например: строим дома в Московской области"></textarea></div></div></details>
+          <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
+          <p class="privacy-note">Подробнее: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>. Форма предназначена для лиц старше 18 лет. Не указывайте паспортные, платёжные, медицинские и другие чувствительные сведения.</p>
+          <button class="btn btn-yellow" type="submit">Получить бесплатную консультацию и план</button>
+          <div class="lead-msg" id="leadMsg" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </section>
+    <section class="section home-reviews" id="reviews">
+      <div class="container reviews-preview">
+        <div class="section-head reveal"><p class="eyebrow">Клиенты о Plan B</p><h2>Не только наши цифры.<br>Их слова.</h2><p>Четыре коротких видеоотзыва от клиентов — с оригинальным звуком.</p><a class="text-link" href="/otzyvy/">Посмотреть все видеоотзывы →</a></div>
+        <a class="review-preview-card reveal" href="/otzyvy/#otzyv-3"><img src="/media/testimonials/otzyv-o-prodvizhenii-na-avito-03.jpg" width="1080" height="1920" loading="lazy" alt="Клиент Plan B в видеоотзыве о продвижении на Avito"><span class="review-play" aria-hidden="true">▶</span><span class="review-preview-copy">Реальный видеоотзыв<span>Открыть и посмотреть со звуком →</span></span></a>
       </div>
     </section>
     <section class="section" id="stages">
       <div class="container">
         <div class="section-head reveal">
           <p class="eyebrow">Точка входа</p>
-          <h2>Подключаемся там, где вы сейчас</h2>
-          <p>Неважно, есть ли уже аккаунт и статистика. Выберите ближайшую задачу — всё остальное разберём вместе.</p>
+          <h2>Какую задачу разберём?</h2>
         </div>
         <div class="stage-grid">
-          <a class="stage-card reveal" href="#contact" data-scenario="launch"><span class="stage-index">01 · СТАРТ</span><h3>Выходим на Avito</h3><p>Проверяем спрос, собираем предложение, оформляем профиль и готовим первые объявления к запуску.</p><span class="text-link">Обсудить запуск</span></a>
-          <a class="stage-card reveal" href="#contact" data-scenario="improve"><span class="stage-index">02 · УСИЛЕНИЕ</span><h3>Усиливаем действующий аккаунт</h3><p>Находим, где теряется внимание и обращения, обновляем объявления и перестраиваем продвижение.</p><span class="text-link">Обсудить аккаунт</span></a>
-          <a class="stage-card reveal" href="#contact" data-scenario="scale"><span class="stage-index">03 · РАЗВИТИЕ</span><h3>Расширяем рабочий канал</h3><p>Развиваем сильные объявления, новые направления и географию, сохраняя контроль над качеством обращений.</p><span class="text-link">Обсудить развитие</span></a>
-        </div>
-      </div>
-    </section>
-    <section class="section dark">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="eyebrow">Результат для бизнеса</p>
-          <h2>Avito работает как единый канал, а не набор разрозненных объявлений</h2>
-          <p>Plan B соединяет стратегию, упаковку, объявления, продвижение и аналитику в одном рабочем цикле.</p>
-        </div>
-        <div class="outcome-grid">
-          <article class="outcome reveal"><div class="line"></div><h3>Понятное предложение</h3><p>Ясно, что, кому и в каком регионе продвигаем.</p></article>
-          <article class="outcome reveal"><div class="line"></div><h3>Сильная упаковка</h3><p>Профиль и объявления помогают быстро понять ценность.</p></article>
-          <article class="outcome reveal"><div class="line"></div><h3>Постоянная работа</h3><p>Объявления публикуются, обновляются и получают продвижение.</p></article>
-          <article class="outcome reveal"><div class="line"></div><h3>План развития</h3><p>Команда видит, какие направления усиливать следующими.</p></article>
+          <a class="stage-card reveal" href="#leadForm" data-scenario="launch"><span class="stage-index">01 · СТАРТ</span><h3>Аккаунта ещё нет</h3><p>Проверим спрос и подготовим профиль и первые объявления.</p><span class="text-link">Обсудить запуск →</span></a>
+          <a class="stage-card reveal" href="#leadForm" data-scenario="improve"><span class="stage-index">02 · УСИЛЕНИЕ</span><h3>Обращений мало</h3><p>Найдём потери в предложении, объявлениях и продвижении.</p><span class="text-link">Разобрать аккаунт →</span></a>
+          <a class="stage-card reveal" href="#leadForm" data-scenario="scale"><span class="stage-index">03 · РАЗВИТИЕ</span><h3>Хотим расширяться</h3><p>Разберём новые направления и регионы, расходы и качество контактов.</p><span class="text-link">Обсудить развитие →</span></a>
         </div>
       </div>
     </section>
@@ -567,42 +583,13 @@
             </ul>
             <a class="btn btn-primary" href="/uslugi/vedenie-avito">Подробнее о ведении</a>
           </div>
-          <div class="service-side"><div class="big-mark">B.</div><p>Одна команда ведёт весь путь на Avito и отвечает за согласованную работу по проекту.</p></div>
+          <div class="service-side cro-price"><p class="eyebrow">Работа команды</p><p class="cro-price-number">от 30 000 ₽<span>в месяц</span></p><p>Рекламный бюджет Avito — отдельно. Объём работ и расходы согласуем после разбора ниши и аккаунта.</p><a class="text-link" href="#leadForm">Получить бесплатный план →</a></div>
         </div>
-        <div class="section-head reveal" style="margin-top:72px">
+        <div class="section-head one-off-heading reveal">
           <p class="eyebrow">Отдельная задача</p>
           <h2>Разовая настройка для самостоятельной работы</h2>
         </div>
         <article class="one-off-service reveal"><div><h3>Соберём основу аккаунта один раз</h3><p>Подготовим структуру профиля и объявлений для запуска или перестроим действующий аккаунт, чтобы дальше команда бизнеса могла работать самостоятельно.</p></div><a class="btn btn-primary" href="/uslugi/razovaya-nastroyka-avito">Подробнее о настройке</a></article>
-      </div>
-    </section>
-    <section class="section" id="cases" style="padding-top:0">
-      <div class="container">
-        <div class="section-head reveal"><p class="eyebrow">Кейсы и сценарии</p><h2>Как строится работа в разных нишах</h2><p>Структура аккаунта, объявления и способ продвижения зависят от продукта, региона и того, как клиент принимает решение.</p></div>
-        <div class="scenario-grid">
-          <a class="scenario-card reveal" href="/kejsy/doma-pod-klyuch"><span class="tag">Сценарий работы</span><h3>Строительные услуги</h3><p>Предложения, комплектации, география и структура объявлений.</p><span class="text-link">Посмотреть</span></a>
-          <a class="scenario-card reveal" href="/kejsy/buhgalterskie-uslugi"><span class="tag">Сценарий работы</span><h3>Бухгалтерские услуги</h3><p>Сегменты клиентов, направления услуг и понятная упаковка.</p><span class="text-link">Посмотреть</span></a>
-          <a class="scenario-card reveal" href="/kejsy/avtostekla"><span class="tag">Сценарий работы</span><h3>Автоуслуги</h3><p>Структура по услугам, маркам, моделям и географии.</p><span class="text-link">Посмотреть</span></a>
-          <a class="scenario-card reveal" href="/kejsy/stroitelstvo-po-regionam"><span class="tag">Сценарий работы</span><h3>Несколько регионов</h3><p>Как разделять спрос и предложения между территориями.</p><span class="text-link">Посмотреть</span></a>
-        </div>
-        <div class="scenario-actions">
-          <a class="btn btn-primary" href="/kejsy/">Все кейсы и сценарии</a>
-          <p class="scenario-note">Раздел описывает возможную структуру работ, а не результаты конкретных клиентов. Для вашего бизнеса маршрут формируется после разбора задачи.</p>
-        </div>
-      </div>
-    </section>
-    <section class="section dark" id="process">
-      <div class="container">
-        <div class="section-head reveal"><p class="eyebrow">Как работает канал</p><h2>Один путь от спроса до обращения</h2></div>
-        <div class="flow" aria-label="Путь клиента на Avito">
-          <div class="flow-item reveal"><span>01</span><strong>Спрос</strong></div>
-          <div class="flow-item reveal"><span>02</span><strong>Предложение</strong></div>
-          <div class="flow-item reveal"><span>03</span><strong>Объявление</strong></div>
-          <div class="flow-item reveal"><span>04</span><strong>Продвижение</strong></div>
-          <div class="flow-item reveal"><span>05</span><strong>Обращение</strong></div>
-          <div class="flow-item reveal"><span>06</span><strong>Рост</strong></div>
-        </div>
-        <p class="flow-copy reveal">Мы работаем со всей цепочкой целиком: смотрим, что ищут люди, как выглядит предложение в выдаче, что помогает открыть объявление и перейти к контакту, а затем развиваем направления с наибольшим потенциалом.</p>
       </div>
     </section>
     <section class="section" id="products">
@@ -661,17 +648,6 @@
         </div>
       </div>
     </section>
-    <section class="section yellow-section">
-      <div class="container">
-        <div class="section-head reveal"><p class="eyebrow">Старт проекта</p><h2>От первого разговора до запуска</h2></div>
-        <div class="steps">
-          <article class="step reveal"><h3>Знакомимся с задачей</h3><p>Ниша, география, текущий аккаунт и цель бизнеса.</p></article>
-          <article class="step reveal"><h3>Собираем маршрут</h3><p>Что запускать, усиливать или расширять в первую очередь.</p></article>
-          <article class="step reveal"><h3>Согласовываем формат</h3><p>Объём работ, порядок взаимодействия и старт.</p></article>
-          <article class="step reveal"><h3>Берём канал в работу</h3><p>Запускаем согласованный план и ведём проект дальше.</p></article>
-        </div>
-      </div>
-    </section>
     <section class="section dark">
       <div class="container">
         <div class="legal-panel reveal">
@@ -693,32 +669,6 @@
         </div>
       </div>
     </section>
-    <section class="section yellow-section" id="contact">
-      <div class="container contact-shell">
-        <div class="contact-copy reveal">
-          <p class="eyebrow">Следующий шаг</p>
-          <h2>Получите бесплатную консультацию и план продвижения</h2>
-          <p>Оставьте номер и коротко напишите, что продаёте. Бесплатно уточним задачу, посмотрим аккаунт и подготовим план первых шагов.</p>
-          <div class="contact-direct" aria-label="Прямые контакты"><a href="tel:+79281446617">+7 928 144-66-17</a><a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer">Telegram</a><a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener noreferrer">ВКонтакте</a></div>
-        </div>
-        <form class="lead-form ym-disable-submit reveal" id="leadForm" novalidate>
-          <h3>Получить бесплатную консультацию и план продвижения</h3>
-          <input type="hidden" name="form_id" value="leadForm">
-          <input type="hidden" name="scenario" value="unspecified">
-          <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
-          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-29-v4">
-          <div class="form-grid">
-            <div class="field"><label for="leadName">Имя — необязательно</label><input class="ym-disable-keys" id="leadName" type="text" name="name" autocomplete="name" placeholder="Как к вам обращаться"></div>
-            <div class="field"><label for="leadPhone">Телефон</label><input class="ym-disable-keys" id="leadPhone" type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 999 000-00-00" required></div>
-            <div class="field field-full"><label for="leadNiche">Что продаёте — необязательно</label><textarea class="ym-disable-keys" id="leadNiche" name="niche" placeholder="Например: строим дома в Московской области"></textarea></div>
-          </div>
-          <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
-          <p class="privacy-note">Подробнее: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>. Форма предназначена для лиц старше 18 лет. Не указывайте паспортные, платёжные, медицинские и другие чувствительные сведения.</p>
-          <button class="btn btn-yellow" type="submit">Получить бесплатную консультацию и план</button>
-          <div class="lead-msg" id="leadMsg" role="status" aria-live="polite"></div>
-        </form>
-      </div>
-    </section>
   </main>
   <footer>
     <div class="container">
@@ -729,7 +679,7 @@
       <div class="footer-grid">
         <div class="footer-column"><h3>Услуги</h3><a href="/uslugi/vedenie-avito">Ведение Avito</a><a href="/uslugi/razovaya-nastroyka-avito">Разовая настройка</a><a href="#contact">Получить план</a></div>
         <div class="footer-column"><h3>Продукты</h3><a href="/sokrat">Сократ</a><a href="https://pifagor-pf.ru/" target="_blank" rel="noopener noreferrer">Пифагор ↗</a></div>
-        <div class="footer-column"><h3>Материалы</h3><a href="/kejsy/">Кейсы и сценарии</a><a href="/blog/">Блог</a><a href="/o-kompanii">О Plan B</a></div>
+        <div class="footer-column"><h3>Материалы</h3><a href="/kejsy/">Все кейсы</a><a href="/otzyvy/">Видеоотзывы</a><a href="/video/">Видео</a><a href="/blog/">Блог</a><a href="/o-kompanii">О Plan B</a></div>
         <div class="footer-column"><h3>Контакты</h3><a href="tel:+79281446617">+7 928 144-66-17</a><a href="https://wa.me/79281446617" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="https://www.instagram.com/avitolog_planb_prodvizenie/" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://t.me/planB_prodvizhenie" target="_blank" rel="noopener noreferrer">Telegram Plan B</a><a href="https://vk.ru/planb_avitolog" target="_blank" rel="noopener noreferrer">ВКонтакте</a><a href="mailto:kislovkosta@yandex.ru">kislovkosta@yandex.ru</a></div>
       </div>
       <div class="footer-legal"><a href="/rekvizity.html">Реквизиты</a><a href="/oferta.html">Договор оферты</a><a href="/privacy.html">Политика обработки персональных данных</a><a href="/consent-personal-data.html">Согласие на обработку данных</a></div>

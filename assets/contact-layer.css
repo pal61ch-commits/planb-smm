@@ -120,6 +120,7 @@ html .contact-dock.planb-contact-dock .contact-link .contact-icon {
 html .contact-dock.planb-contact-dock .contact-link svg {
   width: 24px;
   height: 24px;
+  color: inherit;
 }
 
 html .contact-dock.planb-contact-dock .contact-link.call {

@@ -60,6 +60,20 @@
 <link rel="stylesheet" href="/assets/scrollcraft.css">
 <link rel="stylesheet" href="/assets/page.css">
 <link rel="stylesheet" href="/assets/site-depth.css">
+<style>
+  .testimonials-page .phead{padding:26px 0 22px}
+  .testimonials-page .phead h1{font-size:clamp(36px,5.2vw,60px);line-height:1.04;margin-bottom:12px}
+  .testimonials-page .phead .sub{font-size:17px;line-height:1.5}
+  .testimonials-page .video-grid{margin-top:0;margin-bottom:24px}
+  .testimonials-page .review-note{padding:18px 22px;margin-bottom:34px;color:var(--muted);font-size:14px;line-height:1.5}
+  .testimonials-page .review-note a{color:var(--yellow)}
+  @media(max-width:640px){
+    .testimonials-page .phead{padding:16px 0 20px}
+    .testimonials-page .phead h1{font-size:33px;margin-top:10px}
+    .testimonials-page .phead .sub{font-size:15px}
+    .testimonials-page .review-note{padding:16px;margin-bottom:28px;font-size:13px}
+  }
+</style>
 </head>
 <body>
 <div class="bg"></div>
@@ -77,14 +91,13 @@
     </div>
   </div>
 </nav>
-<main class="wrap wrap-wide">
+<main class="wrap wrap-wide testimonials-page">
   <div class="crumbs"><a href="/">Главная</a><span>→</span>Отзывы</div>
   <header class="phead">
     <span class="badge">Реальные видео клиентов</span>
-    <h1>Видеоотзывы о работе <span class="yel">с Plan B</span></h1>
-    <p class="sub">Четыре коротких видео, записанных самими клиентами. Без пересказанных историй, выдуманных оценок и подмены отзыва рекламным текстом.</p>
+    <h1>Отзывы клиентов <span class="yel">Plan B</span></h1>
+    <p class="sub">Четыре коротких видео, записанных самими клиентами.</p>
   </header>
-  <div class="callout glass"><p><b>Что важно:</b> эти видео подтверждают опыт совместной работы, но не обещают конкретное число обращений или такой же результат в другой нише. Цифры и периоды смотрите отдельно в разделе <a href="/kejsy/">«Кейсы»</a>.</p></div>
   <section class="video-grid" aria-label="Видеоотзывы клиентов Plan B">
     <article class="video-card glass" id="sergey-gruzoperevozki">
       <div class="video-frame">
@@ -147,6 +160,7 @@
       </div>
     </article>
   </section>
+  <div class="callout glass review-note"><p>Отзывы подтверждают опыт сотрудничества, но не гарантируют такой же результат. Цифры, периоды и сделанные работы смотрите в <a href="/kejsy/">кейсах</a>.</p></div>
   <section class="cta glass" id="contact">
     <h2>Хотите обсудить продвижение вашего аккаунта?</h2>
     <p>Разберём задачу, текущий аккаунт и следующий шаг без обещаний до анализа исходных данных.</p>

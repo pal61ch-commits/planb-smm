@@ -135,6 +135,49 @@
   @media(max-width:640px){body{padding-bottom:72px}.hero{padding-bottom:58px}.hero:before{inset:-100px -80% -40px;background:radial-gradient(circle at 76% 22%,rgba(245,196,0,.11),transparent 28%),radial-gradient(circle at 82% 70%,rgba(38,165,229,.08),transparent 23%)}.hero:after{bottom:-285px;opacity:.12}.market-card{width:210px;height:142px;padding:13px;border-radius:18px;opacity:.13}.market-card.one{right:-62px;top:270px}.market-card.two{left:-80px;top:1070px;opacity:.11}.market-body{grid-template-columns:62px 1fr;gap:9px;margin-top:10px}.market-photo{height:59px}.market-lines{gap:6px}.market-lines i{height:5px}.market-foot{height:7px;margin-top:9px}.market-head{font-size:12px}.hero-copy h1{font-size:37px}.hero-copy>.contact-block,.price-action>.contact-block{display:none}.fit,.steps{grid-template-columns:1fr}.proofbar{gap:8px}.proof{padding:16px 8px}.proof b{font-size:24px}.proof-case{padding:13px;text-align:left}.proof-case img{width:80px;height:72px}.section{padding:48px 0}.pricebox{padding:25px}.nav-links a:not(.nav-cta){display:none}.expert{grid-template-columns:1fr}.btn,.price-action .btn{width:100%;min-width:0;justify-content:center}.contact-link{min-height:48px;padding:7px 5px;gap:6px;font-size:11.5px}.contact-icon{width:28px;height:28px;border-radius:9px}.contact-link svg{width:18px;height:18px}.contact-dock{position:fixed;z-index:50;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px;border:1px solid var(--gb2);border-radius:16px;background:rgba(15,15,17,.96);box-shadow:0 12px 38px rgba(0,0,0,.58);backdrop-filter:blur(16px)}.contact-dock .contact-link{min-height:44px;border-radius:10px}.contact-dock .contact-icon{width:25px;height:25px}.contact-dock .contact-link svg{width:16px;height:16px}}
 </style>
 <link rel="stylesheet" href="/assets/site-depth.css">
+<style>
+  .cro-service .hero{padding:36px 0 48px}
+  .cro-service .hero-grid{gap:32px;align-items:start}
+  .cro-service .hero-copy h1{font-size:clamp(40px,5.6vw,64px);line-height:1.04;margin:14px 0 16px}
+  .cro-service .hero-copy .lead{max-width:560px;font-size:18px;line-height:1.5}
+  .cro-service .hero-actions{margin:22px 0 0;gap:12px}
+  .cro-service .hero-actions .micro{max-width:450px;line-height:1.5}
+  .cro-service .hero-proof{margin-top:18px}
+  .cro-service .hero-proof span,.cro-service .case .result{font-family:inherit}
+  .cro-service .hero-points{margin-top:16px}
+  .cro-service .hero-panel{scroll-margin-top:120px}
+  .cro-service .panel-title{font-size:24px}
+  .cro-service .panel-copy{margin-bottom:16px}
+  .cro-service .section{padding-block:54px}
+  .cro-service .case img{display:block;width:100%;height:auto;aspect-ratio:5/3;object-fit:contain;background:#fff}
+  .cro-service .case-kicker{display:block;font-size:11px;line-height:1.6;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);margin-bottom:10px}
+  .cro-service .case h3{font-size:clamp(23px,2.3vw,30px);line-height:1.12;letter-spacing:-.035em;margin-bottom:12px}
+  .cro-service .case .result{font-size:14px;margin-top:18px}
+  .cro-service .proof-note{max-width:850px;margin-top:18px;color:var(--muted);font-size:13px;line-height:1.5}
+  .cro-service .package-scope{display:grid;gap:9px;margin:20px 0 18px;padding:0;list-style:none}
+  .cro-service .package-scope li{position:relative;padding-left:20px;color:#e4e3dc;font-size:15px;line-height:1.45}
+  .cro-service .package-scope li:before{content:"✓";position:absolute;left:0;color:var(--yellow)}
+  @media(max-width:900px){.cro-service .hero-grid{gap:24px}.cro-service .hero-panel{max-width:none}}
+  @media(max-width:640px){
+    .cro-service .hero{padding:22px 0 30px}
+    .cro-service .hero-grid{gap:20px}
+    .cro-service .hero-copy h1{font-size:34px;line-height:1.05;margin:12px 0}
+    .cro-service .hero-copy .lead{font-size:15px;line-height:1.45}
+    .cro-service .hero-actions{margin-top:16px;gap:8px}
+    .cro-service .hero-actions .btn{padding:13px 16px;font-size:14px;line-height:1.35}
+    .cro-service .hero-actions .micro{font-size:12px}
+    .cro-service .hero-proof,.cro-service .hero-points{display:none}
+    .cro-service .hero-panel{padding:20px;border-radius:22px;scroll-margin-top:104px}
+    .cro-service .panel-title{font-size:21px}
+    .cro-service .panel-copy{font-size:13px;line-height:1.45;margin-bottom:14px}
+    .cro-service .panel-price{display:none}
+    .cro-service .section{padding-block:38px}
+    .cro-service .section-head{margin-bottom:24px}
+    .cro-service .section-head p{font-size:15px}
+    .cro-service .pricebox{padding:22px}
+    .cro-service .pricebig{font-size:38px;line-height:1.1}
+  }
+</style>
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true" focusable="false">
@@ -153,18 +196,18 @@
   </div>
 </header>
 
-<main class="service-page">
+<main class="service-page cro-service">
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <span class="badge">Авито работает слабо и съедает время?</span>
-        <h1><span class="yel">Продвижение Авито под ключ:</span> ведение аккаунта</h1>
-        <p class="lead">Находим, где кабинет теряет показы, целевые обращения и бюджет. Согласуем план, пересобираем объявления, используем штатные инструменты продвижения и показываем в отчёте: что сделали, сколько потратили и что изменилось.</p>
-        <div class="hero-proof" aria-label="Принципы работы"><span>План работ до запуска</span><span>Бюджет Авито отдельно</span><span>Без обещаний «топ-1»</span></div>
+        <span class="badge">Plan B · ведение аккаунта</span>
+        <h1>Ведём <span class="yel">Авито под ключ</span></h1>
+        <p class="lead">Берём на себя объявления, продвижение и аналитику. Начните с бесплатной консультации и плана продвижения.</p>
         <div class="hero-actions">
-          <a class="btn btn-y" href="#audit">Получить разбор и смету</a>
-          <span class="micro">Письменно покажем узкие места, маршрут работ и две суммы: команда + бюджет Авито</span>
+          <a class="btn btn-y" href="#audit">Бесплатная консультация и план</a>
+          <span class="micro">План работ и две суммы: услуги команды и бюджет Авито.</span>
         </div>
+        <div class="hero-proof" aria-label="Стоимость и принципы работы"><span>Ведение от 30 000 ₽/мес</span><span>Бюджет Авито отдельно</span><span>Без обещаний «топ-1»</span></div>
         <div class="contact-block" aria-label="Способы связи">
           <span class="contact-title">Связаться напрямую</span>
           <div class="contact-links">
@@ -175,9 +218,9 @@
         </div>
         <div class="hero-points"><span>Авитолог, тексты и дизайн</span><span>Регулярная аналитика</span><span>Для бизнеса по России</span></div>
       </div>
-      <aside class="hero-panel glass" id="audit" aria-label="Форма разбора аккаунта">
-        <div class="panel-title">Получите разбор аккаунта и смету</div>
-        <p class="panel-copy">Оставьте телефон и, если удобно, ссылку на профиль. Покажем главные потери, предложим порядок работ и честно скажем, есть ли основания для постоянного ведения.</p>
+      <aside class="hero-panel glass" id="audit" aria-label="Форма бесплатной консультации и плана продвижения">
+        <div class="panel-title">Бесплатная консультация и план</div>
+        <p class="panel-copy">Оставьте телефон: обсудим аккаунт и предложим план продвижения. Ссылка на профиль необязательна.</p>
         <div class="panel-price"><span>Смета после разбора</span><span>Россия</span></div>
         <form class="leadform ym-disable-submit" id="serviceLead" novalidate>
           <input type="hidden" name="name" value="Заявка с посадочной ведения">
@@ -188,7 +231,7 @@
           <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ссылка на аккаунт или ниша — необязательно" aria-label="Ссылка на аккаунт или ниша" autocomplete="off">
           <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
           <p class="privacy-note">Как мы обрабатываем данные: <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки персональных данных</a>. Форма предназначена для лиц старше 18 лет. Не указывайте паспортные, платёжные, медицинские и другие чувствительные сведения.</p>
-          <button class="btn btn-y" type="submit">Получить разбор и смету</button>
+          <button class="btn btn-y" type="submit">Получить бесплатную консультацию и план</button>
           <div class="lead-msg" id="serviceLeadMsg" role="status" aria-live="polite"></div>
         </form>
       </aside>
@@ -212,13 +255,17 @@
     </div>
   </section>
 
-  <div class="wrap proofbar" aria-label="Этапы и принципы работы Plan B">
-    <div class="proof glass"><b>Аудит</b><span>кабинет, спрос и текущие расходы</span></div>
-    <div class="proof glass"><b>План</b><span>задачи, тесты и критерии оценки</span></div>
-    <div class="proof glass"><b>Команда</b><span>авитолог, тексты и дизайн</span></div>
-    <div class="proof glass"><b>Отчёт</b><span>Контакты, расходы и сделанные работы</span></div>
-    <div class="proof glass"><b>Границы</b><span>без обещаний позиции и числа Контактов</span></div>
-  </div>
+  <section class="section" id="cases">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow">Реальные кейсы</span><h2>Результаты со скриншотами Авито</h2><p>В каждом кейсе: статистика за конкретный период и описание сделанных работ.</p></div>
+      <div class="cases">
+        <a class="case glass" href="/kejsy/odin-den-stroitelnogo-proekta"><img src="/media/cases/avito-stroitelstvo-23-kontakta-proof.png" width="1000" height="600" alt="Статистика Авито за 2 сентября 2026: 23 Контакта, 56 просмотров и 4 815 ₽ расходов" loading="lazy"><div class="case-body"><span class="case-kicker">Строительство · 2 сентября 2026</span><h3>23 Контакта за день</h3><p>56 просмотров · 4 815 ₽ расходов · 209,3 ₽ за Контакт</p><span class="result">Открыть кейс →</span></div></a>
+        <a class="case glass" href="/kejsy/metalloprokat"><img src="/media/cases/avito-metalloprokat-126-kontaktov-proof.png" width="1000" height="600" alt="Статистика Авито за 17 августа – 2 сентября 2026: 126 Контактов и 1 835 просмотров" loading="lazy"><div class="case-body"><span class="case-kicker">Металлопрокат · 17 августа – 2 сентября 2026</span><h3>126 Контактов за 17 дней</h3><p>13 рабочих дней · 1 835 просмотров · 132,9 ₽ за Контакт</p><span class="result">Открыть кейс →</span></div></a>
+        <a class="case glass" href="/kejsy/yuridicheskie-uslugi"><img src="/media/cases/avito-yuridicheskie-uslugi-60-kontaktov-proof.png" width="1000" height="600" alt="Статистика Авито за 15–22 сентября 2026: 60 Контактов, 543 просмотра и конверсия 11%" loading="lazy"><div class="case-body"><span class="case-kicker">Юридические услуги · 15–22 сентября 2026</span><h3>60 Контактов за 8 дней</h3><p>543 просмотра · конверсия 11% · 167 ₽ за Контакт</p><span class="result">Открыть кейс →</span></div></a>
+      </div>
+      <p class="proof-note">Контакт в статистике Авито не равен сделке. Это результаты конкретных проектов, а не гарантия для другой ниши. <a href="/kejsy/">Посмотреть все кейсы →</a></p>
+    </div>
+  </section>
 
   <section class="section" id="work">
     <div class="wrap">
@@ -253,17 +300,6 @@
     </div>
   </section>
 
-  <section class="section" id="cases">
-    <div class="wrap">
-      <div class="section-head"><span class="eyebrow">Примеры работ</span><h2>Показываем задачи из разных ниш</h2><p>Это примеры подхода к проектам, а не обещание одинакового результата в другой нише.</p></div>
-      <div class="cases">
-        <a class="case glass" href="/kejsy/avtostekla"><img src="/og-image.jpg" alt="Сценарий работы на Авито для автоуслуг" loading="lazy"><div class="case-body"><h3>Автоуслуги</h3><p>Сценарий аудита, сегментации объявлений, упаковки и регулярной аналитики.</p><span class="result">Посмотреть сценарий</span></div></a>
-        <a class="case glass" href="/kejsy/stroitelstvo-po-regionam"><img src="/og-image.jpg" alt="Сценарий работы на Авито для строительства" loading="lazy"><div class="case-body"><h3>Строительство по регионам</h3><p>Сценарий локальных предложений, раздельных тестов и бюджетного контроля.</p><span class="result">Посмотреть сценарий</span></div></a>
-        <a class="case glass" href="/kejsy/tnvd-nasosy"><img src="/og-image.jpg" alt="Сценарий работы на Авито для автозапчастей" loading="lazy"><div class="case-body"><h3>Автозапчасти</h3><p>Сценарий управления совместимостью, каталогом, наличием и доставкой.</p><span class="result">Посмотреть сценарий</span></div></a>
-      </div>
-    </div>
-  </section>
-
   <section class="section">
     <div class="wrap">
       <div class="section-head"><span class="eyebrow">Процесс</span><h2>Как устроено продвижение Авито под ключ</h2></div>
@@ -278,11 +314,11 @@
 
   <section class="section" id="price">
     <div class="wrap pricebox glass">
-      <div><span class="eyebrow">Стоимость</span><h2>Стоимость ведения аккаунта Авито</h2><div class="pricebig">от 30 000 ₽/мес</div><p>Это стоимость работы команды в согласованном объёме. Итог зависит от ниши, географии и количества объявлений. Бюджет внутри Авито в эту сумму не входит: рассчитываем его после разбора и указываем отдельно.</p></div>
+      <div><span class="eyebrow">Стоимость и состав работ</span><h2>Ведение аккаунта Авито</h2><div class="pricebig">от 30 000 ₽/мес</div><ul class="package-scope"><li>Аудит аккаунта и план работ</li><li>Структура объявлений, тексты и визуалы</li><li>Публикация, обновление и штатное продвижение</li><li>Контроль расходов и регулярная аналитика</li></ul><p>Точный объём и стоимость фиксируем после разбора: они зависят от ниши, географии и количества объявлений. Бюджет Авито оплачивается отдельно.</p></div>
       <div class="price-action">
-        <h3>Сначала проверим, подходит ли вам постоянное ведение</h3>
-        <p>Посмотрим нишу, кабинет и текущие расходы. После этого предложим план работ и назовём две суммы: работа команды и бюджет Авито.</p>
-        <a class="btn btn-y" href="#audit">Получить разбор и смету</a>
+        <h3>Начните с бесплатной консультации</h3>
+        <p>Обсудим аккаунт, предложим план продвижения и смету. До начала работ согласуем услуги команды и бюджет Авито.</p>
+        <a class="btn btn-y" href="#audit">Бесплатная консультация и план</a>
         <div class="contact-block" aria-label="Способы связи">
           <span class="contact-title">Или свяжитесь напрямую</span>
           <div class="contact-links">

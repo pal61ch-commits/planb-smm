@@ -337,7 +337,28 @@
     if(document.getElementById('planb-consent-styles'))return;
     const style=document.createElement('style');
     style.id='planb-consent-styles';
-    style.textContent='#planb-cookie{position:fixed;right:18px;bottom:18px;z-index:10001;max-width:520px;padding:18px;border-radius:16px;background:rgba(18,18,20,.98);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.18);font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#e1e1de;box-shadow:0 18px 54px rgba(0,0,0,.58)}#planb-cookie p{margin:0 0 12px}#planb-cookie a{color:#f5c400;text-decoration:underline}#planb-cookie-status{color:#bdbdb8;font-size:12px}#planb-cookie-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}#planb-cookie button,#planb-analytics-settings{min-height:42px;padding:10px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.26);background:#242428;color:#fff;cursor:pointer;font:700 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}#planb-cookie button:focus-visible,#planb-analytics-settings:focus-visible{outline:3px solid #f5c400;outline-offset:2px}#planb-cookie .decision{flex:1 1 160px}#planb-cookie .allow{border-color:#f5c400}#planb-cookie .close{position:absolute;right:10px;top:8px;min-height:32px;padding:5px 9px;background:transparent;border-color:transparent;font-size:18px}#planb-analytics-settings{position:fixed;left:12px;bottom:12px;z-index:9998;min-height:36px;padding:8px 11px;background:rgba(18,18,20,.92);color:#ddd;font-weight:600;border-color:rgba(255,255,255,.2)}@media(max-width:720px){#planb-cookie{left:10px;right:10px;bottom:58px;max-width:none}#planb-cookie-actions{display:grid;grid-template-columns:1fr 1fr}#planb-cookie .decision{width:100%}#planb-analytics-settings{font-size:11px}}';
+    style.textContent=`
+      #planb-cookie{position:fixed;right:18px;bottom:18px;z-index:10001;box-sizing:border-box;width:520px;max-width:calc(100vw - 36px);max-height:calc(100dvh - 36px);overflow-y:auto;padding:14px;border-radius:14px;background:rgba(18,18,20,.98);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.18);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#e1e1de;box-shadow:0 18px 54px rgba(0,0,0,.58)}
+      #planb-cookie p{margin:0 0 6px;font:inherit}
+      #planb-cookie-title{padding-right:30px}
+      #planb-cookie a{color:#f5c400;text-decoration:underline}
+      #planb-cookie-status{color:#bdbdb8;font-size:12px}
+      #planb-cookie-status:empty{display:none}
+      #planb-cookie details{margin:0;padding:0;border:0;background:none;font:inherit}
+      #planb-cookie summary{position:static;box-sizing:border-box;min-height:44px;padding:0;display:flex;align-items:center;gap:7px;cursor:pointer;color:#e1e1de;font:600 12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;list-style:none}
+      #planb-cookie summary::-webkit-details-marker{display:none}
+      #planb-cookie summary::after{content:none;display:none}
+      #planb-cookie summary::before{content:'+';font-size:18px;font-weight:400}
+      #planb-cookie details[open] summary::before{content:'−'}
+      #planb-cookie details[open] p{margin:0 0 10px}
+      #planb-cookie-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+      #planb-cookie button,#planb-analytics-settings{box-sizing:border-box;min-height:44px;padding:10px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.26);background:#242428;color:#fff;cursor:pointer;font:700 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+      #planb-cookie button:focus-visible,#planb-cookie summary:focus-visible,#planb-analytics-settings:focus-visible{outline:3px solid #f5c400;outline-offset:2px}
+      #planb-cookie .decision{width:100%}
+      #planb-cookie .close{position:absolute;right:4px;top:3px;min-width:44px;min-height:44px;padding:5px 9px;background:transparent;border-color:transparent;font-size:18px}
+      #planb-analytics-settings{position:fixed;left:12px;bottom:12px;z-index:9998;background:rgba(18,18,20,.92);color:#ddd;font-weight:600;border-color:rgba(255,255,255,.2)}
+      @media(max-width:720px){#planb-cookie{left:10px;right:10px;bottom:12px;width:auto;max-width:none;max-height:calc(100dvh - 24px);padding:12px}#planb-analytics-settings{font-size:11px}}
+    `;
     document.head.appendChild(style);
   }
 
@@ -389,11 +410,12 @@
     banner.id='planb-cookie';
     banner.setAttribute('role','dialog');
     banner.setAttribute('aria-labelledby','planb-cookie-title');
-    banner.setAttribute('aria-describedby','planb-cookie-copy');
-    const status=state?(state.choice==='granted'?'Сейчас аналитика разрешена.':'Сейчас аналитика отключена.'):'Выбор ещё не сделан.';
+    banner.setAttribute('aria-describedby','planb-cookie-summary');
+    const status=state?(state.choice==='granted'?'Сейчас аналитика разрешена.':'Сейчас аналитика отключена.'):'';
     banner.innerHTML=(settingsMode&&state?'<button type="button" class="close" aria-label="Закрыть настройки">×</button>':'')+
       '<p id="planb-cookie-title"><strong>Необязательная аналитика</strong></p>'+
-      '<p id="planb-cookie-copy">После вашего разрешения Яндекс.Метрика считает посещения и успешные отправки форм, а Вебвизор и карта кликов помогают оценивать навигацию, прокрутку и работу интерфейса. Поля форм, нажатия клавиш и отправка формы исключены из записи. До разрешения Метрика не загружается. <a href="/privacy.html">Подробнее</a>.</p>'+
+      '<p id="planb-cookie-summary">Метрика и Вебвизор — только с вашего разрешения.</p>'+
+      '<details><summary>Подробнее о сборе данных</summary><p id="planb-cookie-copy">После вашего разрешения Яндекс.Метрика считает посещения и успешные отправки форм, а Вебвизор и карта кликов помогают оценивать навигацию, прокрутку и работу интерфейса. Поля форм, нажатия клавиш и отправка формы исключены из записи. До разрешения Метрика не загружается. <a href="/privacy.html">Подробнее</a>.</p></details>'+
       '<p id="planb-cookie-status">'+status+'</p>'+
       '<div id="planb-cookie-actions"><button type="button" class="decision" data-choice="denied">Отклонить</button><button type="button" class="decision allow" data-choice="granted">Разрешить аналитику</button></div>';
     banner.addEventListener('click',function(event){

@@ -8,9 +8,9 @@ The harness is local and side-effect-free. It never sends a lead, never loads li
 
 ## Scope
 
-- 46 marketing routes: homepage, two service pages, company page, 15 case routes, 26 blog routes (the index plus 25 article pages), and the video library.
-- 8 new content routes: seven article pages plus `/video/`.
-- 2 self-hosted H.264/AAC videos with posters, Russian captions, source links, published-period context, and no autoplay.
+- 50 marketing routes: homepage, two service pages, company page, 16 case routes, 28 blog routes (the index plus 27 article pages), video library and reviews page.
+- 12 content routes with metadata validation independent of the baseline; exact list in `routes.mjs`.
+- 8 self-hosted H.264/AAC videos with posters, Russian captions, source links, published-period context, and no autoplay.
 - 5 current legal routes: rendered and checked, but kept free of analytics and motion code.
 - 19 immutable files compared byte-for-byte with `/Users/konstantin/content-factory/planb-landing`:
   - 6 versioned legal documents;

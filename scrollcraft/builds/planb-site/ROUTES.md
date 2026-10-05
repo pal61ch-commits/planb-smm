@@ -2,21 +2,23 @@
 
 The executable source of truth is `routes.mjs`.
 
-## Marketing routes: 46
+## Marketing routes: 50
 
 - `/`
 - `/o-kompanii`
 - `/uslugi/vedenie-avito`
 - `/uslugi/razovaya-nastroyka-avito`
-- `/kejsy/` and 14 published case detail routes
-- `/blog/` and 25 article routes
+- `/kejsy/` and 15 published case detail routes
+- `/blog/` and 27 article routes
+- `/video/` and `/otzyvy/`
+
+These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 49 marketing routes use `site-depth`.
+
+The 12 new-content routes are:
+
 - `/video/`
-
-These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 45 marketing routes use `site-depth`.
-
-The eight new-content routes are:
-
-- `/video/`
+- `/otzyvy/`
+- `/kejsy/yuridicheskie-uslugi`
 - `/blog/agentstvo-ili-chastnyy-avitolog`
 - `/blog/audit-akkaunta-avito-pered-prodvizheniem`
 - `/blog/ii-prodavec-dlya-avito`
@@ -24,6 +26,9 @@ The eight new-content routes are:
 - `/blog/statistika-avito-crm-sdelki`
 - `/blog/stoimost-kontakta-na-avito`
 - `/blog/zakon-o-platformennoy-ekonomike-2026`
+
+- `/blog/brif-dlya-avitologa`
+- `/blog/sravnenie-tarifov-vedeniya-avito`
 
 They have their own metadata and structured-data contracts instead of a baseline copy.
 
@@ -74,4 +79,4 @@ Sokrat remains outside this redesign. Its application API, auth, payment, analyt
 
 ## Sitemap contract
 
-The expected sitemap contains 49 URLs: the 46 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.
+The expected sitemap contains 53 URLs: the 50 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.

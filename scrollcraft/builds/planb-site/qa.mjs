@@ -314,7 +314,7 @@ function screenshotName(route) {
 }
 
 async function staticAudit() {
-  check(MARKETING_ROUTES.length === 50, "scope.marketing", `expected 50, got ${MARKETING_ROUTES.length}`);
+  check(MARKETING_ROUTES.length === 51, "scope.marketing", `expected 51, got ${MARKETING_ROUTES.length}`);
   check(CURRENT_LEGAL_ROUTES.length === 5, "scope.current-legal", `expected 5, got ${CURRENT_LEGAL_ROUTES.length}`);
   check(VERSIONED_LEGAL_FILES.length === 6, "scope.versioned-legal", `expected 6, got ${VERSIONED_LEGAL_FILES.length}`);
   check(REDIRECT_CONTRACTS.length === 4, "scope.redirects", `expected 4, got ${REDIRECT_CONTRACTS.length}`);
@@ -1013,7 +1013,8 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
       { timeout: 2000 }
     );
     if (!profile.reduced) await page.waitForTimeout(240);
-    const settledDockState = await page.evaluate(async () => {
+    const expectsBottomDock = route === "/prodvizhenie-instagram" && profile.width <= 720;
+    const settledDockState = await page.evaluate(async expectsBottomDock => {
       const dock = document.querySelector(".contact-dock.planb-contact-dock");
       if (!dock) return null;
       const intersects = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
@@ -1030,6 +1031,8 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
       });
       const style = getComputedStyle(dock);
       const contentOverlaps = [];
+      const bottomDockSamples = [];
+      const mainActionChecks = [];
       const contentSelector = "main p,main li,main h1,main h2,main h3,main a[href],main button,main input,main textarea,main video,main .case-feature-card,main .stage-card,main .kpi,main form";
       const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
       const samplePositions = [...new Set([scrollY, maxScroll * 0.25, maxScroll * 0.5, maxScroll * 0.75, maxScroll].map(Math.round))];
@@ -1037,6 +1040,25 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
         window.scrollTo({ top, behavior: "instant" });
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         const currentDockRect = dock.getBoundingClientRect();
+        if (expectsBottomDock) {
+          const currentStyle = getComputedStyle(dock);
+          const bottom = Number.parseFloat(currentStyle.bottom);
+          const currentLinks = [...dock.querySelectorAll("a[href]")].map(link => {
+            const rect = link.getBoundingClientRect();
+            const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            return { width: rect.width, height: rect.height, centerX: rect.left + rect.width / 2, centerY: rect.top + rect.height / 2,
+              insideViewport: rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight,
+              hit: hit === link || link.contains(hit) };
+          });
+          bottomDockSamples.push({ scrollY, position: currentStyle.position, direction: currentStyle.flexDirection,
+            top: currentDockRect.top, bottom: currentDockRect.bottom, gap: innerHeight - currentDockRect.bottom, cssBottom: bottom,
+            anchored: currentStyle.position === "fixed" && currentStyle.flexDirection === "row" && Number.isFinite(bottom)
+              && currentDockRect.top >= innerHeight * 0.7 && bottom >= 0 && Math.abs(innerHeight - currentDockRect.bottom - bottom) <= 2,
+            horizontal: currentLinks.length === 3 && currentLinks.every((link, index) => index === 0
+              || (link.centerX > currentLinks[index - 1].centerX && Math.abs(link.centerY - currentLinks[0].centerY) <= 2)),
+            links: currentLinks });
+          continue;
+        }
         [...document.querySelectorAll(contentSelector)].forEach(element => {
           const rect = element.getBoundingClientRect();
           const elementStyle = getComputedStyle(element);
@@ -1044,6 +1066,52 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
             contentOverlaps.push(`${top}:${element.tagName.toLowerCase()}.${String(element.className || "").replace(/\s+/g, ".").slice(0, 72)}`);
           }
         });
+      }
+      if (expectsBottomDock) {
+        // A bottom bar deliberately covers text while it scrolls past. Instead
+        // of the sidebar's reserved-column rule, every visible main action must
+        // be fully reachable between the sticky header and the bottom bar.
+        const actionSelector = "main a[href],main button,main input:not([type='hidden']),main select,main textarea,main summary,main [role='button'],main [tabindex]";
+        const isVisible = element => {
+          const rect = element.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0 || element.getClientRects().length === 0) return false;
+          for (let ancestor = element; ancestor; ancestor = ancestor.parentElement) {
+            const style = getComputedStyle(ancestor);
+            if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) <= 0) return false;
+          }
+          const closedDetails = element.closest("details:not([open])");
+          const summary = closedDetails?.querySelector(":scope > summary");
+          return !closedDetails || summary === element || Boolean(summary?.contains(element));
+        };
+        const actions = [...document.querySelectorAll(actionSelector)].filter(isVisible);
+        for (const element of actions) {
+          element.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const rect = element.getBoundingClientRect();
+          const currentDockRect = dock.getBoundingClientRect();
+          const headerBottom = [...document.querySelectorAll(".contact-strip,.planb-header-contact-strip,.nav,header")]
+            .reduce((bottom, header) => {
+              const style = getComputedStyle(header), bounds = header.getBoundingClientRect();
+              return (style.position === "fixed" || style.position === "sticky") && style.display !== "none"
+                && style.visibility !== "hidden" && Number(style.opacity) > 0 && bounds.top < innerHeight * 0.35 && bounds.bottom > 0
+                ? Math.max(bottom, bounds.bottom) : bottom;
+            }, 0);
+          const hitPoints = [[0.5, 0.5], [0.25, 0.25], [0.75, 0.25], [0.25, 0.75], [0.75, 0.75]].map(([x, y]) => {
+            const target = document.elementFromPoint(rect.left + rect.width * x, rect.top + rect.height * y);
+            return target === element || element.contains(target);
+          });
+          mainActionChecks.push({
+            target: element.id || element.getAttribute("aria-label") || (element.textContent || element.getAttribute("name") || element.tagName).trim().replace(/\s+/g, " ").slice(0, 90),
+            href: element.getAttribute("href") || "", scrollY, headerBottom, dockTop: currentDockRect.top,
+            rect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height },
+            visible: isVisible(element),
+            unobscured: rect.left >= 0 && rect.right <= innerWidth && rect.top >= headerBottom - 1
+              && rect.bottom <= currentDockRect.top - 1 && rect.bottom <= innerHeight,
+            hit: hitPoints.every(Boolean), hitPoints
+          });
+        }
+        window.scrollTo({ top: maxScroll, behavior: "instant" });
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       }
       const settings = document.querySelector("#planb-analytics-settings");
       const settingsRect = settings?.getBoundingClientRect();
@@ -1070,6 +1138,8 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
         links,
         headerContacts,
         contentOverlaps,
+        bottomDockSamples,
+        mainActionChecks,
         settings: settingsRect ? {
           width: settingsRect.width,
           height: settingsRect.height,
@@ -1077,12 +1147,19 @@ async function renderRoute({ browser, baseURL, route, profile, screenshot = fals
           overlapsDock: intersects(settingsRect, dockRect)
         } : null
       };
-    });
+    }, expectsBottomDock);
     check(Boolean(settledDockState), "contact.dock-runtime", `${profile.name} ${route}`);
     check(settledDockState?.display !== "none" && settledDockState?.visibility === "visible" && settledDockState?.opacity >= 0.99, "contact.dock-visible-after-scroll", `${profile.name} ${route}: ${JSON.stringify(settledDockState)}`);
     check(settledDockState?.links.length === 3 && settledDockState.links.every(item => item.width >= 44 && item.height >= 44 && item.insideViewport && item.hit), "contact.dock-tap-targets", `${profile.name} ${route}: ${JSON.stringify(settledDockState)}`);
     check(settledDockState?.headerContacts.length === 3 && settledDockState.headerContacts.every(item => item.visible && item.hit), "contact.header-visible-after-scroll", `${profile.name} ${route}: ${JSON.stringify(settledDockState?.headerContacts)}`);
-    check(settledDockState?.contentOverlaps.length === 0, "contact.dock-content-overlap", `${profile.name} ${route}: ${settledDockState?.contentOverlaps.join(", ")}`);
+    if (expectsBottomDock) {
+      check(settledDockState?.bottomDockSamples.length > 0 && settledDockState.bottomDockSamples.every(sample => sample.anchored && sample.horizontal), "contact.bottom-dock-anchor", `${profile.name} ${route}: ${JSON.stringify(settledDockState?.bottomDockSamples)}`);
+      check(settledDockState?.bottomDockSamples.every(sample => sample.links.length === 3 && sample.links.every(link => link.width >= 44 && link.height >= 44 && link.insideViewport && link.hit)), "contact.bottom-dock-tap-targets", `${profile.name} ${route}: ${JSON.stringify(settledDockState?.bottomDockSamples)}`);
+      check(settledDockState?.mainActionChecks.length > 0 && settledDockState.mainActionChecks.every(action => action.visible && action.unobscured && action.hit), "contact.bottom-dock-action-reachability", `${profile.name} ${route}: ${JSON.stringify(settledDockState?.mainActionChecks.filter(action => !action.visible || !action.unobscured || !action.hit))}`);
+      state.bottomDockAudit = { samples: settledDockState?.bottomDockSamples, actions: settledDockState?.mainActionChecks };
+    } else {
+      check(settledDockState?.contentOverlaps.length === 0, "contact.dock-content-overlap", `${profile.name} ${route}: ${settledDockState?.contentOverlaps.join(", ")}`);
+    }
     check(Boolean(settledDockState?.settings) && settledDockState.settings.width >= 44 && settledDockState.settings.height >= 44 && settledDockState.settings.insideViewport && !settledDockState.settings.overlapsDock, "contact.settings-position", `${profile.name} ${route}: ${JSON.stringify(settledDockState?.settings)}`);
   }
 

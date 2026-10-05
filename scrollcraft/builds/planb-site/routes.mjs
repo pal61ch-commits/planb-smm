@@ -4,6 +4,7 @@ export const MARKETING_ROUTES = [
   "/",
   "/uslugi/vedenie-avito",
   "/uslugi/razovaya-nastroyka-avito",
+  "/prodvizhenie-instagram",
   "/o-kompanii",
   "/kejsy/",
   "/kejsy/avtostekla",
@@ -62,6 +63,7 @@ export const CURRENT_LEGAL_ROUTES = [
 export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
 export const NEW_CONTENT_ROUTES = [
+  "/prodvizhenie-instagram",
   "/blog/brif-dlya-avitologa",
   "/blog/sravnenie-tarifov-vedeniya-avito",
   "/video/",
@@ -78,6 +80,7 @@ export const NEW_CONTENT_ROUTES = [
 
 export const REPRESENTATIVE_ROUTES = [
   "/",
+  "/prodvizhenie-instagram",
   "/uslugi/vedenie-avito",
   "/o-kompanii",
   "/kejsy/",

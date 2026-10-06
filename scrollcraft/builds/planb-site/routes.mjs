@@ -1,4 +1,5 @@
 export const MARKETING_ROUTES = [
+  "/blog/prodvizhenie-magazina-avtozapchastey-na-avito",
   "/blog/brif-dlya-avitologa",
   "/blog/sravnenie-tarifov-vedeniya-avito",
   "/",
@@ -63,6 +64,7 @@ export const CURRENT_LEGAL_ROUTES = [
 export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
 export const NEW_CONTENT_ROUTES = [
+  "/blog/prodvizhenie-magazina-avtozapchastey-na-avito",
   "/prodvizhenie-instagram",
   "/blog/brif-dlya-avitologa",
   "/blog/sravnenie-tarifov-vedeniya-avito",

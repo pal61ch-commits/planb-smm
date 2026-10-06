@@ -2,19 +2,20 @@
 
 The executable source of truth is `routes.mjs`.
 
-## Marketing routes: 50
+## Marketing routes: 52
 
 - `/`
 - `/o-kompanii`
 - `/uslugi/vedenie-avito`
 - `/uslugi/razovaya-nastroyka-avito`
+- `/prodvizhenie-instagram`
 - `/kejsy/` and 15 published case detail routes
-- `/blog/` and 27 article routes
+- `/blog/` and 28 article routes
 - `/video/` and `/otzyvy/`
 
-These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 49 marketing routes use `site-depth`.
+These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 51 marketing routes use `site-depth`.
 
-The 12 new-content routes are:
+The 14 new-content routes are:
 
 - `/video/`
 - `/otzyvy/`
@@ -29,8 +30,15 @@ The 12 new-content routes are:
 
 - `/blog/brif-dlya-avitologa`
 - `/blog/sravnenie-tarifov-vedeniya-avito`
+- `/prodvizhenie-instagram`
+- `/blog/prodvizhenie-magazina-avtozapchastey-na-avito`
 
 They have their own metadata and structured-data contracts instead of a baseline copy.
+
+Fifteen existing client-question articles were substantially revised on 6 October
+2026 under the owner's explicit publication instruction. Their precise changed
+title, description and JSON-LD fields are declared per route in the existing
+`BASELINE_DRIFT_ALLOWLIST`; canonical equality and all other checks still apply.
 
 ## Current legal routes: 5
 
@@ -79,4 +87,4 @@ Sokrat remains outside this redesign. Its application API, auth, payment, analyt
 
 ## Sitemap contract
 
-The expected sitemap contains 53 URLs: the 50 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.
+The expected sitemap contains 55 URLs: the 52 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.

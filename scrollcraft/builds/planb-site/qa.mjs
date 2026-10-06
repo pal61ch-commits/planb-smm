@@ -58,6 +58,23 @@ const HISTORICAL_CASE_ROUTES = [
 ];
 const BASELINE_DRIFT_FIELDS = new Set(["title", "description", "jsonld"]);
 const BASELINE_DRIFT_ALLOWLIST = new Map([
+  // Owner-commissioned client articles 2026-10-06.
+  ["/blog/vedenie-akkaunta-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/kak-vybrat-avitologa", new Set(["title", "description", "jsonld"])],
+  ["/blog/tarify-avito-2026", new Set(["title", "description", "jsonld"])],
+  ["/blog/oplata-za-prosmotry-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/pochemu-ne-rabotaet-prodvizhenie-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/kak-napisat-prodayushchee-obyavlenie-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/infografika-dlya-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/skolko-stoit-prodvizhenie-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/pochemu-obyavlenie-ne-pokazyvaetsya-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/cheklist-zapuska-avito-s-nulya", new Set(["title", "description", "jsonld"])],
+  ["/blog/skolko-obyavleniy-nuzhno-na-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/avtozagruzka-avito", new Set(["description", "jsonld"])],
+  ["/blog/kak-masshtabirovat-akkaunt-avito", new Set(["title", "description", "jsonld"])],
+  ["/blog/prodvizhenie-avito-dlya-stroitelnyh-uslug", new Set(["title", "description", "jsonld"])],
+  ["/blog/kak-podnyat-obyavlenie-v-top-avito", new Set(["title", "description", "jsonld"])],
+  // End owner-commissioned client articles.
   ["/blog/", new Set(["jsonld"])],
   ["/video/", new Set(["description", "jsonld"])],
   ["/kejsy/", new Set(["title", "description", "jsonld"])],
@@ -314,7 +331,7 @@ function screenshotName(route) {
 }
 
 async function staticAudit() {
-  check(MARKETING_ROUTES.length === 51, "scope.marketing", `expected 51, got ${MARKETING_ROUTES.length}`);
+  check(MARKETING_ROUTES.length === 52, "scope.marketing", `expected 52, got ${MARKETING_ROUTES.length}`);
   check(CURRENT_LEGAL_ROUTES.length === 5, "scope.current-legal", `expected 5, got ${CURRENT_LEGAL_ROUTES.length}`);
   check(VERSIONED_LEGAL_FILES.length === 6, "scope.versioned-legal", `expected 6, got ${VERSIONED_LEGAL_FILES.length}`);
   check(REDIRECT_CONTRACTS.length === 4, "scope.redirects", `expected 4, got ${REDIRECT_CONTRACTS.length}`);

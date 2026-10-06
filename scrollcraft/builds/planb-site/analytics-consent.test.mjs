@@ -119,8 +119,9 @@ async function testGlobalEventsAndPayloads(browser, baseURL) {
   const initCalls = await page.evaluate(() => (window.__analyticsTestCalls || [])
     .filter(args => args[0] === 110884885 && args[1] === "init"));
   assert.equal(initCalls.length, 1);
-  assert.equal(initCalls[0][2].webvisor, true);
-  assert.equal(initCalls[0][2].clickmap, true);
+  assert.equal(initCalls[0][2].webvisor, false, "existing general consent does not opt in to recording");
+  assert.equal(initCalls[0][2].clickmap, false);
+  assert.equal(await page.locator("#planb-cookie").count(), 0, "existing valid consent must not be requested again");
   await page.evaluate(() => {
     document.body.insertAdjacentHTML("beforeend", `
       <a id="qa-phone" href="tel:+79991234567">Phone</a>
@@ -301,6 +302,87 @@ async function testLegacyContactsAreSafeAndNotDuplicated(browser, baseURL) {
   }
 }
 
+async function testConsentAcrossSiteRoutes(browser, baseURL) {
+  for (const choice of ["granted", "denied"]) {
+    const context = await browser.newContext();
+    await context.addInitScript(() => {
+      window.__analyticsTestCalls = [];
+      window.ym = (...args) => window.__analyticsTestCalls.push(args);
+    });
+    const page = await context.newPage();
+    let analyticsRequests = 0;
+    await page.route("https://mc.yandex.ru/**", request => {
+      analyticsRequests++;
+      return request.fulfill({ status: 200, contentType: "application/javascript", body: "" });
+    });
+    await page.goto(baseURL + "/", { waitUntil: "load" });
+    assert.equal(await page.locator("#planb-cookie").count(), 1);
+    assert.equal(await page.locator("#planb-cookie-title").textContent(), "Аналитика сайта");
+    assert.equal(await page.locator("#planb-cookie details").getAttribute("open"), null);
+    assert.equal(await page.locator("#planb-recording-consent").isChecked(), false);
+    assert.equal(analyticsRequests, 0, "analytics must not load before a choice");
+    await page.locator(`[data-choice="${choice}"]`).click();
+    const saved = await page.evaluate(key => localStorage.getItem(key), CONSENT.key);
+    assert.equal(JSON.parse(saved).choice, choice);
+    assert.equal(JSON.parse(saved).session_recording, false);
+    for (const route of ["/prodvizhenie-instagram", "/"]) {
+      await page.goto(baseURL + route, { waitUntil: "load" });
+      assert.equal(await page.locator("#planb-cookie").count(), 0, `no repeat consent on ${route}`);
+      assert.equal(await page.evaluate(key => localStorage.getItem(key), CONSENT.key), saved,
+        "route changes must preserve the original choice and expiry without rewriting it");
+      assert.equal(await page.locator("script[data-planb-analytics]").count(), choice === "granted" ? 1 : 0);
+      const init = await page.evaluate(() => window.__analyticsTestCalls.filter(args => args[1] === "init"));
+      assert.equal(init.length, choice === "granted" ? 1 : 0);
+      if (init.length) {
+        assert.equal(init[0][2].webvisor, false);
+        assert.equal(init[0][2].clickmap, false);
+      }
+    }
+    if (choice === "denied") assert.equal(analyticsRequests, 0, "declined analytics must never be requested");
+    await context.close();
+  }
+}
+
+async function testSeparateRecordingChoice(browser, baseURL) {
+  const context = await browser.newContext();
+  await context.addInitScript(() => {
+    window.__analyticsTestCalls = [];
+    window.ym = (...args) => window.__analyticsTestCalls.push(args);
+  });
+  const page = await context.newPage();
+  await page.route("https://mc.yandex.ru/**", request => request.fulfill({
+    status: 200, contentType: "application/javascript", body: ""
+  }));
+  await page.goto(baseURL + "/prodvizhenie-instagram", { waitUntil: "load" });
+  await page.locator("#planb-cookie summary").click();
+  await page.locator("#planb-recording-consent").check();
+  assert.equal(await page.locator("script[data-planb-analytics]").count(), 0,
+    "checking recording alone must not load analytics before saving consent");
+  await page.locator('[data-choice="granted"]').click();
+  let init = await page.evaluate(() => window.__analyticsTestCalls.filter(args => args[1] === "init"));
+  assert.equal(init.length, 1);
+  assert.equal(init[0][2].webvisor, true);
+  assert.equal(init[0][2].clickmap, true);
+  await page.goto(baseURL + "/", { waitUntil: "load" });
+  assert.equal(await page.locator("#planb-cookie").count(), 0);
+  await page.locator("#planb-analytics-settings").click();
+  assert.equal(await page.locator("#planb-recording-consent").isChecked(), true);
+  await page.locator("#planb-recording-consent").uncheck();
+  await Promise.all([
+    page.waitForEvent("load"),
+    page.locator('[data-choice="granted"]').click()
+  ]);
+  assert.equal(await page.locator("#planb-cookie").count(), 0);
+  const state = await page.evaluate(() => window.PlanBAnalyticsConsent.state());
+  assert.equal(state.choice, "granted");
+  assert.equal(state.session_recording, false);
+  init = await page.evaluate(() => window.__analyticsTestCalls.filter(args => args[1] === "init"));
+  assert.equal(init.length, 1);
+  assert.equal(init[0][2].webvisor, false);
+  assert.equal(init[0][2].clickmap, false);
+  await context.close();
+}
+
 const running = await startServer({ root: SITE_ROOT, port: 0 });
 let browser;
 try {
@@ -311,7 +393,9 @@ try {
   await testExpandedContentSelectors(browser, running.baseURL);
   await testFormsUseFirstTouchAttribution(browser, running.baseURL);
   await testLegacyContactsAreSafeAndNotDuplicated(browser, running.baseURL);
-  console.log("PASS analytics-consent: consent gate, Webvisor config, first-touch attribution, CTA mapping, safe payloads, and deduplication");
+  await testConsentAcrossSiteRoutes(browser, running.baseURL);
+  await testSeparateRecordingChoice(browser, running.baseURL);
+  console.log("PASS analytics-consent: consent gate, preserved cross-route choices and expiry, separate recording opt-in/revocation, first-touch attribution, CTA mapping, safe payloads, and deduplication");
 } finally {
   if (browser) await browser.close();
   await running.close();

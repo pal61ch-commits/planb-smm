@@ -1454,7 +1454,7 @@ async function runConsent(browser, baseURL) {
   }), { consentKey: CONSENT_KEY, attributionKey: ATTRIBUTION_KEY });
   const initCall = granted.calls.find(args => args[0] === 110884885 && args[1] === "init");
   check(granted.state?.choice === "granted" && granted.scripts === 1 && granted.label === "Аналитика: разрешена", "consent.granted", JSON.stringify(granted));
-  check(Boolean(initCall) && initCall[2]?.webvisor === true && initCall[2]?.clickmap === true, "consent.safe-init", JSON.stringify(initCall));
+  check(Boolean(initCall) && initCall[2]?.webvisor === false && initCall[2]?.clickmap === false, "consent.safe-init", JSON.stringify(initCall));
   check(granted.attribution?.utm_source === "qa-first" && granted.attribution?.utm_medium === "consent" && granted.attribution?.utm_campaign === "first-touch" && granted.attribution?.yclid === "qa-first-yclid", "consent.first-touch-attribution", JSON.stringify(granted.attribution));
   check(granted.storedAttribution?.schema === "planb-session-attribution-v1" && granted.storedAttribution?.utm_source === "qa-first", "consent.first-touch-stored", JSON.stringify(granted.storedAttribution));
   check(grantExternal.filter(item => /mc\.yandex\.ru/.test(item.url)).length === 1, "consent.single-loader", JSON.stringify(grantExternal));

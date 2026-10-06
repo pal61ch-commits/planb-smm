@@ -1,6 +1,7 @@
 (function(){
   'use strict';
 
+  // Keep the existing site-wide choice and expiry when only the notice UI changes.
   const STORAGE_KEY='planb_analytics_consent_v3';
   const LEGACY_KEYS=['planb_analytics_consent_v2','planb_analytics_consent_v1'];
   const ATTRIBUTION_KEY='planb_session_attribution_v1';
@@ -38,7 +39,7 @@
     }catch(_){return null}
   }
 
-  function saveState(choice){
+  function saveState(choice,recording){
     const decidedAt=new Date();
     const state={
       schema:'planb-analytics-choice-v3',
@@ -47,6 +48,7 @@
       privacy_sha256:PRIVACY_SHA256,
       notice_sha256:NOTICE_SHA256,
       choice:choice,
+      session_recording:choice==='granted'&&recording===true,
       decided_at:decidedAt.toISOString(),
       expires_at:decidedAt.getTime()+TTL_MS
     };
@@ -54,7 +56,7 @@
       localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
       LEGACY_KEYS.forEach(function(key){localStorage.removeItem(key)});
       const persisted=readState();
-      if(!persisted||persisted.choice!==state.choice||persisted.decided_at!==state.decided_at||persisted.expires_at!==state.expires_at){
+      if(!persisted||persisted.choice!==state.choice||persisted.session_recording!==state.session_recording||persisted.decided_at!==state.decided_at||persisted.expires_at!==state.expires_at){
         try{localStorage.removeItem(STORAGE_KEY)}catch(_){}
         return null;
       }
@@ -68,6 +70,12 @@
   function hasAnalyticsConsent(){
     const state=readState();
     return Boolean(state&&state.choice==='granted');
+  }
+
+  function hasRecordingConsent(){
+    const state=readState();
+    // A previous general analytics grant must never enable the new optional toggle.
+    return Boolean(state&&state.choice==='granted'&&state.session_recording===true);
   }
 
   function attributionFromUrl(){
@@ -297,8 +305,8 @@
     })(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id='+METRIKA_ID,'ym');
     window.ym(METRIKA_ID,'init',{
       ssr:true,
-      webvisor:true,
-      clickmap:true,
+      webvisor:hasRecordingConsent(),
+      clickmap:hasRecordingConsent(),
       accurateTrackBounce:true,
       trackLinks:true
     });
@@ -338,7 +346,7 @@
     const style=document.createElement('style');
     style.id='planb-consent-styles';
     style.textContent=`
-      #planb-cookie{position:fixed;right:18px;bottom:18px;z-index:10001;box-sizing:border-box;width:520px;max-width:calc(100vw - 36px);max-height:calc(100dvh - 36px);overflow-y:auto;padding:14px;border-radius:14px;background:rgba(18,18,20,.98);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.18);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#e1e1de;box-shadow:0 18px 54px rgba(0,0,0,.58)}
+      #planb-cookie{position:fixed;right:18px;bottom:18px;z-index:10001;box-sizing:border-box;width:420px;max-width:calc(100vw - 36px);max-height:calc(100dvh - 36px);overflow-y:auto;padding:14px;border-radius:14px;background:rgba(18,18,20,.98);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.18);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#e1e1de;box-shadow:0 18px 54px rgba(0,0,0,.58)}
       #planb-cookie p{margin:0 0 6px;font:inherit}
       #planb-cookie-title{padding-right:30px}
       #planb-cookie a{color:#f5c400;text-decoration:underline}
@@ -351,6 +359,8 @@
       #planb-cookie summary::before{content:'+';font-size:18px;font-weight:400}
       #planb-cookie details[open] summary::before{content:'−'}
       #planb-cookie details[open] p{margin:0 0 10px}
+      #planb-cookie .recording-choice{display:flex;align-items:flex-start;gap:9px;margin:4px 0 10px;cursor:pointer}
+      #planb-cookie .recording-choice input{flex:none;width:18px;height:18px;margin:1px 0 0;accent-color:#f5c400}
       #planb-cookie-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
       #planb-cookie button,#planb-analytics-settings{box-sizing:border-box;min-height:44px;padding:10px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.26);background:#242428;color:#fff;cursor:pointer;font:700 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
       #planb-cookie button:focus-visible,#planb-cookie summary:focus-visible,#planb-analytics-settings:focus-visible{outline:3px solid #f5c400;outline-offset:2px}
@@ -378,9 +388,10 @@
     }
   }
 
-  function setChoice(choice){
+  function setChoice(choice,recording){
     const wasLoaded=Boolean(window.__planbAnalyticsLoaded);
-    const persisted=saveState(choice);
+    const previousRecording=hasRecordingConsent();
+    const persisted=saveState(choice,recording);
     if(!persisted){
       disableAnalytics();
       const status=document.getElementById('planb-cookie-status');
@@ -392,8 +403,13 @@
     closeDialog();
     updateSettingsLabel();
     if(choice==='granted'){
-      captureFirstTouchAttribution();
-      loadAnalytics();
+      if(wasLoaded&&previousRecording!==hasRecordingConsent()){
+        disableAnalytics();
+        location.reload();
+      }else{
+        captureFirstTouchAttribution();
+        loadAnalytics();
+      }
     }
     else{
       disableAnalytics();
@@ -413,14 +429,16 @@
     banner.setAttribute('aria-describedby','planb-cookie-summary');
     const status=state?(state.choice==='granted'?'Сейчас аналитика разрешена.':'Сейчас аналитика отключена.'):'';
     banner.innerHTML=(settingsMode&&state?'<button type="button" class="close" aria-label="Закрыть настройки">×</button>':'')+
-      '<p id="planb-cookie-title"><strong>Необязательная аналитика</strong></p>'+
-      '<p id="planb-cookie-summary">Метрика и Вебвизор — только с вашего разрешения.</p>'+
-      '<details><summary>Подробнее о сборе данных</summary><p id="planb-cookie-copy">После вашего разрешения Яндекс.Метрика считает посещения и успешные отправки форм, а Вебвизор и карта кликов помогают оценивать навигацию, прокрутку и работу интерфейса. Поля форм, нажатия клавиш и отправка формы исключены из записи. До разрешения Метрика не загружается. <a href="/privacy.html">Подробнее</a>.</p></details>'+
+      '<p id="planb-cookie-title"><strong>Аналитика сайта</strong></p>'+
+      '<p id="planb-cookie-summary">Помогает нам улучшать сайт. Ваш выбор действует на всех его страницах.</p>'+
+      '<details'+(settingsMode?' open':'')+'><summary>Настройки</summary><p id="planb-cookie-copy">С вашего разрешения Яндекс.Метрика считает посещения, переходы и успешные отправки форм. До разрешения аналитика отключена.</p>'+
+      '<label class="recording-choice"><input type="checkbox" id="planb-recording-consent"'+(state&&state.choice==='granted'&&state.session_recording===true?' checked':'')+'><span>Также разрешаю запись посещений для улучшения интерфейса</span></label>'+
+      '<p>Эта настройка отдельно включает Вебвизор и карту кликов: навигацию, прокрутку и взаимодействие со страницей. Поля форм, нажатия клавиш и отправка формы исключены из записи. Настройки можно изменить в любой момент. <a href="/privacy.html">Политика обработки данных</a>.</p></details>'+
       '<p id="planb-cookie-status">'+status+'</p>'+
-      '<div id="planb-cookie-actions"><button type="button" class="decision" data-choice="denied">Отклонить</button><button type="button" class="decision allow" data-choice="granted">Разрешить аналитику</button></div>';
+      '<div id="planb-cookie-actions"><button type="button" class="decision" data-choice="denied">Отклонить</button><button type="button" class="decision allow" data-choice="granted">Разрешить</button></div>';
     banner.addEventListener('click',function(event){
       const choiceButton=event.target.closest('[data-choice]');
-      if(choiceButton)setChoice(choiceButton.dataset.choice);
+      if(choiceButton)setChoice(choiceButton.dataset.choice,banner.querySelector('#planb-recording-consent').checked);
       if(event.target.closest('.close'))closeDialog();
     });
     banner.addEventListener('keydown',function(event){

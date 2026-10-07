@@ -383,7 +383,7 @@
       const acceptedAt=new Date().toISOString();
       const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:form.name.value.trim()||'Заявка с посадочной ведения',phone,niche:form.niche.value.trim()||'ведение Авито',product:'planb_vedenie',route:'vedenie',landing_variant:'service_vedenie_v4',form_id:form.form_id.value,pd_consent:true,pd_consent_version:form.pd_consent_version.value,pd_consent_client_at:acceptedAt,privacy_version:form.privacy_version.value,utm_source:attribution.utm_source||'',utm_medium:attribution.utm_medium||'',utm_campaign:attribution.utm_campaign||'',utm_content:attribution.utm_content||'',utm_term:attribution.utm_term||'',yclid:attribution.yclid||'',page:location.href,ref:document.referrer||'',ts:acceptedAt})});
       let result={};try{result=await response.json()}catch(_){result={}}
-      if(!response.ok||result.ok===false)throw new Error('HTTP '+response.status);
+      if(!response.ok||result.ok!==true)throw new Error('HTTP '+response.status);
       form.reset();msg.className='lead-msg ok';msg.textContent='Заявка принята. Свяжемся с вами в ближайшее время.';
       window.PlanBAnalyticsConsent?.track('lead_success',{target_type:'form'});
     }catch(_){msg.className='lead-msg bad';msg.innerHTML='Не отправилось. Напишите в <a href="https://t.me/Bv_B09">Telegram</a>.'}

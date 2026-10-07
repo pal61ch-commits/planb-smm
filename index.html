@@ -731,7 +731,8 @@
             utm_source:attribution.utm_source||'',utm_medium:attribution.utm_medium||'',utm_campaign:attribution.utm_campaign||'',utm_content:attribution.utm_content||'',utm_term:attribution.utm_term||'',yclid:attribution.yclid||'',
             page:window.location.href,ref:document.referrer||'',ts:acceptedAt
           })});
-          if(!response.ok)throw new Error('http '+response.status);
+          let result={};try{result=await response.json()}catch(_){result={}}
+          if(!response.ok||result.ok!==true)throw new Error('http '+response.status);
           form.reset();form.elements.scenario.value='unspecified';message.className='lead-msg ok';message.textContent='Заявка принята. Свяжемся для бесплатной консультации и подготовим план первых шагов.';
           window.PlanBAnalyticsConsent?.track('lead_success',{target_type:'form'});
         }catch(error){

@@ -378,7 +378,7 @@
       });
       let result={};
       try{result=await response.json()}catch(_){result={}}
-      if(!response.ok||result.ok===false)throw new Error('HTTP '+response.status);
+      if(!response.ok||result.ok!==true)throw new Error('HTTP '+response.status);
       form.reset();
       msg.className='lead-msg ok';
       msg.textContent='Заявка принята. Свяжемся с вами, чтобы уточнить задачу.';

@@ -2,11 +2,9 @@
   "use strict";
   var panel = document.querySelector(".phone-panel");
   var viewport = panel && panel.querySelector(".phone-notification-scroll");
-  var button = panel && panel.querySelector(".notification-toggle");
-  if (!viewport || !button) return;
+  if (!viewport) return;
 
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var paused = false;
   var hovered = false;
   var visible = false;
   var direction = 1;
@@ -14,10 +12,9 @@
   var movement = null;
   var frame = 0;
   document.documentElement.setAttribute("data-ig-animated", "true");
-  button.hidden = reducedMotion.matches;
 
   function canMove() {
-    return visible && !paused && !hovered && !document.hidden && !reducedMotion.matches;
+    return visible && !hovered && !document.hidden && !reducedMotion.matches;
   }
 
   function schedule() {
@@ -79,24 +76,12 @@
     hovered = false;
     schedule();
   });
-  button.addEventListener("click", function () {
-    paused = !paused;
-    panel.classList.toggle("is-paused", paused);
-    button.setAttribute("aria-pressed", String(paused));
-    button.textContent = paused ? "Продолжить прокрутку" : "Приостановить прокрутку";
-    if (paused) stop();
-    else {
-      holdUntil = performance.now() + 700;
-      schedule();
-    }
-  });
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) stop();
     else schedule();
   });
   function motionPreferenceChanged() {
-    button.hidden = reducedMotion.matches;
-    stop();
+      stop();
     holdUntil = performance.now() + 2000;
     schedule();
   }

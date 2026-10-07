@@ -29,7 +29,7 @@
       "alternateName":"pLanB",
       "url":"https://planb-prodvizhenie.ru/",
       "logo":{"@type":"ImageObject","url":"https://planb-prodvizhenie.ru/logo-planb.png"},
-      "telephone":"+7-928-144-66-17",
+      "telephone":"+7-960-496-49-13",
       "areaServed":{"@type":"Country","name":"Россия"},
       "sameAs":[
         "https://vk.ru/planb_avitolog",
@@ -165,7 +165,8 @@
         <div class="panel-title">Проверим задачу до расчёта</div>
         <p class="panel-copy">Укажите телефон и кратко опишите нишу или пришлите ссылку на профиль. После разбора предложим состав проекта или честно скажем, если лучше выбрать другой формат.</p>
         <div class="panel-price"><span>Разовая работа от 10 000 ₽</span><span>Россия</span></div>
-        <form class="leadform ym-disable-submit" id="setupLead" novalidate>
+        <p>Для владельцев бизнеса. Разовая настройка Авито — от 10 000 ₽. Первый разговор о задаче — бесплатно.</p>
+          <form class="leadform ym-disable-submit" id="setupLead" novalidate>
           <input type="hidden" name="name" value="Заявка на разовую настройку Авито">
           <input type="hidden" name="form_id" value="serviceLead">
           <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
@@ -283,9 +284,9 @@
         <p>Результат проекта — согласованный комплект материалов и настроек, перечень выполненного и план передачи для дальнейшей работы. Будущие Контакты и сделки зависят также от спроса, предложения и обработки обращений.</p>
         <a class="btn btn-y" href="#audit" style="margin-top:20px">Обсудить состав и стоимость</a>
         <div class="contact-row" aria-label="Прямая связь">
-          <a href="tel:+79281446617" data-contact="phone">Позвонить</a>
-          <a href="https://t.me/kislovkosta" target="_blank" rel="noopener noreferrer" data-contact="telegram">Telegram</a>
-          <a href="https://wa.me/79281446617?text=Здравствуйте%21%20Хочу%20обсудить%20разовую%20настройку%20аккаунта%20Авито." target="_blank" rel="noopener noreferrer" data-contact="whatsapp">WhatsApp</a>
+          <a href="tel:+79604964913" data-contact="phone">Позвонить</a>
+          <a href="https://t.me/Bv_B09" target="_blank" rel="noopener noreferrer" data-contact="telegram">Telegram</a>
+          <a href="https://wa.me/79604964913?text=Здравствуйте%21%20Хочу%20обсудить%20разовую%20настройку%20аккаунта%20Авито." target="_blank" rel="noopener noreferrer" data-contact="whatsapp">WhatsApp</a>
         </div>
       </div>
     </div>
@@ -381,10 +382,10 @@
       form.reset();
       msg.className='lead-msg ok';
       msg.textContent='Заявка принята. Свяжемся с вами, чтобы уточнить задачу.';
-      if(window.ym)ym(110884885,'reachGoal','LEAD_FORM',{product:'planb_setup',route:'razovaya_nastroyka',landing_variant:'service_setup_v1'});
+      window.PlanBAnalyticsConsent?.track('lead_success',{target_type:'form'});
     }catch(_){
       msg.className='lead-msg bad';
-      msg.innerHTML='Не отправилось. Напишите в <a href="https://t.me/kislovkosta">Telegram</a>.';
+      msg.innerHTML='Не отправилось. Напишите в <a href="https://t.me/Bv_B09">Telegram</a>.';
     }finally{
       button.disabled=false;
     }

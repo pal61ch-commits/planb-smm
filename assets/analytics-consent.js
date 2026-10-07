@@ -18,6 +18,8 @@
     phone:'CONTACT_PHONE',
     telegram:'CONTACT_TELEGRAM',
     whatsapp:'CONTACT_WHATSAPP',
+    max:'CONTACT_MAX',
+    sales_contact:'PLANB_SALES_CONTACT',
     content_cta_click:'CONTENT_CTA',
     video_play:'VIDEO_PLAY',
     lead_success:'LEAD_FORM'
@@ -165,6 +167,7 @@
     if(name==='whatsapp_click'||name==='contact_whatsapp')return GOALS.whatsapp;
     if(name==='content_cta')return GOALS.content_cta_click;
     if(name==='lead_form')return GOALS.lead_success;
+    if(name==='sales_contact')return GOALS.sales_contact;
     return '';
   }
 
@@ -178,6 +181,7 @@
     if(goal===GOALS.phone)targetType='phone';
     if(goal===GOALS.telegram)targetType='telegram';
     if(goal===GOALS.whatsapp)targetType='whatsapp';
+    if(goal===GOALS.max)targetType='max';
     if(goal===GOALS.video_play)targetType='video';
     if(goal===GOALS.lead_success)targetType='form';
     if(targetType)payload.target_type=targetType;
@@ -208,8 +212,24 @@
     if(isDuplicateGoal(goal,payload))return false;
     try{
       window.ym(METRIKA_ID,'reachGoal',goal,payload);
+      if(goal===GOALS.lead_success&&isAgencyFormRoute())trackEvent('sales_contact',{target_type:'form'});
       return true;
     }catch(_){return false}
+  }
+
+  function isAgencyFormRoute(){
+    return ['/', '/index', '/index.html', '/uslugi/vedenie-avito', '/uslugi/vedenie-avito.html', '/uslugi/razovaya-nastroyka-avito', '/uslugi/razovaya-nastroyka-avito.html'].includes(routeValue());
+  }
+
+  function isSalesContact(link){
+    const url=linkUrl(link);
+    if(!url)return false;
+    return (window.PlanBSalesContacts||[]).some(function(href){
+      try{
+        const sales=new URL(href,location.href);
+        return url.protocol===sales.protocol&&url.host===sales.host&&url.pathname===sales.pathname;
+      }catch(_){return false}
+    });
   }
 
   function linkUrl(link){
@@ -226,6 +246,7 @@
     const host=safeHost(url.hostname);
     if(host==='t.me'||host==='telegram.me'||host==='telegram.dog')return {event:'telegram',target_type:'telegram',target_host:host};
     if(host==='wa.me'||host==='api.whatsapp.com'||host==='web.whatsapp.com')return {event:'whatsapp',target_type:'whatsapp',target_host:host};
+    if(host==='max.ru')return {event:'max',target_type:'max',target_host:host};
     return null;
   }
 
@@ -281,6 +302,7 @@
       if(!target)return;
       const contact=contactTarget(target);
       if(contact){
+        if(isSalesContact(target))trackEvent('sales_contact',contact);
         if(!hasLegacyContactHandler(target))trackEvent(contact.event,contact);
         return;
       }

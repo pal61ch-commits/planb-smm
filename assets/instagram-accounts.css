@@ -1,0 +1,24 @@
+/* Accounts connected to promotion, provided by the owner. */
+.ig-page #accounts{scroll-margin-top:70px}
+.ig-page .ig-accounts-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
+.ig-page .ig-account-card{--account-accent:#ff72c6;position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:22px;min-width:0;padding:28px 25px;border:1px solid #7b446f88;border-radius:22px;background:linear-gradient(145deg,#30142b99,#100918 65%);color:#fbf8ff;text-decoration:none;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.ig-page .ig-account-card::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 95% 0,var(--account-accent),transparent 65%);opacity:.09;pointer-events:none}
+.ig-page .ig-account-card:nth-child(2){--account-accent:#c795ff}
+.ig-page .ig-account-card:nth-child(3){--account-accent:#74e5f5}
+.ig-page .ig-account-card:nth-child(4){--account-accent:#ffb275}
+.ig-page .ig-account-card:nth-child(5){--account-accent:#b3e68f}
+.ig-page .ig-account-avatar{position:relative;display:grid;place-items:center;flex:none;width:66px;height:66px;border:1px solid var(--account-accent);border-radius:20px;background:linear-gradient(140deg,#6c214b77,#2b143b);color:var(--account-accent);box-shadow:0 0 24px #d036a41a}
+.ig-page .ig-account-avatar svg{width:31px;height:31px}
+.ig-page .ig-account-copy{position:relative;min-width:0;flex:1}
+.ig-page .ig-account-handle{display:block;font-size:15px;font-weight:800;line-height:1.6;overflow-wrap:anywhere}
+.ig-page .ig-account-status{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:11px;line-height:1.6;color:#d5c8de}
+.ig-page .ig-account-status::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:#a8f0c9;box-shadow:0 0 9px #a8f0c933}
+.ig-page .ig-account-action{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;align-self:stretch;padding-top:17px;border-top:1px solid #ae78ac38;font-size:12px;font-weight:800;color:var(--account-accent)}
+.ig-page .ig-account-arrow{font-size:21px;line-height:1}
+.ig-page .ig-account-card:hover{transform:translateY(-4px);border-color:var(--account-accent);box-shadow:0 12px 32px #0005}
+.ig-page .ig-account-card:focus-visible{outline:3px solid #fff0fa;outline-offset:5px}
+@media(min-width:721px){.ig-page .ig-accounts-grid{padding-right:72px}}
+@media(max-width:1100px){.ig-page .ig-accounts-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ig-page .ig-account-card{gap:20px}}
+@media(min-width:601px) and (max-width:800px){.ig-page .ig-accounts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.ig-page .ig-accounts-grid{grid-template-columns:1fr;gap:13px}.ig-page .ig-account-card{flex-direction:row;align-items:center;gap:15px;padding:20px 18px;border-radius:18px}.ig-page .ig-account-avatar{width:48px;height:48px;border-radius:15px}.ig-page .ig-account-avatar svg{width:25px;height:25px}.ig-page .ig-account-handle{font-size:14px;line-height:1.5}.ig-page .ig-account-status{font-size:10px;margin-top:5px}.ig-page .ig-account-action{align-self:center;flex:none;padding:0;border:0}.ig-page .ig-account-action-label{display:none}.ig-page .ig-account-arrow{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.ig-page .ig-account-card{transition:none}.ig-page .ig-account-card:hover{transform:none}}

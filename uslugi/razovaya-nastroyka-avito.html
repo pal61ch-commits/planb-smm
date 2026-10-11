@@ -169,8 +169,8 @@
           <form class="leadform ym-disable-submit" id="setupLead" novalidate>
           <input type="hidden" name="name" value="Заявка на разовую настройку Авито">
           <input type="hidden" name="form_id" value="serviceLead">
-          <input type="hidden" name="pd_consent_version" value="planb-pd-2026-09-04-v2">
-          <input type="hidden" name="privacy_version" value="planb-privacy-2026-09-29-v4">
+          <input type="hidden" name="pd_consent_version" value="planb-pd-2026-10-11-v3">
+          <input type="hidden" name="privacy_version" value="planb-privacy-2026-10-11-v5">
           <input class="fld ym-disable-keys" id="setupLeadPhone" type="tel" name="phone" placeholder="Телефон для связи" aria-label="Телефон для связи" autocomplete="tel" inputmode="tel" aria-describedby="setupLeadMsg" required>
           <input class="fld ym-disable-keys" type="text" name="niche" placeholder="Ниша или ссылка на профиль — необязательно" aria-label="Ниша или ссылка на профиль" autocomplete="off">
           <label class="agree"><input type="checkbox" name="pd_consent" required><span>Даю отдельное <a href="/consent-personal-data.html" target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a></span></label>
@@ -326,10 +326,14 @@
 
 <script>
 (function(){
-  const endpoint='https://functions.yandexcloud.net/d4egi8sqig8ak86v89jg?tag=stable';
+  const endpoint='https://leads.avi-booster.ru/api/leads';
   const form=document.getElementById('setupLead');
   const msg=document.getElementById('setupLeadMsg');
   if(!form)return;
+      let pendingSubmission=null;
+      const submissionTime=()=>{const key=JSON.stringify(Array.from(new FormData(form).entries()));if(!pendingSubmission||pendingSubmission.key!==key||Date.now()-Date.parse(pendingSubmission.at)>14*60*1000)pendingSubmission={key,at:new Date().toISOString()};return pendingSubmission.at};
+      const leadRequest=async(url,options)=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);try{const response=await fetch(url,{...options,signal:controller.signal});let result={};try{result=await response.json()}catch(_){result={}}return {response,result}}finally{clearTimeout(timer)}};
+
   const digits=value=>(value||'').replace(/\D/g,'');
   form.addEventListener('submit',async function(event){
     event.preventDefault();
@@ -349,8 +353,8 @@
     try{
       const params=new URLSearchParams(location.search);
       const attribution=window.PlanBAnalyticsConsent?.attribution?.()||{utm_source:params.get('utm_source')||'',utm_medium:params.get('utm_medium')||'',utm_campaign:params.get('utm_campaign')||'',utm_content:params.get('utm_content')||'',utm_term:params.get('utm_term')||'',yclid:params.get('yclid')||''};
-      const acceptedAt=new Date().toISOString();
-      const response=await fetch(endpoint,{
+      const acceptedAt=submissionTime();
+      const {response,result}=await leadRequest(endpoint,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
@@ -376,10 +380,8 @@
           ts:acceptedAt
         })
       });
-      let result={};
-      try{result=await response.json()}catch(_){result={}}
-      if(!response.ok||result.ok!==true)throw new Error('HTTP '+response.status);
-      form.reset();
+      if(!response.ok||result.ok!==true||result.stored!==true||result.replicated!==true)throw new Error('HTTP '+response.status);
+      pendingSubmission=null;form.reset();
       msg.className='lead-msg ok';
       msg.textContent='Заявка принята. Свяжемся с вами, чтобы уточнить задачу.';
       window.PlanBAnalyticsConsent?.track('lead_success',{target_type:'form'});

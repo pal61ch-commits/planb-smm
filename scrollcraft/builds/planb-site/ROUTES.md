@@ -2,7 +2,7 @@
 
 The executable source of truth is `routes.mjs`.
 
-## Marketing routes: 52
+## Marketing routes: 56
 
 - `/`
 - `/o-kompanii`
@@ -10,12 +10,12 @@ The executable source of truth is `routes.mjs`.
 - `/uslugi/razovaya-nastroyka-avito`
 - `/prodvizhenie-instagram`
 - `/kejsy/` and 15 published case detail routes
-- `/blog/` and 28 article routes
+- `/blog/` and 32 article routes
 - `/video/` and `/otzyvy/`
 
-These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 51 marketing routes use `site-depth`.
+These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 55 marketing routes use `site-depth`.
 
-The 14 new-content routes are:
+The 18 new-content routes are:
 
 - `/video/`
 - `/otzyvy/`
@@ -32,6 +32,11 @@ The 14 new-content routes are:
 - `/blog/sravnenie-tarifov-vedeniya-avito`
 - `/prodvizhenie-instagram`
 - `/blog/prodvizhenie-magazina-avtozapchastey-na-avito`
+
+- `/blog/proverka-poziciy-avito-tri-zaprosa`
+- `/blog/podklyuchenie-pifagor-profil-avito`
+- `/blog/kejs-massazh-avito-kontakty-zapis`
+- `/blog/agentstvo-avito-nepreryvnost-vedeniya`
 
 They have their own metadata and structured-data contracts instead of a baseline copy.
 
@@ -87,4 +92,6 @@ Sokrat remains outside this redesign. Its application API, auth, payment, analyt
 
 ## Sitemap contract
 
-The expected sitemap contains 55 URLs: the 52 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.
+The expected sitemap contains 59 URLs: the 56 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.
+
+Weekly website batch 2026-10-12: 4 new articles, 2 revisions; 32 canonical blog articles; 56 marketing / 61 active / 59 sitemap URLs. QA fixture lead route and current PD document hashes follow published Mac cutover fef7c180; analytics-consent archived snapshot remains independently pinned.

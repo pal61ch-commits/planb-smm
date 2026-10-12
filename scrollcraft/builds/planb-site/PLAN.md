@@ -82,3 +82,5 @@ PLANB_BASELINE_ROOT=/path/to/baseline \
 SCROLLCRAFT_CHROME=/path/to/chrome \
 npm run qa
 ```
+
+Weekly website batch 2026-10-12: 4 new articles, 2 revisions; 32 canonical blog articles; 56 marketing / 61 active / 59 sitemap URLs. QA fixture lead route and current PD document hashes follow published Mac cutover fef7c180; analytics-consent archived snapshot remains independently pinned.

@@ -34,3 +34,5 @@ Before publication, the owner still reviews the whole site on a desktop and a ph
 - Analytics grant/revoke behavior is tested without executing third-party code.
 - The baseline worktree is read-only.
 - This build writes evidence only to `scrollcraft/lab/planb-site/`.
+
+Weekly website batch 2026-10-12: 4 new articles, 2 revisions; 32 canonical blog articles; 56 marketing / 61 active / 59 sitemap URLs. QA fixture lead route and current PD document hashes follow published Mac cutover fef7c180; analytics-consent archived snapshot remains independently pinned.

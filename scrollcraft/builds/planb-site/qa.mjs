@@ -26,11 +26,22 @@ const BASELINE_ROOT = path.resolve(process.env.PLANB_BASELINE_ROOT || "/Users/ko
 // Historical SEO expectations and current protected assets can have different
 // release baselines (for example an independently shipped Sokrat page).
 const SEO_BASELINE_ROOT = path.resolve(process.env.PLANB_SEO_BASELINE_ROOT || BASELINE_ROOT);
+// These unchanged pages shipped after the historical SEO snapshot. Protect the
+// exact production release instead of allowing arbitrary metadata/loader drift.
+const CURRENT_BASELINE_REVISION = "fef7c1803681396bb5903c2f8d06def2ab75bde4";
+const CURRENT_BASELINE_PAGE_CONTRACTS = new Map([
+  ["/", { sha256: "e9d056f25d7d07b7b8395a1abab0d2c94cc40cd7cbbbe1d984a881aedec0897d" }],
+  ["/uslugi/vedenie-avito", { sha256: "409d22eec6c92dc115ed1798733e85f629e63ac859dadb0b7fcad43dd7b8a496" }],
+  ["/uslugi/razovaya-nastroyka-avito", { sha256: "2355fee3906fe914606068e0e14f8d11a5bf4cd3300e7ee470c0265797635990" }],
+  ["/o-kompanii", { sha256: "8349434aed38908ba31be8bc58f5d67bd2aeb34d03b64ba82193b3119c3b0353" }],
+  ["/rekvizity.html", { sha256: "37e9eab59e40ed11a048252224357e2bc14991e7cbe94f673c9c2e8355dac31f", consentLoaderCount: 1 }],
+  ["/oferta.html", { sha256: "5d9e8746426206f9eab79da3d631cf4d0bd9138295024a66a2afcdcc0c8b6b60", consentLoaderCount: 1 }]
+]);
 const CHROME = process.env.SCROLLCRAFT_CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const OUT = path.resolve(HERE, "../../lab/planb-site");
 const SCREENSHOTS = path.join(OUT, "screenshots");
-const LEAD_HOST = "functions.yandexcloud.net";
-const LEAD_PATH = "/d4egi8sqig8ak86v89jg";
+const LEAD_HOST = "leads.avi-booster.ru";
+const LEAD_PATH = "/api/leads";
 const CONSENT_KEY = "planb_analytics_consent_v3";
 const CONSENT_SCHEMA = "planb-analytics-choice-v3";
 const CONSENT_VERSION = "planb-analytics-2026-09-29-v3";
@@ -38,7 +49,14 @@ const ATTRIBUTION_KEY = "planb_session_attribution_v1";
 const PRIVACY_VERSION = "planb-privacy-2026-09-29-v4";
 const PRIVACY_SHA256 = "455d7155c3aa47424bb66daee7e8dd2492532a30c567e5f84e8634bbe853ee83";
 const NOTICE_SHA256 = "567a90210a2d829edccf7b977e7727a4c0fd4b2e2b294826f4ccd574f2916270";
+// Published Mac intake cutover fef7c180, independent 11Oct release/legal receipts.
+// Analytics consent continues to bind its archived v4 snapshot above.
+const FORM_PRIVACY_VERSION = "planb-privacy-2026-10-11-v5";
+const CURRENT_PD_CONSENT_VERSION = "planb-pd-2026-10-11-v3";
+const CURRENT_PRIVACY_SHA256 = "1c3ab84f3103acd73c7eb3c65b28694032c3ae66d10533da3b0e3e6afc952be0";
 const CURRENT_LEGAL_EVIDENCE = new Map([
+  ["legal/privacy/planb-privacy-2026-10-11-v5.html", CURRENT_PRIVACY_SHA256],
+  ["legal/consent/planb-pd-2026-10-11-v3.html", "6a235f6554d3cc8ab2ae4c28957b471df1a660ba6e71ae521003dc8b33f3078d"],
   ["legal/privacy/planb-privacy-2026-09-29-v4.html", PRIVACY_SHA256],
   ["legal/analytics-consent/planb-analytics-notice-2026-09-29-v3.txt", NOTICE_SHA256]
 ]);
@@ -58,6 +76,7 @@ const HISTORICAL_CASE_ROUTES = [
 ];
 const BASELINE_DRIFT_FIELDS = new Set(["title", "description", "jsonld"]);
 const BASELINE_DRIFT_ALLOWLIST = new Map([
+  ["/blog/sravnenie-tarifov-vedeniya-avito", new Set(["jsonld"])],
   // Owner-commissioned client articles 2026-10-06.
   ["/blog/vedenie-akkaunta-avito", new Set(["title", "description", "jsonld"])],
   ["/blog/kak-vybrat-avitologa", new Set(["title", "description", "jsonld"])],
@@ -295,8 +314,8 @@ async function jpegDimensions(file) {
   return null;
 }
 
-async function seedDeniedConsent(context) {
-  await context.addInitScript(({ key, schema, version, privacyVersion, privacyHash, noticeHash }) => {
+async function seedDeniedConsent(context, choice = "denied") {
+  await context.addInitScript(({ key, schema, version, privacyVersion, privacyHash, noticeHash, choice }) => {
     const now = Date.now();
     localStorage.setItem(key, JSON.stringify({
       schema,
@@ -304,7 +323,8 @@ async function seedDeniedConsent(context) {
       privacy_version: privacyVersion,
       privacy_sha256: privacyHash,
       notice_sha256: noticeHash,
-      choice: "denied",
+      choice,
+      session_recording: false,
       decided_at: new Date(now).toISOString(),
       expires_at: now + 180 * 24 * 60 * 60 * 1000
     }));
@@ -314,7 +334,8 @@ async function seedDeniedConsent(context) {
     version: CONSENT_VERSION,
     privacyVersion: PRIVACY_VERSION,
     privacyHash: PRIVACY_SHA256,
-    noticeHash: NOTICE_SHA256
+    noticeHash: NOTICE_SHA256,
+    choice
   });
 }
 
@@ -331,7 +352,7 @@ function screenshotName(route) {
 }
 
 async function staticAudit() {
-  check(MARKETING_ROUTES.length === 52, "scope.marketing", `expected 52, got ${MARKETING_ROUTES.length}`);
+  check(MARKETING_ROUTES.length === 56, "scope.marketing", `expected 56, got ${MARKETING_ROUTES.length}`);
   check(CURRENT_LEGAL_ROUTES.length === 5, "scope.current-legal", `expected 5, got ${CURRENT_LEGAL_ROUTES.length}`);
   check(VERSIONED_LEGAL_FILES.length === 6, "scope.versioned-legal", `expected 6, got ${VERSIONED_LEGAL_FILES.length}`);
   check(REDIRECT_CONTRACTS.length === 4, "scope.redirects", `expected 4, got ${REDIRECT_CONTRACTS.length}`);
@@ -372,14 +393,15 @@ async function staticAudit() {
   const currentPrivacy = path.join(SITE_ROOT, "privacy.html");
   if (await exists(currentPrivacy)) {
     const actual = await digest(currentPrivacy);
-    check(actual === PRIVACY_SHA256, "legal.current-privacy-hash", `privacy.html expected ${PRIVACY_SHA256}, got ${actual}`);
+    check(actual === CURRENT_PRIVACY_SHA256, "legal.current-privacy-hash", `privacy.html expected ${CURRENT_PRIVACY_SHA256}, got ${actual}`);
   }
   const active = [];
   const localLinkFailures = [];
   for (const route of ACTIVE_ROUTES) {
     const relative = routeToRelativeFile(route);
     const candidate = path.join(SITE_ROOT, relative);
-    const baseline = path.join(SEO_BASELINE_ROOT, relative);
+    const currentBaseContract = CURRENT_BASELINE_PAGE_CONTRACTS.get(route);
+    const baseline = path.join(currentBaseContract ? BASELINE_ROOT : SEO_BASELINE_ROOT, relative);
     const candidateExists = await exists(candidate);
     const baselineExists = await exists(baseline);
     check(candidateExists, "active.missing-candidate", `${route} -> ${relative}`);
@@ -387,6 +409,14 @@ async function staticAudit() {
       check(baselineExists, "active.missing-baseline", `${route} -> ${relative}`);
     }
     if (!candidateExists) continue;
+    if (currentBaseContract) {
+      const candidateHash = await digest(candidate);
+      check(candidateHash === currentBaseContract.sha256, "baseline.current-candidate-pin", `${route}: ${CURRENT_BASELINE_REVISION} expected ${currentBaseContract.sha256}, got ${candidateHash}`);
+      if (baselineExists) {
+        const baselineHash = await digest(baseline);
+        check(baselineHash === currentBaseContract.sha256, "baseline.current-release-pin", `${route}: ${CURRENT_BASELINE_REVISION} expected ${currentBaseContract.sha256}, got ${baselineHash}`);
+      }
+    }
     const html = await fs.readFile(candidate, "utf8");
     const marketing = MARKETING_ROUTES.includes(route);
     const expected = expectedCanonical(route);
@@ -420,18 +450,6 @@ async function staticAudit() {
       try {
         const actualJson = JSON.stringify(normalizeJson(values));
         const baselineValues = jsonLdValues(baselineHtml);
-        if (route === "/") {
-          const organization = baselineValues
-            .flatMap(value => value && Array.isArray(value["@graph"]) ? value["@graph"] : [value])
-            .find(node => node?.["@id"] === "https://planb-prodvizhenie.ru/#business");
-          if (organization) {
-            organization.sameAs = [
-              "https://www.instagram.com/avitolog_planb_prodvizenie/",
-              "https://vk.ru/planb_avitolog",
-              "https://t.me/planB_prodvizhenie"
-            ];
-          }
-        }
         const baselineJson = JSON.stringify(normalizeJson(baselineValues));
         const jsonChanged = actualJson !== baselineJson;
         if (allowedDrift.has("jsonld")) check(jsonChanged, "baseline.allowlist-stale", `${route}: jsonld`);
@@ -668,7 +686,7 @@ async function staticAudit() {
       }
     } else {
       check(count(html, "/assets/legal-depth.css") === 1, "asset.legal-css", route);
-      check(count(html, "/assets/analytics-consent.js") === 0, "asset.legal-consent-loader", route);
+      check(count(html, "/assets/analytics-consent.js") === (currentBaseContract?.consentLoaderCount ?? 0), "asset.legal-consent-loader", route);
       check(count(html, "/assets/scrollcraft.js") === 0, "asset.legal-scrollcraft", route);
     }
 
@@ -1277,9 +1295,9 @@ async function runContactStability(browser, baseURL) {
   }
 }
 
-async function formAttempt(browser, baseURL, contract, outcome) {
+async function formAttempt(browser, baseURL, contract, outcome, consentChoice = "denied") {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
-  await seedDeniedConsent(context);
+  await seedDeniedConsent(context, consentChoice);
   await context.addInitScript(() => {
     window.__qaGoals = [];
     window.ym = (...args) => window.__qaGoals.push(args);
@@ -1290,6 +1308,9 @@ async function formAttempt(browser, baseURL, contract, outcome) {
   let resolveSent;
   const sent = new Promise(resolve => { resolveSent = resolve; });
   await installPageRouting(page, baseURL, externalRequests, async (route, request) => {
+    check(request.url() === `https://${LEAD_HOST}${LEAD_PATH}`, "form.exact-endpoint", request.url());
+    check(request.method() === "POST", "form.method", request.method());
+    check((request.headers()["content-type"] || "").startsWith("application/json"), "form.content-type", request.headers()["content-type"] || "");
     try {
       payload = request.postDataJSON();
     } catch {
@@ -1298,9 +1319,9 @@ async function formAttempt(browser, baseURL, contract, outcome) {
     resolveSent(payload);
     await new Promise(resolve => setTimeout(resolve, 120));
     await route.fulfill({
-      status: outcome === "success" ? 200 : 500,
+      status: outcome === "failure" ? 500 : 200,
       contentType: "application/json; charset=utf-8",
-      body: JSON.stringify(outcome === "success" ? { ok: true } : { ok: false })
+      body: JSON.stringify(outcome === "success" ? { ok: true, stored: true, replicated: true } : outcome === "incomplete-ack" ? { ok: true } : outcome === "unreplicated-ack" ? { ok: true, stored: true, replicated: false } : { ok: false })
     });
   });
   const query = "?utm_source=qa&utm_medium=automation&utm_campaign=sitewide&utm_content=form&utm_term=avito&yclid=qa-yclid";
@@ -1349,8 +1370,8 @@ async function formAttempt(browser, baseURL, contract, outcome) {
     check(payload?.landing_variant === contract.landingVariant, "form.variant", `${contract.route}: ${payload?.landing_variant}`);
     check(payload?.form_id === contract.formId, "form.form-id", `${contract.route}: ${payload?.form_id}`);
     check(payload?.pd_consent === true, "form.pd-consent", contract.route);
-    check(payload?.pd_consent_version === "planb-pd-2026-09-04-v2", "form.pd-version", contract.route);
-    check(payload?.privacy_version === PRIVACY_VERSION, "form.privacy-version", contract.route);
+    check(payload?.pd_consent_version === CURRENT_PD_CONSENT_VERSION, "form.pd-version", contract.route);
+    check(payload?.privacy_version === FORM_PRIVACY_VERSION, "form.privacy-version", contract.route);
     check(Number.isFinite(Date.parse(payload?.pd_consent_client_at)), "form.consent-time", contract.route);
     check(payload?.ts === payload?.pd_consent_client_at, "form.timestamp-match", contract.route);
     check(payload?.utm_source === "qa" && payload?.utm_medium === "automation" && payload?.utm_campaign === "sitewide" && payload?.utm_content === "form" && payload?.utm_term === "avito" && payload?.yclid === "qa-yclid", "form.attribution", contract.route);
@@ -1358,8 +1379,10 @@ async function formAttempt(browser, baseURL, contract, outcome) {
     if (contract.submittedScenario) check(payload?.scenario === contract.submittedScenario, "form.scenario", `${contract.route}: ${payload?.scenario}`);
     check(after.phone === "" && !after.consent && !after.disabled, "form.success-reset", `${contract.route}: ${JSON.stringify(after)}`);
     if (contract.submittedScenario) check(after.scenario === "unspecified", "form.scenario-reset", `${contract.route}: ${after.scenario}`);
-    check(goals.some(args => args[0] === 110884885 && args[1] === "reachGoal" && args[2] === "LEAD_FORM"), "form.goal", contract.route);
-    report.forms.push({ route: contract.route, outcome, payload, after, goals, externalRequests });
+    const leadGoals = goals.filter(args => args[0] === 110884885 && args[1] === "reachGoal" && args[2] === "LEAD_FORM").length;
+    const salesGoals = goals.filter(args => args[0] === 110884885 && args[1] === "reachGoal" && args[2] === "PLANB_SALES_CONTACT").length;
+    check(consentChoice === "granted" ? leadGoals === 1 && salesGoals === 1 : leadGoals === 0 && salesGoals === 0, "form.goal-consent", `${contract.route}: ${consentChoice}: ${leadGoals}/${salesGoals}`);
+    report.forms.push({ route: contract.route, outcome, consentChoice, payload, after, goals, externalRequests });
   } else {
     await page.locator(contract.phone).fill("+7 999 123-45-67");
     await form.locator("[name='pd_consent']").check();
@@ -1375,8 +1398,8 @@ async function formAttempt(browser, baseURL, contract, outcome) {
     const goals = await page.evaluate(() => window.__qaGoals || []);
     check(state.phone.length > 0 && state.consent && !state.disabled, "form.failure-preserves", `${contract.route}: ${JSON.stringify(state)}`);
     check(fallbackLinks > 0, "form.failure-fallback", contract.route);
-    check(!goals.some(args => args[1] === "reachGoal" && args[2] === "LEAD_FORM"), "form.failure-goal", contract.route);
-    report.forms.push({ route: contract.route, outcome, payload, state, fallbackLinks, goals, externalRequests });
+    check(!goals.some(args => args[1] === "reachGoal" && ["LEAD_FORM", "PLANB_SALES_CONTACT"].includes(args[2])), "form.failure-goal", `${contract.route}: ${consentChoice}`);
+    report.forms.push({ route: contract.route, outcome, consentChoice, payload, state, fallbackLinks, goals, externalRequests });
   }
   await context.close();
 }
@@ -1384,7 +1407,10 @@ async function formAttempt(browser, baseURL, contract, outcome) {
 async function runForms(browser, baseURL) {
   for (const contract of FORM_CONTRACTS) {
     await formAttempt(browser, baseURL, contract, "success");
-    await formAttempt(browser, baseURL, contract, "failure");
+    await formAttempt(browser, baseURL, contract, "success", "granted");
+    await formAttempt(browser, baseURL, contract, "failure", "granted");
+    await formAttempt(browser, baseURL, contract, "incomplete-ack", "granted");
+    await formAttempt(browser, baseURL, contract, "unreplicated-ack", "granted");
   }
 }
 

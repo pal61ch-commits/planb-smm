@@ -27,7 +27,7 @@ This is required because Python's basic HTTP server does not resolve the site's 
 
 ## 3. Full-route render sweep
 
-Render all 55 active routes at:
+Render all 64 active routes at:
 
 - 1440 × 900;
 - 390 × 844.
@@ -84,3 +84,5 @@ npm run qa
 ```
 
 Weekly website batch 2026-10-12: 4 new articles, 2 revisions; 32 canonical blog articles; 56 marketing / 61 active / 59 sitemap URLs. QA fixture lead route and current PD document hashes follow published Mac cutover fef7c180; analytics-consent archived snapshot remains independently pinned.
+
+Weekly website batch 2026-10-19: 3 new articles, 3 revisions; 35 canonical blog articles; 59 marketing / 64 active / 62 sitemap URLs. Two already published Telegram videos are copied unchanged with local posters under the owner18Oct website-video instruction.

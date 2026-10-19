@@ -8,7 +8,7 @@ The harness is local and side-effect-free. It never sends a lead, never loads li
 
 ## Scope
 
-- 50 marketing routes: homepage, two service pages, company page, 16 case routes, 28 blog routes (the index plus 27 article pages), video library and reviews page.
+- 59 marketing routes: homepage, service pages, company page, case routes, 36 blog routes (index plus 35 articles), video library and reviews page.
 - 12 content routes with metadata validation independent of the baseline; exact list in `routes.mjs`.
 - 8 self-hosted H.264/AAC videos with posters, Russian captions, source links, published-period context, and no autoplay.
 - 5 current legal routes: rendered and checked, but kept free of analytics and motion code.
@@ -36,3 +36,5 @@ Before publication, the owner still reviews the whole site on a desktop and a ph
 - This build writes evidence only to `scrollcraft/lab/planb-site/`.
 
 Weekly website batch 2026-10-12: 4 new articles, 2 revisions; 32 canonical blog articles; 56 marketing / 61 active / 59 sitemap URLs. QA fixture lead route and current PD document hashes follow published Mac cutover fef7c180; analytics-consent archived snapshot remains independently pinned.
+
+Weekly website batch 2026-10-19: 3 new articles, 3 revisions; 35 canonical blog articles; 59 marketing / 64 active / 62 sitemap URLs. Two already published Telegram videos are copied unchanged with local posters under the owner18Oct website-video instruction.

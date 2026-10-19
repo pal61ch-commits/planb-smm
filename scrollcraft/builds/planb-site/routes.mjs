@@ -1,4 +1,7 @@
 export const MARKETING_ROUTES = [
+  "/blog/kto-takoy-avitolog-kogda-nuzhen-biznesu",
+  "/blog/posty-na-avito-lenta-dlya-biznesa",
+  "/blog/agentstva-avito-analitika-avtomatizaciya",
   "/blog/proverka-poziciy-avito-tri-zaprosa",
   "/blog/podklyuchenie-pifagor-profil-avito",
   "/blog/kejs-massazh-avito-kontakty-zapis",
@@ -68,6 +71,9 @@ export const CURRENT_LEGAL_ROUTES = [
 export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
 export const NEW_CONTENT_ROUTES = [
+  "/blog/kto-takoy-avitolog-kogda-nuzhen-biznesu",
+  "/blog/posty-na-avito-lenta-dlya-biznesa",
+  "/blog/agentstva-avito-analitika-avtomatizaciya",
   "/blog/proverka-poziciy-avito-tri-zaprosa",
   "/blog/podklyuchenie-pifagor-profil-avito",
   "/blog/kejs-massazh-avito-kontakty-zapis",

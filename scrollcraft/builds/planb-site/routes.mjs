@@ -1,4 +1,7 @@
 export const MARKETING_ROUTES = [
+  "/blog/bonusy-avito-uslugi-proverka-usloviy",
+  "/blog/kejs-skrytye-karnizy-avito-69-899-kontaktov",
+  "/blog/kak-proverit-keysy-avito-agentstva",
   "/blog/kto-takoy-avitolog-kogda-nuzhen-biznesu",
   "/blog/posty-na-avito-lenta-dlya-biznesa",
   "/blog/agentstva-avito-analitika-avtomatizaciya",
@@ -71,6 +74,9 @@ export const CURRENT_LEGAL_ROUTES = [
 export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
 export const NEW_CONTENT_ROUTES = [
+  "/blog/bonusy-avito-uslugi-proverka-usloviy",
+  "/blog/kejs-skrytye-karnizy-avito-69-899-kontaktov",
+  "/blog/kak-proverit-keysy-avito-agentstva",
   "/blog/kto-takoy-avitolog-kogda-nuzhen-biznesu",
   "/blog/posty-na-avito-lenta-dlya-biznesa",
   "/blog/agentstva-avito-analitika-avtomatizaciya",

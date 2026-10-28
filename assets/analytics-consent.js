@@ -19,7 +19,7 @@
     telegram:'CONTACT_TELEGRAM',
     whatsapp:'CONTACT_WHATSAPP',
     max:'CONTACT_MAX',
-    sales_contact:'PLANB_SALES_CONTACT',
+    manager_contact_click:'MANAGER_CONTACT_CLICK',
     content_cta_click:'CONTENT_CTA',
     video_play:'VIDEO_PLAY',
     lead_success:'LEAD_FORM'
@@ -115,7 +115,27 @@
 
   function formAttribution(){
     const current=attributionFromUrl();
-    return storedAttribution()||current;
+    const values=storedAttribution()||current;
+    if(!hasAnalyticsConsent())values.yclid='';
+    return values;
+  }
+
+  function metricaClientId(){
+    // Use the documented API only after consent; an unavailable tag must not hold up a form.
+    if(!hasAnalyticsConsent()||typeof window.ym!=='function')return Promise.resolve('');
+    return new Promise(function(resolve){
+      let settled=false;
+      const finish=function(value){
+        if(settled)return;
+        settled=true;
+        clearTimeout(timer);
+        const id=typeof value==='string'?value:'';
+        const valid=/^[1-9][0-9]{0,19}$/.test(id)&&(id.length<20||id<='18446744073709551615');
+        resolve(hasAnalyticsConsent()&&valid?id:'');
+      };
+      const timer=setTimeout(function(){finish('')},250);
+      try{window.ym(METRIKA_ID,'getClientID',finish)}catch(_){finish('')}
+    });
   }
 
   function routeValue(){
@@ -167,7 +187,6 @@
     if(name==='whatsapp_click'||name==='contact_whatsapp')return GOALS.whatsapp;
     if(name==='content_cta')return GOALS.content_cta_click;
     if(name==='lead_form')return GOALS.lead_success;
-    if(name==='sales_contact')return GOALS.sales_contact;
     return '';
   }
 
@@ -209,16 +228,12 @@
     const goal=canonicalGoal(name);
     if(!goal||!hasAnalyticsConsent()||typeof window.ym!=='function')return false;
     const payload=safeGoalPayload(goal,detail);
-    if(isDuplicateGoal(goal,payload))return false;
+    // Accepted forms use the durable receipt guard; two distinct receipts can be close together.
+    if(goal!==GOALS.lead_success&&isDuplicateGoal(goal,payload))return false;
     try{
       window.ym(METRIKA_ID,'reachGoal',goal,payload);
-      if(goal===GOALS.lead_success&&isAgencyFormRoute())trackEvent('sales_contact',{target_type:'form'});
       return true;
     }catch(_){return false}
-  }
-
-  function isAgencyFormRoute(){
-    return ['/', '/index', '/index.html', '/uslugi/vedenie-avito', '/uslugi/vedenie-avito.html', '/uslugi/razovaya-nastroyka-avito', '/uslugi/razovaya-nastroyka-avito.html'].includes(routeValue());
   }
 
   function isSalesContact(link){
@@ -302,7 +317,8 @@
       if(!target)return;
       const contact=contactTarget(target);
       if(contact){
-        if(isSalesContact(target))trackEvent('sales_contact',contact);
+        // A contact click is a micro event, never a confirmed or billable lead.
+        if(isSalesContact(target))trackEvent('manager_contact_click',contact);
         if(!hasLegacyContactHandler(target))trackEvent(contact.event,contact);
         return;
       }
@@ -499,6 +515,7 @@
     state:readState,
     track:trackEvent,
     attribution:formAttribution,
+    getClientId:metricaClientId,
     grant:function(){setChoice('granted')},
     deny:function(){setChoice('denied')},
     open:function(){mountDialog(true)},

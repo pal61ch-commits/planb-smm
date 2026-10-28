@@ -98,6 +98,7 @@
 }
 </script>
 <script src="/assets/analytics-consent.js"></script>
+<script src="/assets/lead-quality.js"></script>
 <link rel="stylesheet" href="/assets/scrollcraft.css">
 <link rel="stylesheet" href="/assets/page.css">
 <style>
@@ -330,19 +331,16 @@
   const form=document.getElementById('setupLead');
   const msg=document.getElementById('setupLeadMsg');
   if(!form)return;
-      let pendingSubmission=null;
-      const submissionTime=()=>{const key=JSON.stringify(Array.from(new FormData(form).entries()));if(!pendingSubmission||pendingSubmission.key!==key||Date.now()-Date.parse(pendingSubmission.at)>14*60*1000)pendingSubmission={key,at:new Date().toISOString()};return pendingSubmission.at};
       const leadRequest=async(url,options)=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);try{const response=await fetch(url,{...options,signal:controller.signal});let result={};try{result=await response.json()}catch(_){result={}}return {response,result}}finally{clearTimeout(timer)}};
 
-  const digits=value=>(value||'').replace(/\D/g,'');
   form.addEventListener('submit',async function(event){
     event.preventDefault();
     const phone=form.phone.value.trim();
-    const phoneLength=digits(phone).length;
-    if(phoneLength<10||phoneLength>11||!form.pd_consent.checked){
-      form.phone.setAttribute('aria-invalid',phoneLength<10||phoneLength>11?'true':'false');
+    const phoneOk=Boolean(window.PlanBLeadQuality?.normalizePhone(phone));
+    if(!phoneOk||!form.pd_consent.checked){
+      form.phone.setAttribute('aria-invalid',!phoneOk?'true':'false');
       msg.className='lead-msg bad';
-      msg.textContent=phoneLength<10||phoneLength>11?'Укажите корректный телефон':'Нужно отдельное согласие на обработку данных';
+      msg.textContent=!phoneOk?'Укажите корректный телефон':'Нужно отдельное согласие на обработку данных';
       return;
     }
     form.phone.setAttribute('aria-invalid','false');
@@ -351,13 +349,8 @@
     msg.className='lead-msg';
     msg.textContent='Отправляю…';
     try{
-      const params=new URLSearchParams(location.search);
-      const attribution=window.PlanBAnalyticsConsent?.attribution?.()||{utm_source:params.get('utm_source')||'',utm_medium:params.get('utm_medium')||'',utm_campaign:params.get('utm_campaign')||'',utm_content:params.get('utm_content')||'',utm_term:params.get('utm_term')||'',yclid:params.get('yclid')||''};
-      const acceptedAt=submissionTime();
-      const {response,result}=await leadRequest(endpoint,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
+      const attribution=window.PlanBAnalyticsConsent?.attribution?.()||{};
+      const payload=await window.PlanBLeadQuality.prepare({
           name:form.name.value.trim()||'Заявка на разовую настройку Авито',
           phone,
           niche:form.niche.value.trim()||'разовая настройка Авито',
@@ -367,7 +360,6 @@
           form_id:form.form_id.value,
           pd_consent:true,
           pd_consent_version:form.pd_consent_version.value,
-          pd_consent_client_at:acceptedAt,
           privacy_version:form.privacy_version.value,
           utm_source:attribution.utm_source||'',
           utm_medium:attribution.utm_medium||'',
@@ -376,15 +368,14 @@
           utm_term:attribution.utm_term||'',
           yclid:attribution.yclid||'',
           page:location.href,
-          ref:document.referrer||'',
-          ts:acceptedAt
-        })
+          ref:document.referrer||''
       });
+      const {response,result}=await leadRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       if(!response.ok||result.ok!==true||result.stored!==true||result.replicated!==true)throw new Error('HTTP '+response.status);
-      pendingSubmission=null;form.reset();
+      form.reset();
       msg.className='lead-msg ok';
       msg.textContent='Заявка принята. Свяжемся с вами, чтобы уточнить задачу.';
-      window.PlanBAnalyticsConsent?.track('lead_success',{target_type:'form'});
+      await window.PlanBLeadQuality.accepted(result,payload);
     }catch(_){
       msg.className='lead-msg bad';
       msg.innerHTML='Не отправилось. Напишите в <a href="https://t.me/Bv_B09">Telegram</a>.';

@@ -26,8 +26,8 @@ const BASELINE_ROOT = path.resolve(process.env.PLANB_BASELINE_ROOT || "/Users/ko
 // Historical SEO expectations and current protected assets can have different
 // release baselines (for example an independently shipped Sokrat page).
 const SEO_BASELINE_ROOT = path.resolve(process.env.PLANB_SEO_BASELINE_ROOT || BASELINE_ROOT);
-// These unchanged pages shipped after the historical SEO snapshot. Protect the
-// exact production release instead of allowing arbitrary metadata/loader drift.
+// These pages shipped after the historical SEO snapshot. Preserve the exact
+// production source pin independently of any explicitly approved candidate pin.
 const CURRENT_BASELINE_REVISION = "fef7c1803681396bb5903c2f8d06def2ab75bde4";
 const CURRENT_BASELINE_PAGE_CONTRACTS = new Map([
   ["/", { sha256: "e9d056f25d7d07b7b8395a1abab0d2c94cc40cd7cbbbe1d984a881aedec0897d" }],
@@ -36,6 +36,15 @@ const CURRENT_BASELINE_PAGE_CONTRACTS = new Map([
   ["/o-kompanii", { sha256: "8349434aed38908ba31be8bc58f5d67bd2aeb34d03b64ba82193b3119c3b0353" }],
   ["/rekvizity.html", { sha256: "37e9eab59e40ed11a048252224357e2bc14991e7cbe94f673c9c2e8355dac31f", consentLoaderCount: 1 }],
   ["/oferta.html", { sha256: "5d9e8746426206f9eab79da3d631cf4d0bd9138295024a66a2afcdcc0c8b6b60", consentLoaderCount: 1 }]
+]);
+// Owner-authorized lead-quality change, reviewed against d077141. Only these
+// exact form candidates may differ from the protected fef7c180 source release.
+// The source hashes above remain mandatory for the baseline itself.
+const APPROVED_CANDIDATE_REVISION = "planb-lead-quality-20261028";
+const APPROVED_CANDIDATE_PAGE_CONTRACTS = new Map([
+  ["/", { sha256: "6e7991e1ab812b5af5a126bccde280813b509cef7c5be291a51aed9a2a01b66c", sourceSha256: "e9d056f25d7d07b7b8395a1abab0d2c94cc40cd7cbbbe1d984a881aedec0897d" }],
+  ["/uslugi/vedenie-avito", { sha256: "acc1de6f0347d66054e352f4f2a16f5ae804a2856eb26466dd62d5d0434bb7d7", sourceSha256: "409d22eec6c92dc115ed1798733e85f629e63ac859dadb0b7fcad43dd7b8a496" }],
+  ["/uslugi/razovaya-nastroyka-avito", { sha256: "16fd9eb09e0aa09d3b3645a6ea731e0003c3cfc037f5bcf538cbe311f4f97169", sourceSha256: "2355fee3906fe914606068e0e14f8d11a5bf4cd3300e7ee470c0265797635990" }]
 ]);
 const CHROME = process.env.SCROLLCRAFT_CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const OUT = path.resolve(HERE, "../../lab/planb-site");
@@ -365,6 +374,12 @@ async function staticAudit() {
     check([...fields].every(field => BASELINE_DRIFT_FIELDS.has(field)), "baseline.allowlist-field", `${route}: ${[...fields].join(", ")}`);
   }
 
+  for (const [route, contract] of APPROVED_CANDIDATE_PAGE_CONTRACTS) {
+    const source = CURRENT_BASELINE_PAGE_CONTRACTS.get(route);
+    check(Boolean(source) && source.sha256 === contract.sourceSha256, "baseline.approved-candidate-source", route);
+    check(/^[0-9a-f]{64}$/.test(contract.sha256) && contract.sha256 !== contract.sourceSha256, "baseline.approved-candidate-pin", route);
+  }
+
   const immutable = [];
   for (const relative of IMMUTABLE_FILES) {
     const candidate = path.join(SITE_ROOT, relative);
@@ -411,7 +426,10 @@ async function staticAudit() {
     if (!candidateExists) continue;
     if (currentBaseContract) {
       const candidateHash = await digest(candidate);
-      check(candidateHash === currentBaseContract.sha256, "baseline.current-candidate-pin", `${route}: ${CURRENT_BASELINE_REVISION} expected ${currentBaseContract.sha256}, got ${candidateHash}`);
+      const approvedCandidate = APPROVED_CANDIDATE_PAGE_CONTRACTS.get(route);
+      const expectedCandidateHash = approvedCandidate?.sha256 || currentBaseContract.sha256;
+      const expectedCandidateRevision = approvedCandidate ? APPROVED_CANDIDATE_REVISION : CURRENT_BASELINE_REVISION;
+      check(candidateHash === expectedCandidateHash, "baseline.current-candidate-pin", `${route}: ${expectedCandidateRevision} expected ${expectedCandidateHash}, got ${candidateHash}`);
       if (baselineExists) {
         const baselineHash = await digest(baseline);
         check(baselineHash === currentBaseContract.sha256, "baseline.current-release-pin", `${route}: ${CURRENT_BASELINE_REVISION} expected ${currentBaseContract.sha256}, got ${baselineHash}`);
@@ -1300,7 +1318,10 @@ async function formAttempt(browser, baseURL, contract, outcome, consentChoice = 
   await seedDeniedConsent(context, consentChoice);
   await context.addInitScript(() => {
     window.__qaGoals = [];
-    window.ym = (...args) => window.__qaGoals.push(args);
+    window.ym = (...args) => {
+      window.__qaGoals.push(args.slice(0, 4).map(value => typeof value === "function" ? "[callback]" : value));
+      if (args[1] === "getClientID") args[2]("1234567890123456789");
+    };
   });
   const page = await context.newPage();
   const externalRequests = [];
@@ -1321,20 +1342,27 @@ async function formAttempt(browser, baseURL, contract, outcome, consentChoice = 
     await route.fulfill({
       status: outcome === "failure" ? 500 : 200,
       contentType: "application/json; charset=utf-8",
-      body: JSON.stringify(outcome === "success" ? { ok: true, stored: true, replicated: true } : outcome === "incomplete-ack" ? { ok: true } : outcome === "unreplicated-ack" ? { ok: true, stored: true, replicated: false } : { ok: false })
+      body: JSON.stringify(["success", "duplicate"].includes(outcome) ? { ok: true, stored: true, replicated: true, duplicate: outcome === "duplicate", receipt_id: "a".repeat(64), request_id: "018e8480-4a00-4000-8000-123456789abc" } : outcome === "incomplete-ack" ? { ok: true } : outcome === "unreplicated-ack" ? { ok: true, stored: true, replicated: false } : { ok: false })
     });
   });
-  const query = "?utm_source=qa&utm_medium=automation&utm_campaign=sitewide&utm_content=form&utm_term=avito&yclid=qa-yclid";
+  const query = "?utm_source=qa&utm_medium=automation&utm_campaign=sitewide&utm_content=form&utm_term=avito&yclid=1234567890123456789";
   await page.goto(baseURL + contract.route + query, { waitUntil: "load" });
   await page.waitForTimeout(160);
   const form = page.locator(contract.selector);
   const message = page.locator(contract.status);
 
-  if (outcome === "success") {
+  if (["success", "duplicate"].includes(outcome)) {
     await form.evaluate(element => element.requestSubmit());
     await page.waitForTimeout(30);
     check((await message.textContent() || "").trim().length > 0, "form.phone-validation", contract.route);
     check(await page.locator(contract.phone).evaluate(element => element === document.activeElement || element.getAttribute("aria-invalid") === "true" || element.classList.contains("err")), "form.phone-focus", contract.route);
+
+    await page.locator(contract.phone).fill("+7 999 999-99-99");
+    await form.locator("[name='pd_consent']").check();
+    await form.evaluate(element => element.requestSubmit());
+    await page.waitForTimeout(30);
+    check(payload === null && !(await message.getAttribute("class") || "").includes("ok"), "form.fake-phone-rejected", contract.route);
+    await form.locator("[name='pd_consent']").uncheck();
 
     await page.locator(contract.phone).fill("+7 999 123-45-67");
     await form.evaluate(element => element.requestSubmit());
@@ -1357,6 +1385,7 @@ async function formAttempt(browser, baseURL, contract, outcome, consentChoice = 
     await page.waitForFunction(selector => document.querySelector(selector)?.disabled === true, `${contract.selector} button[type='submit'],${contract.selector} button`, { timeout: 2000 });
     await sent;
     await page.waitForFunction(({ selector, text }) => document.querySelector(selector)?.textContent?.includes(text), { selector: contract.status, text: contract.successText });
+    await page.waitForFunction(selector => document.querySelector(selector)?.disabled === false, `${contract.selector} button[type='submit'],${contract.selector} button`);
     const goals = await page.evaluate(() => window.__qaGoals || []);
     const after = await form.evaluate(element => ({
       phone: element.elements.phone?.value || "",
@@ -1374,14 +1403,21 @@ async function formAttempt(browser, baseURL, contract, outcome, consentChoice = 
     check(payload?.privacy_version === FORM_PRIVACY_VERSION, "form.privacy-version", contract.route);
     check(Number.isFinite(Date.parse(payload?.pd_consent_client_at)), "form.consent-time", contract.route);
     check(payload?.ts === payload?.pd_consent_client_at, "form.timestamp-match", contract.route);
-    check(payload?.utm_source === "qa" && payload?.utm_medium === "automation" && payload?.utm_campaign === "sitewide" && payload?.utm_content === "form" && payload?.utm_term === "avito" && payload?.yclid === "qa-yclid", "form.attribution", contract.route);
+    check(payload?.utm_source === "qa" && payload?.utm_medium === "automation" && payload?.utm_campaign === "sitewide" && payload?.utm_content === "form" && payload?.utm_term === "avito" && payload?.yclid === (consentChoice === "granted" ? "1234567890123456789" : ""), "form.attribution", contract.route);
+    check(payload?.analytics_consent === (consentChoice === "granted"), "form.analytics-consent", contract.route);
+    check(consentChoice === "granted" ? payload?.metrica_client_id === "1234567890123456789" : !("metrica_client_id" in payload) && !String(payload?.page).includes("yclid="), "form.client-id-consent", contract.route);
+    check(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(payload?.submit_id || ""), "form.submit-id", contract.route);
     check(String(payload?.page || "").startsWith(baseURL + contract.route), "form.page", `${contract.route}: ${payload?.page}`);
     if (contract.submittedScenario) check(payload?.scenario === contract.submittedScenario, "form.scenario", `${contract.route}: ${payload?.scenario}`);
     check(after.phone === "" && !after.consent && !after.disabled, "form.success-reset", `${contract.route}: ${JSON.stringify(after)}`);
     if (contract.submittedScenario) check(after.scenario === "unspecified", "form.scenario-reset", `${contract.route}: ${after.scenario}`);
     const leadGoals = goals.filter(args => args[0] === 110884885 && args[1] === "reachGoal" && args[2] === "LEAD_FORM").length;
-    const salesGoals = goals.filter(args => args[0] === 110884885 && args[1] === "reachGoal" && args[2] === "PLANB_SALES_CONTACT").length;
-    check(consentChoice === "granted" ? leadGoals === 1 && salesGoals === 1 : leadGoals === 0 && salesGoals === 0, "form.goal-consent", `${contract.route}: ${consentChoice}: ${leadGoals}/${salesGoals}`);
+    const paidGoals = goals.filter(args => args[1] === "reachGoal" && ["PLANB_SALES_CONTACT", "PLANB_CONFIRMED_LEAD", "MANAGER_CONTACT_CLICK"].includes(args[2])).length;
+    check(leadGoals === (consentChoice === "granted" && outcome === "success" ? 1 : 0) && paidGoals === 0, "form.goal-consent", `${contract.route}: ${consentChoice}: ${leadGoals}/${paidGoals}`);
+    if (outcome === "success" && consentChoice === "granted") {
+      const countedAgain = await page.evaluate(async ({ ack, submitId }) => window.PlanBLeadQuality.accepted(ack, { submit_id: submitId }), { ack: { ok: true, stored: true, replicated: true, receipt_id: "a".repeat(64) }, submitId: payload.submit_id });
+      check(countedAgain === false, "form.receipt-counted-once", contract.route);
+    }
     report.forms.push({ route: contract.route, outcome, consentChoice, payload, after, goals, externalRequests });
   } else {
     await page.locator(contract.phone).fill("+7 999 123-45-67");
@@ -1398,7 +1434,7 @@ async function formAttempt(browser, baseURL, contract, outcome, consentChoice = 
     const goals = await page.evaluate(() => window.__qaGoals || []);
     check(state.phone.length > 0 && state.consent && !state.disabled, "form.failure-preserves", `${contract.route}: ${JSON.stringify(state)}`);
     check(fallbackLinks > 0, "form.failure-fallback", contract.route);
-    check(!goals.some(args => args[1] === "reachGoal" && ["LEAD_FORM", "PLANB_SALES_CONTACT"].includes(args[2])), "form.failure-goal", `${contract.route}: ${consentChoice}`);
+    check(!goals.some(args => args[1] === "reachGoal" && ["LEAD_FORM", "PLANB_SALES_CONTACT", "PLANB_CONFIRMED_LEAD"].includes(args[2])), "form.failure-goal", `${contract.route}: ${consentChoice}`);
     report.forms.push({ route: contract.route, outcome, consentChoice, payload, state, fallbackLinks, goals, externalRequests });
   }
   await context.close();
@@ -1408,6 +1444,7 @@ async function runForms(browser, baseURL) {
   for (const contract of FORM_CONTRACTS) {
     await formAttempt(browser, baseURL, contract, "success");
     await formAttempt(browser, baseURL, contract, "success", "granted");
+    await formAttempt(browser, baseURL, contract, "duplicate", "granted");
     await formAttempt(browser, baseURL, contract, "failure", "granted");
     await formAttempt(browser, baseURL, contract, "incomplete-ack", "granted");
     await formAttempt(browser, baseURL, contract, "unreplicated-ack", "granted");
@@ -1507,6 +1544,9 @@ async function runConsent(browser, baseURL) {
   }
   const serializedContactGoals = JSON.stringify(contactGoals);
   check(!/79281446617|Здравствуйте|консультац/i.test(serializedContactGoals), "analytics.contact-payload-safe", serializedContactGoals);
+  const microGoals = await grantPage.evaluate(() => (window.ym?.a || []).map(args => Array.from(args)).filter(args => args[1] === "reachGoal"));
+  check(microGoals.filter(args => args[2] === "MANAGER_CONTACT_CLICK").length === 3, "analytics.manager-click-micro", JSON.stringify(microGoals));
+  check(!microGoals.some(args => ["PLANB_SALES_CONTACT", "PLANB_CONFIRMED_LEAD", "LEAD_FORM"].includes(args[2])), "analytics.contact-not-confirmed", JSON.stringify(microGoals));
   await grantPage.locator("#planb-analytics-settings").click();
   await grantPage.locator("#planb-cookie [data-choice='denied']").click();
   await grantPage.waitForFunction(key => JSON.parse(localStorage.getItem(key) || "null")?.choice === "denied", CONSENT_KEY);

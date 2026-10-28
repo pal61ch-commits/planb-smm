@@ -110,6 +110,7 @@
   }
   </script>
   <script src="/assets/analytics-consent.js"></script>
+  <script src="/assets/lead-quality.js"></script>
   <style>
     :root{--paper:#f4f1e8;--white:#fffdf8;--ink:#11110f;--muted:#66665f;--line:rgba(17,17,15,.15);--line-dark:rgba(255,255,255,.16);--yellow:#ffd21f;--yellow-strong:#f5c900;--green:#176c49;--red:#a72b22;--radius:24px;--container:1220px;--shadow:0 20px 60px rgba(17,17,15,.08);--ease:cubic-bezier(.2,.72,.2,1)}
     *{box-sizing:border-box}
@@ -708,17 +709,14 @@
       const LEAD_ENDPOINT='https://leads.avi-booster.ru/api/leads';
       const form=document.getElementById('leadForm');
       if(!form)return;
-      let pendingSubmission=null;
-      const submissionTime=()=>{const key=JSON.stringify(Array.from(new FormData(form).entries()));if(!pendingSubmission||pendingSubmission.key!==key||Date.now()-Date.parse(pendingSubmission.at)>14*60*1000)pendingSubmission={key,at:new Date().toISOString()};return pendingSubmission.at};
       const leadRequest=async(url,options)=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);try{const response=await fetch(url,{...options,signal:controller.signal});let result={};try{result=await response.json()}catch(_){result={}}return {response,result}}finally{clearTimeout(timer)}};
 
       const message=document.getElementById('leadMsg'),button=form.querySelector('button[type="submit"]'),phone=form.elements.phone,consent=form.elements.pd_consent;
-      const digits=value=>(value||'').replace(/\D/g,'');
       phone.addEventListener('input',()=>{phone.classList.remove('err');message.className='lead-msg';message.textContent=''});
       consent.addEventListener('change',()=>{form.querySelector('.agree').classList.remove('err');message.className='lead-msg';message.textContent=''});
       form.addEventListener('submit',async event=>{
         event.preventDefault();
-        const phoneValue=phone.value.trim(),phoneDigits=digits(phoneValue),phoneOk=phoneDigits.length>=10&&phoneDigits.length<=11,consentOk=consent.checked;
+        const phoneValue=phone.value.trim(),phoneOk=Boolean(window.PlanBLeadQuality?.normalizePhone(phoneValue)),consentOk=consent.checked;
         phone.classList.toggle('err',!phoneOk);form.querySelector('.agree').classList.toggle('err',!consentOk);
         if(!phoneOk||!consentOk){
           message.className='lead-msg bad';message.textContent=!phoneOk?'Укажите телефон — мы свяжемся с вами':'Подтвердите согласие на обработку данных';
@@ -726,18 +724,18 @@
         }
         button.disabled=true;message.className='lead-msg';message.textContent='Отправляем заявку…';
         try{
-          const acceptedAt=submissionTime(),params=new URLSearchParams(window.location.search);
-          const attribution=window.PlanBAnalyticsConsent?.attribution?.()||{utm_source:params.get('utm_source')||'',utm_medium:params.get('utm_medium')||'',utm_campaign:params.get('utm_campaign')||'',utm_content:params.get('utm_content')||'',utm_term:params.get('utm_term')||'',yclid:params.get('yclid')||''};
-          const {response,result}=await leadRequest(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          const attribution=window.PlanBAnalyticsConsent?.attribution?.()||{};
+          const payload=await window.PlanBLeadQuality.prepare({
             name:form.elements.name.value.trim()||'не представился',phone:phoneValue,niche:form.elements.niche.value.trim(),scenario:form.elements.scenario.value||'unspecified',
             product:'planb_agency',route:'agency_hub',landing_variant:'home_agency_v4',form_id:form.elements.form_id.value,pd_consent:true,
-            pd_consent_version:form.elements.pd_consent_version.value,pd_consent_client_at:acceptedAt,privacy_version:form.elements.privacy_version.value,
+            pd_consent_version:form.elements.pd_consent_version.value,privacy_version:form.elements.privacy_version.value,
             utm_source:attribution.utm_source||'',utm_medium:attribution.utm_medium||'',utm_campaign:attribution.utm_campaign||'',utm_content:attribution.utm_content||'',utm_term:attribution.utm_term||'',yclid:attribution.yclid||'',
-            page:window.location.href,ref:document.referrer||'',ts:acceptedAt
-          })});
+            page:window.location.href,ref:document.referrer||''
+          });
+          const {response,result}=await leadRequest(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
           if(!response.ok||result.ok!==true||result.stored!==true||result.replicated!==true)throw new Error('http '+response.status);
-          pendingSubmission=null;form.reset();form.elements.scenario.value='unspecified';message.className='lead-msg ok';message.textContent='Заявка принята. Свяжемся для бесплатной консультации и подготовим план первых шагов.';
-          window.PlanBAnalyticsConsent?.track('lead_success',{target_type:'form'});
+          form.reset();form.elements.scenario.value='unspecified';message.className='lead-msg ok';message.textContent='Заявка принята. Свяжемся для бесплатной консультации и подготовим план первых шагов.';
+          await window.PlanBLeadQuality.accepted(result,payload);
         }catch(error){
           message.className='lead-msg bad';message.innerHTML='Не удалось отправить. Позвоните <a href="tel:+79604964913" style="color:#ffd21f">+7 960 496-49-13</a> или напишите в <a href="https://wa.me/79604964913" style="color:#ffd21f">WhatsApp</a>.';
         }finally{button.disabled=false}

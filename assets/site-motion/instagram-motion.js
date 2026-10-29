@@ -28,6 +28,7 @@
   let entered = false;
   let visible = false;
   let disposed = false;
+  let pendingFocusReplay = false;
   let measuredWidth = 0;
   let measuredHeight = 0;
   const abort = new AbortController();
@@ -140,6 +141,14 @@
   function setVisible(next) {
     visible = next;
     if (!visible) { settle(); return; }
+    if (pendingFocusReplay) {
+      pendingFocusReplay = false;
+      if (document.activeElement === trigger) {
+        entered = true;
+        replay();
+        return;
+      }
+    }
     if (!entered) { entered = true; replay(); }
   }
   const observer = 'IntersectionObserver' in window
@@ -166,14 +175,28 @@
   resizer?.observe(visual);
   listen(window, 'resize', resize);
   listen(trigger, 'pointerenter', event => { if (event.pointerType !== 'touch') replay(); });
-  listen(trigger, 'focus', replay);
+  listen(trigger, 'focus', () => {
+    pendingFocusReplay = false;
+    if (disposed || reduce.matches || document.hidden || document.activeElement !== trigger) return;
+    const box = visual.getBoundingClientRect();
+    // Native focus can start a long smooth scroll before IO sees the hero.
+    if (!visible || box.bottom <= 0 || box.top >= innerHeight) {
+      pendingFocusReplay = true;
+      return;
+    }
+    replay();
+  });
+  listen(trigger, 'blur', () => { pendingFocusReplay = false; });
   listen(window, 'pb-motion-replay', replay);
-  listen(document, 'visibilitychange', () => { if (document.hidden) settle(); });
+  listen(document, 'visibilitychange', () => {
+    if (document.hidden) { pendingFocusReplay = false; settle(); }
+  });
   listen(reduce, 'change', () => {
-    if (reduce.matches) settle();
+    if (reduce.matches) { pendingFocusReplay = false; settle(); }
     else if (visible) replay();
   });
   listen(window, 'pagehide', event => {
+    pendingFocusReplay = false;
     settle();
     // A persisted page resumes with this same script and DOM on Back/Forward.
     if (event.persisted) return;

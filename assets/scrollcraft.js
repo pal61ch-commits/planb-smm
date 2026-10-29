@@ -1093,12 +1093,16 @@
     // ---- pointer devices --------------------------------------------------
     var tilts = [], magnets = [], spots = [];
     function initPointer() {
-      if (reduce || !fineMQ.matches) return;
+      if (!fineMQ.matches) return;
+      // Pointer controls must follow the live preference, including a page
+      // loaded with reduced motion before the user switches it off.
+      var pointerReduce = matchMedia('(prefers-reduced-motion: reduce)');
+      var pointerFrame = 0;
       Array.prototype.forEach.call(root.querySelectorAll('[data-sc-tilt]'), function (el) {
-        tilts.push({ el: el, max: parseFloat(el.getAttribute('data-sc-tilt')) || 6, x: 0, ty: 0, tx: 0, y: 0 });
+        tilts.push({ el: el, max: parseFloat(el.getAttribute('data-sc-tilt')) || 6, x: 0, ty: 0, tx: 0, y: 0, baseTransform: el.style.transform });
       });
       Array.prototype.forEach.call(root.querySelectorAll('[data-sc-magnet]'), function (el) {
-        magnets.push({ el: el, k: parseFloat(el.getAttribute('data-sc-magnet')) || 0.3, x: 0, y: 0, tx: 0, ty: 0 });
+        magnets.push({ el: el, k: parseFloat(el.getAttribute('data-sc-magnet')) || 0.3, x: 0, y: 0, tx: 0, ty: 0, baseTransform: el.style.transform });
       });
       Array.prototype.forEach.call(root.querySelectorAll('[data-sc-spotlight]'), function (el) {
         spots.push(el);
@@ -1106,7 +1110,7 @@
       if (!tilts.length && !magnets.length && !spots.length) return;
 
       addEventListener('pointermove', function (e) {
-        if (e.pointerType !== 'mouse') return;
+        if (pointerReduce.matches || e.pointerType !== 'mouse') return;
         for (var i = 0; i < tilts.length; i++) {
           var T = tilts[i], r = T.el.getBoundingClientRect();
           if (r.bottom < -200 || r.top > vh + 200) { T.tx = 0; T.ty = 0; continue; }
@@ -1131,7 +1135,9 @@
         }
       }, { passive: true });
 
-      (function pointerTick() {
+      function pointerTick() {
+        pointerFrame = 0;
+        if (pointerReduce.matches) return;
         // Interpolate toward the target rather than tracking the pointer
         // directly. Direct tracking reads as artificial because it carries no
         // momentum; the lerp gives it weight.
@@ -1147,8 +1153,23 @@
           M.x += (M.tx - M.x) * 0.12; M.y += (M.ty - M.y) * 0.12;
           M.el.style.transform = 'translate3d(' + M.x.toFixed(2) + 'px,' + M.y.toFixed(2) + 'px,0)';
         }
-        requestAnimationFrame(pointerTick);
-      })();
+        pointerFrame = requestAnimationFrame(pointerTick);
+      }
+      function pointerMotionChange() {
+        if (pointerReduce.matches) {
+          if (pointerFrame) cancelAnimationFrame(pointerFrame);
+          pointerFrame = 0;
+          tilts.concat(magnets).forEach(function (item) {
+            item.x = item.y = item.tx = item.ty = 0;
+            item.el.style.transform = item.baseTransform;
+          });
+        } else if (!pointerFrame) {
+          pointerFrame = requestAnimationFrame(pointerTick);
+        }
+      }
+      if (pointerReduce.addEventListener) pointerReduce.addEventListener('change', pointerMotionChange);
+      else pointerReduce.addListener(pointerMotionChange);
+      pointerMotionChange();
     }
 
     // ---- wiring -----------------------------------------------------------

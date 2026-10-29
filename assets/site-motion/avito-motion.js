@@ -1,4 +1,4 @@
-/* One finite, decorative SVG sequence. Existing copy, numbers and forms are untouched. */
+/* Finite decorative stages, each entering while its number is actually visible. */
 (() => {
   'use strict';
   if (!/(?:vedenie-avito|razovaya-nastroyka-avito)(?:\.html)?\/?$/.test(location.pathname)) return;
@@ -13,9 +13,18 @@
   };
   const round = value => Math.round(value * 100) / 100;
   const point = (x, y) => `${round(x)},${round(y)}`;
-  const visible = element => {
+  const exposed = element => {
     const rect = element.getBoundingClientRect();
-    return !document.hidden && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight;
+    const nav = document.querySelector('.nav')?.getBoundingClientRect();
+    const top = nav && nav.top <= 16 && nav.bottom > 0 ? nav.bottom + 12 : 12;
+    if (document.hidden || rect.width <= 0 || rect.height <= 0 || rect.top < top ||
+        rect.bottom > innerHeight - 20 || rect.left < 0 || rect.right > innerWidth) return false;
+    return ![...document.querySelectorAll('.contact-dock, #planb-cookie')].some(blocker => {
+      const style = getComputedStyle(blocker), box = blocker.getBoundingClientRect();
+      return style.visibility !== 'hidden' && Number(style.opacity) > .1 &&
+        box.width > 0 && box.height > 0 && rect.left < box.right && rect.right > box.left &&
+        rect.top < box.bottom && rect.bottom > box.top;
+    });
   };
   const chamfer = (cx, cy, width, height) => {
     const x = cx - width / 2, y = cy - height / 2, cut = 7;
@@ -29,13 +38,22 @@
     container.classList.add('pb-avito-steps');
     const svg = svgNode('svg', {class: 'pb-avito-route', 'aria-hidden': 'true', focusable: 'false'});
     container.append(svg);
-    const scene = {container, svg, cards, markers, animations: [], played: false, generation: 0, routes: [], frames: []};
+    const scene = {container, svg, cards, markers, played: false, routes: [], frames: [],
+      stages: markers.map(() => ({done: false, timer: 0, animations: [], generation: 0, startsAt: 0}))};
 
+    const updateState = () => {
+      container.dataset.pbAvitoMotion = scene.stages.some(stage => stage.animations.length) ? 'playing' : 'settled';
+    };
+    const cancelStage = stage => {
+      stage.generation += 1;
+      clearTimeout(stage.timer);
+      stage.timer = 0;
+      stage.animations.forEach(animation => animation.cancel());
+      stage.animations = [];
+    };
     const settle = () => {
-      scene.generation += 1;
-      scene.animations.forEach(animation => animation.cancel());
-      scene.animations = [];
-      container.dataset.pbAvitoMotion = 'settled';
+      scene.stages.forEach(cancelStage);
+      updateState();
     };
 
     const measure = () => {
@@ -91,75 +109,116 @@
       });
     };
 
-    const play = () => {
-      if (reduced.matches || !visible(container) || !Element.prototype.animate) {
-        settle();
-        return;
-      }
-      settle();
+    const playStage = index => {
+      const stage = scene.stages[index];
+      stage.timer = 0;
+      if (stage.done || reduced.matches || !exposed(scene.frames[index].draw) || !Element.prototype.animate) return;
       scene.played = true;
-      container.dataset.pbAvitoMotion = 'playing';
-      const generation = scene.generation;
+      const generation = ++stage.generation;
       const animate = (node, frames, options) => {
-        const animation = node.animate(frames, {...options, fill: 'both'});
-        scene.animations.push(animation);
+        stage.animations.push(node.animate(frames, {...options, fill: 'both'}));
       };
-      scene.routes.forEach(({draw, beam}, index) => {
-        const delay = 280 + index * 555;
+      if (index > 0) {
+        const {draw, beam} = scene.routes[index - 1];
         animate(draw, [{strokeDashoffset: 1, opacity: .25}, {strokeDashoffset: 0, opacity: .7}],
-          {duration: 575, delay, easing: 'cubic-bezier(.22,.7,.2,1)'});
+          {duration: 575, easing: 'cubic-bezier(.22,.7,.2,1)'});
         animate(beam, [{strokeDashoffset: .18, opacity: 0},
           {strokeDashoffset: .06, opacity: 1, offset: .14},
           {strokeDashoffset: -.82, opacity: 1, offset: .87},
-          {strokeDashoffset: -1, opacity: 0}],
-          {duration: 640, delay, easing: 'linear'});
-      });
-      scene.frames.forEach(({draw, light}, index) => {
-        const delay = index === 0 ? 0 : 550 + (index - 1) * 555;
-        animate(draw, [{strokeDashoffset: 1, opacity: .2}, {strokeDashoffset: 0, opacity: 1}],
-          {duration: 420, delay, easing: 'cubic-bezier(.2,.75,.2,1)'});
-        animate(light, [{opacity: 0}, {opacity: .12, offset: .4}, {opacity: 0}],
-          {duration: 550, delay, easing: 'ease-out'});
-      });
-      Promise.all(scene.animations.map(animation => animation.finished.catch(() => {}))).then(() => {
-        if (scene.generation === generation) settle();
+          {strokeDashoffset: -1, opacity: 0}], {duration: 640, easing: 'linear'});
+      }
+      const {draw, light} = scene.frames[index], delay = index ? 270 : 0;
+      animate(draw, [{strokeDashoffset: 1, opacity: .2}, {strokeDashoffset: 0, opacity: 1}],
+        {duration: 420, delay, easing: 'cubic-bezier(.2,.75,.2,1)'});
+      animate(light, [{opacity: 0}, {opacity: .12, offset: .4}, {opacity: 0}],
+        {duration: 550, delay, easing: 'ease-out'});
+      updateState();
+      Promise.all(stage.animations.map(animation => animation.finished.catch(() => {}))).then(() => {
+        if (stage.generation !== generation) return;
+        stage.done = true;
+        cancelStage(stage);
+        updateState();
       });
     };
 
+    const scan = () => {
+      if (reduced.matches || document.hidden || !Element.prototype.animate) {
+        settle();
+        return;
+      }
+      const now = performance.now();
+      scene.stages.forEach((stage, index) => {
+        if (!exposed(scene.frames[index].draw)) cancelStage(stage);
+      });
+      let next = Math.max(now, ...scene.stages.filter(stage => stage.timer || stage.animations.length)
+        .map(stage => stage.startsAt + 500));
+      scene.stages.forEach((stage, index) => {
+        if (stage.done || stage.timer || stage.animations.length || !exposed(scene.frames[index].draw)) return;
+        stage.startsAt = next;
+        const delay = Math.max(0, next - now);
+        if (delay < 1) playStage(index);
+        else stage.timer = setTimeout(() => playStage(index), delay);
+        next += 500;
+      });
+      updateState();
+    };
+
     scene.settle = settle;
-    scene.play = play;
-    scene.measure = measure;
+    scene.scan = scan;
+    scene.replay = () => {
+      settle();
+      scene.stages.forEach(stage => { stage.done = false; });
+      scene.played = false;
+      scan();
+    };
     scenes.push(scene);
     measure();
     if ('ResizeObserver' in window) {
       scene.resize = new ResizeObserver(() => {
         const rect = container.getBoundingClientRect();
         if (Math.abs(rect.width - scene.lastWidth) > .5 || Math.abs(rect.height - scene.lastHeight) > .5) measure();
+        scan();
       });
       scene.resize.observe(container);
-    } else {
-      addEventListener('resize', measure, {passive: true});
     }
     if ('IntersectionObserver' in window) {
-      scene.intersection = new IntersectionObserver(entries => entries.forEach(entry => {
-        if (!entry.isIntersecting) settle();
-        else if (!scene.played && !reduced.matches && !document.hidden) play();
-      }), {threshold: .2});
-      scene.intersection.observe(container);
+      scene.intersection = new IntersectionObserver(scan, {threshold: [0, 1]});
+      markers.forEach(marker => scene.intersection.observe(marker));
     }
+    scene.measure = () => { measure(); scan(); };
+
   });
 
   const settle = () => scenes.forEach(scene => scene.settle());
-  const replay = () => scenes.forEach(scene => scene.play());
+  const scan = () => scenes.forEach(scene => scene.scan());
+  const replay = () => scenes.forEach(scene => scene.replay());
+  // One queued frame per scroll/resize burst; there is no autonomous animation loop.
+  let pendingFrame = 0;
+  const requestScan = () => {
+    if (pendingFrame || document.hidden) return;
+    pendingFrame = requestAnimationFrame(() => { pendingFrame = 0; scan(); });
+  };
+  addEventListener('scroll', requestScan, {passive: true});
+  addEventListener('resize', () => scenes.forEach(scene => scene.measure()), {passive: true});
+  addEventListener('pageshow', scan);
   addEventListener('pb-motion-replay', replay);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) settle(); });
-  const motionChange = () => { if (reduced.matches) settle(); };
-  if (reduced.addEventListener) reduced.addEventListener('change', motionChange);
-  else reduced.addListener(motionChange);
+  document.addEventListener('planb:analytics-consent', requestScan);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(pendingFrame);
+      pendingFrame = 0;
+      settle();
+    } else scan();
+  });
+  if (reduced.addEventListener) reduced.addEventListener('change', scan);
+  else reduced.addListener(scan);
   window.PBAvitoMotion = {replay, settle, getState: () => scenes.map(scene => ({
     state: scene.container.dataset.pbAvitoMotion,
     played: scene.played,
-    activeAnimations: scene.animations.filter(animation => animation.playState === 'running' || animation.playState === 'pending').length,
+    completedStages: scene.stages.map(stage => stage.done),
+    queuedStages: scene.stages.map(stage => Boolean(stage.timer)),
+    activeAnimations: scene.stages.flatMap(stage => stage.animations)
+      .filter(animation => animation.playState === 'running' || animation.playState === 'pending').length,
     routes: scene.routes.length, markers: scene.frames.length
   }))};
 })();

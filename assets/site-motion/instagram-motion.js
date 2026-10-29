@@ -169,13 +169,24 @@
   listen(trigger, 'focus', replay);
   listen(window, 'pb-motion-replay', replay);
   listen(document, 'visibilitychange', () => { if (document.hidden) settle(); });
-  listen(reduce, 'change', settle);
-  listen(window, 'pagehide', () => {
-    disposed = true;
+  listen(reduce, 'change', () => {
+    if (reduce.matches) settle();
+    else if (visible) replay();
+  });
+  listen(window, 'pagehide', event => {
     settle();
+    // A persisted page resumes with this same script and DOM on Back/Forward.
+    if (event.persisted) return;
+    disposed = true;
     observer?.disconnect();
     resizer?.disconnect();
     abort.abort();
+  });
+  listen(window, 'pageshow', event => {
+    if (!event.persisted || disposed) return;
+    geometry();
+    fallbackVisibility();
+    if (visible) replay();
   });
   window.PBInstagramMotion = { replay, settle };
 })();

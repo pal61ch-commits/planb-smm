@@ -77,10 +77,6 @@
   stroke: none;
   opacity: 0;
 }
-.pb-avito-steps[data-pb-avito-motion="playing"] .pb-avito-draw,
-.pb-avito-steps[data-pb-avito-motion="playing"] .pb-avito-marker-draw {
-  stroke-dashoffset: 1;
-}
 @media (prefers-reduced-motion: reduce) {
   .pb-avito-route * { animation: none !important; transition: none !important; }
   .pb-avito-beam, .pb-avito-marker-light { opacity: 0 !important; }

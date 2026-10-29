@@ -1,0 +1,87 @@
+/* Local Avito process study: an illustration of the sequence, not task status. */
+.pb-avito-steps {
+  position: relative;
+  isolation: isolate;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+.pb-avito-steps > .step {
+  position: relative;
+  z-index: 1;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: border-color .26s, background-color .26s !important;
+}
+.pb-avito-steps > .step > b {
+  position: relative;
+  z-index: 3;
+}
+.pb-avito-route {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  contain: layout style;
+  /* The existing generic child stagger must not translate the measured overlay. */
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+.pb-avito-route path {
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pb-avito-guide {
+  stroke: #f5c400;
+  stroke-width: 1;
+  opacity: .16;
+}
+.pb-avito-draw {
+  stroke: #eec94b;
+  stroke-width: 1.6;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  opacity: .52;
+}
+.pb-avito-beam {
+  stroke: #fff2b0;
+  stroke-width: 3;
+  stroke-dasharray: .16 .84;
+  stroke-dashoffset: .18;
+  opacity: 0;
+  filter: drop-shadow(0 0 5px #f5c400) drop-shadow(0 0 12px #edb923);
+}
+.pb-avito-marker-base {
+  fill: #f5c400;
+  fill-opacity: .035;
+  stroke: #eec94b;
+  stroke-width: 1;
+  opacity: .48;
+}
+.pb-avito-marker-draw {
+  stroke: #ffe99a;
+  stroke-width: 1.8;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  opacity: .44;
+}
+.pb-avito-marker-light {
+  fill: #ffe99a;
+  stroke: none;
+  opacity: 0;
+}
+.pb-avito-steps[data-pb-avito-motion="playing"] .pb-avito-draw,
+.pb-avito-steps[data-pb-avito-motion="playing"] .pb-avito-marker-draw {
+  stroke-dashoffset: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-avito-route * { animation: none !important; transition: none !important; }
+  .pb-avito-beam, .pb-avito-marker-light { opacity: 0 !important; }
+}

@@ -189,6 +189,17 @@
   ]
 }
 </script>
+
+<link rel="stylesheet" href="/assets/site-motion/interaction-motion.css"><link rel="stylesheet" href="/assets/site-motion/instagram-motion.css">
+
+<!-- Reserve the shared header layout during its existing enhancement. -->
+<link rel="stylesheet" href="/assets/contact-layer.css" data-planb-contact-layer>
+<link rel="preload" href="/assets/fonts/manrope-variable-3ae11c49db04.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/assets/fonts/unbounded-variable-323b511be380.ttf" as="font" type="font/ttf" crossorigin>
+<style data-planb-motion-header-stability>
+@media (max-width:720px) and (scripting:enabled){html:not([data-planb-depth-mounted]) .ig-page .nav .nav-links{position:absolute;visibility:hidden;pointer-events:none;opacity:0;animation:pb-nav-fail-open 0s linear 3s forwards}}
+@keyframes pb-nav-fail-open{to{position:static;visibility:visible;pointer-events:auto;opacity:1}}
+</style>
 </head>
 <body class="ig-page">
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden"><defs>
@@ -253,4 +264,6 @@
 <script src="/assets/scrollcraft.js"></script>
 <script src="/assets/site-depth.js"></script>
 <script src="/assets/instagram-page.js?v=20261007-comments"></script>
+
+<script defer src="/assets/site-motion/interaction-motion.js"></script><script defer src="/assets/site-motion/instagram-motion.js"></script>
 </body></html>

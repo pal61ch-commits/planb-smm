@@ -76,9 +76,24 @@
     hovered = false;
     schedule();
   });
+  // A restored page can retain :hover from its cached document even after
+  // the mouse moved elsewhere. Only fresh pointer input should pause it again.
+  viewport.addEventListener("pointermove", function (event) {
+    if (event.pointerType !== "mouse" || hovered) return;
+    hovered = true;
+    stop();
+  }, { passive: true });
+  function resumeAfterReturn() {
+    hovered = false;
+    movement = null;
+    schedule();
+  }
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) stop();
-    else schedule();
+    else resumeAfterReturn();
+  });
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted) resumeAfterReturn();
   });
   function motionPreferenceChanged() {
       stop();

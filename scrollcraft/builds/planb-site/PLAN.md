@@ -88,3 +88,5 @@ Weekly website batch 2026-10-12: 4 new articles, 2 revisions; 32 canonical blog 
 Weekly website batch 2026-10-19: 3 new articles, 3 revisions; 35 canonical blog articles; 59 marketing / 64 active / 62 sitemap URLs. Two already published Telegram videos are copied unchanged with local posters under the owner18Oct website-video instruction.
 
 Weekly website batch 2026-10-27: 3 new articles, 1 revisions; 38 canonical blog articles; 62 marketing / 67 active / 65 sitemap URLs. One already published Telegram video is copied unchanged with a local poster under the owner18Oct website-video instruction.
+
+Weekly website batch 2026-11-02: 2 new articles, 0 revisions; 40 canonical blog articles; 64 marketing / 69 active / 67 sitemap URLs. New website video embeds are added only when published content is verified and matches the page intent.

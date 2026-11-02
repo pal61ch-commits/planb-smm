@@ -37,14 +37,14 @@ const CURRENT_BASELINE_PAGE_CONTRACTS = new Map([
   ["/rekvizity.html", { sha256: "37e9eab59e40ed11a048252224357e2bc14991e7cbe94f673c9c2e8355dac31f", consentLoaderCount: 1 }],
   ["/oferta.html", { sha256: "5d9e8746426206f9eab79da3d631cf4d0bd9138295024a66a2afcdcc0c8b6b60", consentLoaderCount: 1 }]
 ]);
-// Owner-authorized lead-quality change, reviewed against d077141. Only these
+// Owner-approved published motion release75cae9e, including the prior lead-quality repair. Only these
 // exact form candidates may differ from the protected fef7c180 source release.
 // The source hashes above remain mandatory for the baseline itself.
-const APPROVED_CANDIDATE_REVISION = "planb-lead-quality-20261028";
+const APPROVED_CANDIDATE_REVISION = "planb-site-motion-20261029-75cae9e";
 const APPROVED_CANDIDATE_PAGE_CONTRACTS = new Map([
-  ["/", { sha256: "6e7991e1ab812b5af5a126bccde280813b509cef7c5be291a51aed9a2a01b66c", sourceSha256: "e9d056f25d7d07b7b8395a1abab0d2c94cc40cd7cbbbe1d984a881aedec0897d" }],
-  ["/uslugi/vedenie-avito", { sha256: "acc1de6f0347d66054e352f4f2a16f5ae804a2856eb26466dd62d5d0434bb7d7", sourceSha256: "409d22eec6c92dc115ed1798733e85f629e63ac859dadb0b7fcad43dd7b8a496" }],
-  ["/uslugi/razovaya-nastroyka-avito", { sha256: "16fd9eb09e0aa09d3b3645a6ea731e0003c3cfc037f5bcf538cbe311f4f97169", sourceSha256: "2355fee3906fe914606068e0e14f8d11a5bf4cd3300e7ee470c0265797635990" }]
+  ["/", { sha256: "2190c17d0fb8b374f28246585741fe10684c933dcbc2607eba32712ccbc88592", sourceSha256: "e9d056f25d7d07b7b8395a1abab0d2c94cc40cd7cbbbe1d984a881aedec0897d" }],
+  ["/uslugi/vedenie-avito", { sha256: "92337fa0c2cb8625e49ab038d88261d23dff78fbe6fb14c6a4665291c77455b0", sourceSha256: "409d22eec6c92dc115ed1798733e85f629e63ac859dadb0b7fcad43dd7b8a496" }],
+  ["/uslugi/razovaya-nastroyka-avito", { sha256: "57b175ae3971ae8c915a7daa9a4dbdaa16cb052479562d4e03dde3f53ceab302", sourceSha256: "2355fee3906fe914606068e0e14f8d11a5bf4cd3300e7ee470c0265797635990" }]
 ]);
 const CHROME = process.env.SCROLLCRAFT_CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const OUT = path.resolve(HERE, "../../lab/planb-site");
@@ -361,7 +361,7 @@ function screenshotName(route) {
 }
 
 async function staticAudit() {
-  check(MARKETING_ROUTES.length === 62, "scope.marketing", `expected 62, got ${MARKETING_ROUTES.length}`);
+  check(MARKETING_ROUTES.length === 64, "scope.marketing", `expected 64, got ${MARKETING_ROUTES.length}`);
   check(CURRENT_LEGAL_ROUTES.length === 5, "scope.current-legal", `expected 5, got ${CURRENT_LEGAL_ROUTES.length}`);
   check(VERSIONED_LEGAL_FILES.length === 6, "scope.versioned-legal", `expected 6, got ${VERSIONED_LEGAL_FILES.length}`);
   check(REDIRECT_CONTRACTS.length === 4, "scope.redirects", `expected 4, got ${REDIRECT_CONTRACTS.length}`);

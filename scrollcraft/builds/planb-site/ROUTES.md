@@ -2,7 +2,7 @@
 
 The executable source of truth is `routes.mjs`.
 
-## Marketing routes: 62
+## Marketing routes: 64
 
 - `/`
 - `/o-kompanii`
@@ -10,12 +10,12 @@ The executable source of truth is `routes.mjs`.
 - `/uslugi/razovaya-nastroyka-avito`
 - `/prodvizhenie-instagram`
 - `/kejsy/` and 15 published case detail routes
-- `/blog/` and 38 article routes
+- `/blog/` and 40 article routes
 - `/video/` and `/otzyvy/`
 
-These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 61 marketing routes use `site-depth`.
+These routes must each load one consent loader, one Scrollcraft stylesheet/script pair, and one visual-system stylesheet/script pair. The homepage retains `home-depth`; the remaining 63 marketing routes use `site-depth`.
 
-The 24 new-content routes are:
+The 26 new-content routes are:
 
 - `/video/`
 - `/otzyvy/`
@@ -45,6 +45,9 @@ The 24 new-content routes are:
 - `/blog/bonusy-avito-uslugi-proverka-usloviy`
 - `/blog/kejs-skrytye-karnizy-avito-69-899-kontaktov`
 - `/blog/kak-proverit-keysy-avito-agentstva`
+
+- `/blog/svyaz-s-avitologom-vremya-otveta-srochnye-zadachi`
+- `/blog/prodlevat-li-vedenie-avito`
 
 They have their own metadata and structured-data contracts instead of a baseline copy.
 
@@ -100,10 +103,12 @@ Sokrat remains outside this redesign. Its application API, auth, payment, analyt
 
 ## Sitemap contract
 
-The expected sitemap contains 65 URLs: the 62 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.
+The expected sitemap contains 67 URLs: the 64 marketing routes, `/sokrat`, `/rekvizity.html`, and `/oferta.html`. Privacy and consent documents remain reachable through site links but are intentionally excluded.
 
 Weekly website batch 2026-10-12: 4 new articles, 2 revisions; 32 canonical blog articles; 56 marketing / 61 active / 59 sitemap URLs. QA fixture lead route and current PD document hashes follow published Mac cutover fef7c180; analytics-consent archived snapshot remains independently pinned.
 
 Weekly website batch 2026-10-19: 3 new articles, 3 revisions; 35 canonical blog articles; 59 marketing / 64 active / 62 sitemap URLs. Two already published Telegram videos are copied unchanged with local posters under the owner18Oct website-video instruction.
 
 Weekly website batch 2026-10-27: 3 new articles, 1 revisions; 38 canonical blog articles; 62 marketing / 67 active / 65 sitemap URLs. One already published Telegram video is copied unchanged with a local poster under the owner18Oct website-video instruction.
+
+Weekly website batch 2026-11-02: 2 new articles, 0 revisions; 40 canonical blog articles; 64 marketing / 69 active / 67 sitemap URLs. New website video embeds are added only when published content is verified and matches the page intent.

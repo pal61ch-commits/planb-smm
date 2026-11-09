@@ -8,8 +8,8 @@ The harness is local and side-effect-free. It never sends a lead, never loads li
 
 ## Scope
 
-- 64 marketing routes: homepage, service pages, company page, case routes, 41 blog routes (index plus 40 articles), video library and reviews page.
-- 26 content routes with metadata validation independent of the baseline; exact list in `routes.mjs`.
+- 65 marketing routes: homepage, service pages, company page, case routes, 42 blog routes (index plus 41 articles), video library and reviews page.
+- 27 content routes with metadata validation independent of the baseline; exact list in `routes.mjs`.
 - 15 self-hosted H.264/AAC videos (11 topical videos and four testimonials) with posters, Russian captions, source links, published-period context, and no autoplay.
 - 5 current legal routes: rendered and checked, but kept free of analytics and motion code.
 - 19 immutable files compared byte-for-byte with `/Users/konstantin/content-factory/planb-landing`:
@@ -42,3 +42,5 @@ Weekly website batch 2026-10-19: 3 new articles, 3 revisions; 35 canonical blog 
 Weekly website batch 2026-10-27: 3 new articles, 1 revisions; 38 canonical blog articles; 62 marketing / 67 active / 65 sitemap URLs. One already published Telegram video is copied unchanged with a local poster under the owner18Oct website-video instruction.
 
 Weekly website batch 2026-11-02: 2 new articles, 0 revisions; 40 canonical blog articles; 64 marketing / 69 active / 67 sitemap URLs. New website video embeds are added only when published content is verified and matches the page intent.
+
+Weekly website batch 2026-11-09: 1 new articles, 2 revisions; 41 canonical blog articles; 65 marketing / 70 active / 68 sitemap URLs. New website video embeds are added only when published content is verified and matches the page intent.

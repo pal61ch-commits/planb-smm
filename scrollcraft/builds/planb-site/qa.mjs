@@ -85,6 +85,7 @@ const HISTORICAL_CASE_ROUTES = [
 ];
 const BASELINE_DRIFT_FIELDS = new Set(["title", "description", "jsonld"]);
 const BASELINE_DRIFT_ALLOWLIST = new Map([
+  ["/blog/bonusy-avito-uslugi-proverka-usloviy", new Set(["jsonld"])],
   ["/blog/sravnenie-tarifov-vedeniya-avito", new Set(["jsonld"])],
   // Owner-commissioned client articles 2026-10-06.
   ["/blog/vedenie-akkaunta-avito", new Set(["title", "description", "jsonld"])],
@@ -361,7 +362,7 @@ function screenshotName(route) {
 }
 
 async function staticAudit() {
-  check(MARKETING_ROUTES.length === 64, "scope.marketing", `expected 64, got ${MARKETING_ROUTES.length}`);
+  check(MARKETING_ROUTES.length === 65, "scope.marketing", `expected 65, got ${MARKETING_ROUTES.length}`);
   check(CURRENT_LEGAL_ROUTES.length === 5, "scope.current-legal", `expected 5, got ${CURRENT_LEGAL_ROUTES.length}`);
   check(VERSIONED_LEGAL_FILES.length === 6, "scope.versioned-legal", `expected 6, got ${VERSIONED_LEGAL_FILES.length}`);
   check(REDIRECT_CONTRACTS.length === 4, "scope.redirects", `expected 4, got ${REDIRECT_CONTRACTS.length}`);

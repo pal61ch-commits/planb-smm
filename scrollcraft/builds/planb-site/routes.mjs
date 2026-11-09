@@ -1,4 +1,5 @@
 export const MARKETING_ROUTES = [
+  "/blog/opyt-avito-agentstva-v-vashey-nishe",
   "/blog/svyaz-s-avitologom-vremya-otveta-srochnye-zadachi",
   "/blog/prodlevat-li-vedenie-avito",
   "/blog/bonusy-avito-uslugi-proverka-usloviy",
@@ -76,6 +77,7 @@ export const CURRENT_LEGAL_ROUTES = [
 export const ACTIVE_ROUTES = [...MARKETING_ROUTES, ...CURRENT_LEGAL_ROUTES];
 
 export const NEW_CONTENT_ROUTES = [
+  "/blog/opyt-avito-agentstva-v-vashey-nishe",
   "/blog/svyaz-s-avitologom-vremya-otveta-srochnye-zadachi",
   "/blog/prodlevat-li-vedenie-avito",
   "/blog/bonusy-avito-uslugi-proverka-usloviy",
